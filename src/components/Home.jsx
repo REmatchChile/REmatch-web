@@ -13,7 +13,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import { PlayArrow, Publish } from '@material-ui/icons';
+import PlayArrow from '@material-ui/icons/PlayArrow';
+import Stop from '@material-ui/icons/Stop';
+import Publish from '@material-ui/icons/Publish';
 
 /* Project Components */
 import MatchesTable from './MatchesTable';
@@ -36,6 +38,7 @@ class Home extends Component {
       schema: [],
       matches: [],
       uploadingFile: false,
+      running: false,
       howTo: (localStorage.getItem('showHowTo') === null) ? true : false,
       fileProgress: 0,
     };
@@ -136,10 +139,12 @@ class Home extends Component {
   restartWorker = () => {
     worker.terminate();
     worker = new Worker(WORKPATH);
+    this.setState({running: false});
   }
 
   runWorker = () => {
     console.log('STARTED');
+    this.setState({running: true});
     this.clearMarks();
     this.setState({ matches: [], schema: [] });
     worker.postMessage({
@@ -154,7 +159,11 @@ class Home extends Component {
         case 'MATCHES':
           this.setState((prevState) => ({ matches: [...prevState.matches, ...m.data.payload] }));
           break;
+        case 'FINISHED':
+          this.setState({running: false});
+          break;
         case 'ERROR':
+          this.setState({running: false});
           console.log('ERROR:', m.data.payload);
           this.restartWorker();
           console.log('WORKER HAS BEEN RELOADED');
@@ -218,13 +227,13 @@ class Home extends Component {
             <Button
               className="queryButton"
               color="primary"
-              startIcon={<PlayArrow />}
-              onClick={this.runWorker}
+              startIcon={(this.state.running) ? <Stop/> : <PlayArrow />}
+              onClick={(this.state.running) ? this.restartWorker : this.runWorker}
             >
-              Run
+              {(this.state.running) ? 'Stop' : 'Run'}
             </Button>
           </div>
-          <Divider />
+          <Divider />          
           {/* EDITOR */}
           <div className="sectionTitle">
             Text
@@ -255,9 +264,6 @@ class Home extends Component {
             addMarks={this.addMarks}
             clearMarks={this.clearMarks}
           />
-
-
-
         </Paper>
       </Container>
     )

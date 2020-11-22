@@ -56,6 +56,10 @@ this.onmessage = (m) => {
             });
         }
 
+        this.postMessage({
+            type: 'FINISHED',
+        })
+
         // Send a message of finished for disable/enable button
 
         rgxOptions.delete();
