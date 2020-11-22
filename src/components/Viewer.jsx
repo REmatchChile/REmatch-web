@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import PlayArrow from '@material-ui/icons/PlayArrow';
 
@@ -80,28 +81,14 @@ class Viewer extends Component {
     });
   }
 
-  RegExMarks(span) {
-    this.clearMarks();
-    let start = this.state.textEditor.posFromIndex(span[0]);
-    let end = this.state.textEditor.posFromIndex(span[1]);
-    this.state.textEditor.markText(start, end, {
-      className: 'm0',
-    })
-  }
-
   runRegex() {
     let rgx = new RegExp(this.state.regex, 'g');
-    //let matches = [];
-    let matches = this.state.textEditor.getValue().matchAll(rgx);
-    for(let match of matches) {
-      console.log(match);
-    }
-    /*
-    while ((match = rgx.exec(this.state.textEditor.getValue())) != null) {
-      matches.push([match.index, match.index + match[0].length]);
+    let matches = [];
+    let results = this.state.textEditor.getValue().matchAll(rgx);
+    for (let result of results) {
+      matches.push(result);
     }
     this.setState({ regexMatches: matches });
-    */
   }
 
   runREmatch() {
@@ -203,17 +190,19 @@ class Viewer extends Component {
           {(this.state.regex) ?
             <div className="matches">
               {this.state.regexMatches.map((span, idxSpan) => (
-                <div key={idxSpan} className="matchesRow" onClick={() => this.RegExMarks(span)}>
+                <div key={idxSpan} className="matchesRow disabled">
                   <div className="matchesIdx">{idxSpan}</div>
-                  <div className="matchesItem">
-                    {this.getText(span)}
-                  </div>
+                  {span.map((capture, idxCapture) => (
+                    <div key={idxCapture} className={`cm-m${idxCapture} matchesItem`}>
+                      {capture}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
             : null}
         </div>
-      </Paper>
+      </Paper >
     )
   }
 }

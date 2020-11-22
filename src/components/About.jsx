@@ -10,7 +10,7 @@ import english from '../text/english';
 
 const About = () => {
   return (
-    <Container maxWidth="sm" className="mainContainer">
+    <Container maxWidth="md" className="mainContainer">
       {english.about.title}
       {english.about.regexinrematch}
       {english.about.anotherlibrary}

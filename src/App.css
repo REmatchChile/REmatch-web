@@ -667,11 +667,11 @@ code {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  cursor: pointer;
 }
 
 .mainPaper .matchesContainer .matchesRow:hover {
   background-color: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
 }
 
 .mainPaper .matchesContainer .matchesRow:hover .matchesIdx {
@@ -827,6 +827,10 @@ code {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+}
+
+.viewerPaper .matchesContainer .matches .matchesRow.disabled {
+  cursor: default !important;
 }
 
 .viewerPaper .matchesContainer .matches .matchesRow:hover {
