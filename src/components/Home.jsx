@@ -7,6 +7,11 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { PlayArrow, Publish } from '@material-ui/icons';
 
@@ -31,12 +36,13 @@ class Home extends Component {
       schema: [],
       matches: [],
       uploadingFile: false,
+      howTo: (localStorage.getItem('showHowTo') === null) ? true : false,
       fileProgress: 0,
     };
   }
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById('queryEditor'), {
-      value: '.*!x{.+}!y{.+}.*',
+      value: '.*!x{.+}.*',
       mode: 'REmatchQuery',
       placeholder: 'Enter your query...',
       theme: 'material-darker',
@@ -75,7 +81,7 @@ class Home extends Component {
       viewportMargin: 15,
     });
 
-    textEditor.on('change', () => { this.clearMarks() });
+    textEditor.on('change', () => this.clearMarks());
 
     this.setState({
       queryEditor,
@@ -159,9 +165,39 @@ class Home extends Component {
     }
   }
 
+  handleCloseForever() {
+    localStorage.setItem('showHowTo', false);
+    this.setState({howTo: false});
+  }
+
   render() {
     return (
       <Container maxWidth="md" className="mainContainer">
+        <Dialog
+          className="dialog"
+          open={this.state.howTo}
+          onClose={() => this.setState({howTo: false})}
+        >
+          <DialogTitle>
+            How to use this page?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This page serves as a visualisation tool for the <span className="cm-m0">REmatch</span> library, which allows users to run regular expressions over a text document, and extract certain pieces of information of their interest.
+            </DialogContentText>
+            <DialogContentText>
+              The basic usage is simple: you enter your regular expression in the <span className="cm-m1">Query</span> field of the main page, and your text in the <span className="cm-m1">Text</span> field. Once you hit the <span className="cm-m1">Run</span> button, the field <span className="cm-m1">Matches</span> will fill up with the encountered results. To see where a result appears inside the text, you can click on it. You can also upload the text from a file by clicking the <span className="cm-m1">Import File</span> button and selecting a text file on your computer.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleCloseForever.bind(this)} color="primary">
+              Don't show this again
+            </Button>
+            <Button onClick={() => this.setState({howTo: false})} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Backdrop
           className="backdrop"
           open={this.state.uploadingFile}

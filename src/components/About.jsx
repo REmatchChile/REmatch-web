@@ -12,7 +12,6 @@ const About = () => {
   return (
     <Container maxWidth="sm" className="mainContainer">
       {english.about.title}
-      {english.about.howto}
       {english.about.regexinrematch}
       {english.about.anotherlibrary}
       {english.about.example1}

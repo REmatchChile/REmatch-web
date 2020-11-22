@@ -561,6 +561,16 @@ code {
   margin-top: 1rem;
 }
 
+.dialog {
+  text-align: justify;
+}
+
+.dialog .code {
+  font-family: 'Roboto Mono', monospace;
+  background-color: #545454;
+  color: white;
+}
+
 .mainPaper {
   overflow: hidden;
   font-size: 14px;
@@ -610,6 +620,10 @@ code {
 .mainPaper #textEditor .CodeMirror {
   height: 250px;
   padding: .5rem 1rem;
+}
+
+.mainPaper #textEditor .CodeMirror .CodeMirror-line {
+  margin: .5rem 0;
 }
 
 .mainPaper .headContainer {
@@ -721,7 +735,7 @@ code {
 /* LiteViewer */
 .viewerPaper {
   width: 90%;
-  margin: 1rem auto;
+  margin: 2rem auto;
   font-size: 14px;
   overflow: hidden;
 }
@@ -828,94 +842,9 @@ code {
   text-overflow: ellipsis;
 }
 
-/* asdasdsad*/
-.paperLite {
-  -webkit-transition: all .5s ease-in-out;
-  transition: all .5s ease-in-out;
-  font-size: 14px;
-  width: 90%;
-  margin: 2rem auto;
-}
-
-.paperLite .CodeMirror {
-  font-size: 14px;
-  text-align: justify;
-}
-
-.paperLite .liteTab {
-  text-transform: none;
-  font-family: 'Roboto Mono', monospace;
-}
-
-.paperLite .queryContainer {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  padding: 0 1rem;
-}
-
-.paperLite .queryContainer #queryEditor {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  overflow: hidden;
-}
-
-.paperLite .queryContainer #queryEditor .CodeMirror {
-  height: auto;
-  padding: .5rem 0;
-}
-
-.paperLite .textEditor {
-  height: 250px;
-}
-
-.paperLite .textEditor .CodeMirror {
-  height: 250px;
-  padding: .5rem 1rem;
-}
-
-.paperLite .matches {
-  padding: 1rem;
-  height: 150px;
-  overflow-y: auto;
-}
-
-.paperLite .matches .buttonContainer {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  height: 100%;
-}
-
-.paperLite .matches .list {
-  width: 100%;
-  table-layout: fixed;
-  font-family: monospace;
-}
-
-.paperLite .matches .list .matchesRow {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-}
-
-.paperLite .matches .list .matchesRow .matchesItem {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.viewerPaper .matchesContainer .matches .matchesRow .matchesIdx {
+  color: #545454;
+  width: 1.5rem;
 }
 
 .sectionContainer {
@@ -935,6 +864,7 @@ code {
   font-family: 'Roboto Mono', monospace;
   background-color: #212121;
   padding: 0 .2rem;
+  white-space: nowrap;
 }
 
 .codeBlock {

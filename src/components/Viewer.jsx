@@ -89,14 +89,19 @@ class Viewer extends Component {
     })
   }
 
-  runRegEx() {
+  runRegex() {
     let rgx = new RegExp(this.state.regex, 'g');
-    let matches = [];
-    let match;
+    //let matches = [];
+    let matches = this.state.textEditor.getValue().matchAll(rgx);
+    for(let match of matches) {
+      console.log(match);
+    }
+    /*
     while ((match = rgx.exec(this.state.textEditor.getValue())) != null) {
       matches.push([match.index, match.index + match[0].length]);
     }
     this.setState({ regexMatches: matches });
+    */
   }
 
   runREmatch() {
@@ -144,7 +149,7 @@ class Viewer extends Component {
               color={this.state.rematch ? 'primary' : 'secondary'}
               startIcon={<PlayArrow />}
               size="small"
-              onClick={this.state.rematch ? this.runREmatch.bind(this) : this.runRegEx.bind(this)}>
+              onClick={this.state.rematch ? this.runREmatch.bind(this) : this.runRegex.bind(this)}>
               {(this.state.rematch) ? 'REmatch' : 'RegEx'}
             </Button>
             : null}
@@ -169,7 +174,7 @@ class Viewer extends Component {
                 color="secondary"
                 startIcon={<PlayArrow />}
                 size="small"
-                onClick={this.runRegEx.bind(this)}>
+                onClick={this.runRegex.bind(this)}>
                 RegEx
               </Button>
             </div>
@@ -181,7 +186,9 @@ class Viewer extends Component {
             <div className="matches">
               {this.state.rematchMatches.map((match, idxMatch) => (
                 <div key={idxMatch} className="matchesRow" onClick={() => this.REmatchMarks(match)}>
+                  <div className="matchesIdx">{idxMatch}</div>
                   {Object.keys(match).map((variable, idxVariable) => (
+
                     <div key={idxVariable} className={`cm-m${idxVariable} matchesItem`}>
                       {variable}: {this.getText(match[variable])}
                     </div>
@@ -197,6 +204,7 @@ class Viewer extends Component {
             <div className="matches">
               {this.state.regexMatches.map((span, idxSpan) => (
                 <div key={idxSpan} className="matchesRow" onClick={() => this.RegExMarks(span)}>
+                  <div className="matchesIdx">{idxSpan}</div>
                   <div className="matchesItem">
                     {this.getText(span)}
                   </div>
