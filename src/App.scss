@@ -1,0 +1,423 @@
+@import url('./scrollbar.css');
+
+/* Main */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+$dark: #868686;
+$darker: #545454;
+$darkest: #212121;
+
+/* MainInterface */
+$colors: #03DAC6,
+#FCE938,
+hsl(354, 100%, 72%),
+hsl(244, 100%, 81%),
+#20BA56,
+#f5a0ff,
+#a6ff22,
+#7f34f0;
+
+
+@for $i from 0 to length($colors) {
+  .m#{$i} {
+    background-color: nth($colors, $i+1) !important;
+    color: black !important;
+    border-top: 4px solid nth($colors, $i+1);
+    border-bottom: 4px solid nth($colors, $i+1);
+
+    @for $j from $i+1 to length($colors) {
+      &.m#{$j} {
+        border-top: 4px solid nth($colors, $i+1);
+        border-bottom: 4px solid nth($colors, $i+1);
+
+        @for $k from $j+1 to length($colors) {
+          &.m#{$k} {
+            border-top: 4px solid nth($colors, $j+1);
+            border-bottom: 4px solid nth($colors, $i+1);
+          }
+        }
+      }
+    }
+  }
+
+  .cm-m#{$i} {
+    color: nth($colors, $i+1) !important;
+  }
+}
+
+.svgIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.invisible {
+  display: none;
+}
+
+.CodeMirror {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.CodeMirror-scrollbar-filler {
+  background-color: $darkest !important;
+}
+
+.CodeMirror pre.CodeMirror-placeholder {
+  color: $darker;
+}
+
+.mainContainer {
+  padding: 1.5*64px 0;
+}
+
+.backdrop {
+  z-index: 6000 !important;
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+
+  .loading {
+    margin-top: 1rem;
+  }
+}
+
+.mainPaper {
+  overflow: hidden;
+  font-size: 14px;
+  font-family: 'Roboto Mono', monospace;
+
+  .CodeMirror {
+    font-size: 14px;
+  }
+
+  .sectionTitle {
+    padding: 1rem 1rem 0rem 1rem;
+    font-size: 12px;
+    color: $dark;
+  }
+
+  .queryContainer {
+    padding: 0;
+    display: flex;
+    height: auto;
+
+
+    #queryEditor {
+      padding-left: 1rem;
+      flex: 1;
+      overflow: hidden;
+
+      .CodeMirror {
+        height: auto;
+        padding: .5rem 0;
+      }
+    }
+
+    .queryButton {
+      padding: .5rem 2.5rem;
+      border-radius: 0;
+    }
+  }
+
+  #textEditor {
+    height: 250px;
+
+    .CodeMirror {
+      height: 250px;
+      padding: .5rem 1rem;
+    }
+  }
+
+  .headContainer {
+    padding: 0 1rem;
+
+    .matchesRow {
+      display: flex;
+      align-items: center;
+
+      .matchesIdx {
+        color: $darker;
+        width: 3rem;
+      }
+
+      .matchesItem {
+        padding: .5rem;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .matchesContainer {
+    padding: 0 1rem;
+    height: 250px;
+    overflow-y: auto;
+
+    .matchesRow {
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, .2);
+        cursor: pointer;
+
+        .matchesIdx {
+          color: $darkest;
+        }
+      }
+
+      .matchesIdx {
+        color: $darker;
+        width: 3rem;
+      }
+
+      .matchesItem {
+        padding: 0 .5rem;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .paginationContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 0;
+  }
+
+  .fullButton {
+    border-radius: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+/* NavBar */
+.appBar {
+  background-color: $darkest !important;
+
+  .logo {
+    display: block;
+    height: 36px;
+
+    &:hover {
+      filter: drop-shadow(0 0 2px #03DAC6);
+    }
+  }
+
+  .button {
+    text-decoration: none;
+    color: nth($colors, 1);
+    margin-left: 1rem;
+  }
+}
+
+/* LiteViewer */
+.viewerPaper {
+  width: 90%;
+  margin: 1rem auto;
+  font-size: 14px;
+  overflow: hidden;
+
+  .CodeMirror {
+    font-size: 14px;
+    text-align: justify;
+  }
+
+  .textEditor {
+    height: 260px;
+
+    .CodeMirror {
+      height: 260px;
+      padding: 1rem;
+    }
+  }
+
+  .queryContainer {
+    display: flex;
+    height: auto;
+
+    .button {
+      border-radius: 0;
+      padding: 0 1rem;
+    }
+
+    .queryEditor {
+      padding-left: 1rem;
+      flex: 1;
+      overflow: hidden;
+
+      &.centered {
+        padding-left: 0;
+
+        .CodeMirror {
+          text-align: center;
+        }
+      }
+
+      .CodeMirror {
+        height: auto;
+        padding: .5rem 0;
+      }
+    }
+  }
+
+  .buttonContainer {
+    display: flex;
+
+    .button {
+      flex: 1;
+      border-radius: 0;
+      padding: .75rem 0;
+    }
+  }
+
+  .matchesContainer {
+    display: flex;
+    height: 200px;
+    font-family: 'Roboto mono', monospace;
+
+    .matches {
+      overflow-y: auto;
+      flex: 1;
+      padding: 1rem;
+      font-size: 12px;
+
+      .matchesRow {
+        padding: .2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, .2);
+        }
+
+        .matchesItem {
+          flex: 1;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+}
+
+/* asdasdsad*/
+.paperLite {
+  transition: all .5s ease-in-out;
+  font-size: 14px;
+  width: 90%;
+  margin: 2rem auto;
+
+  .CodeMirror {
+    font-size: 14px;
+    text-align: justify;
+  }
+
+  .liteTab {
+    text-transform: none;
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .queryContainer {
+    display: flex;
+    padding: 0 1rem;
+
+    #queryEditor {
+      flex: 1;
+      overflow: hidden;
+
+      .CodeMirror {
+        height: auto;
+        padding: .5rem 0;
+      }
+    }
+  }
+
+  .textEditor {
+    height: 250px;
+
+    .CodeMirror {
+      height: 250px;
+      padding: .5rem 1rem;
+    }
+  }
+
+  .matches {
+    padding: 1rem;
+    height: 150px;
+    overflow-y: auto;
+
+    .buttonContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .list {
+      width: 100%;
+      table-layout: fixed;
+      font-family: monospace;
+
+      .matchesRow {
+        display: flex;
+        align-items: center;
+
+        .matchesItem {
+          flex: 1;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+}
+
+.sectionContainer {
+  padding: .5rem 0;
+
+  p {
+    margin-top: .25rem;
+  }
+}
+.important {
+  background-color: red;
+  color: white;
+}
+
+.code {
+  font-family: 'Roboto Mono', monospace;
+  background-color: #212121;
+  padding: 0 .2rem;
+}
+
+.codeBlock {
+  font-family: 'Roboto Mono', monospace;
+  text-align: justify;
+  padding: 1rem;
+  margin: 1rem auto;
+  width: 90%;
+  &.centered {
+    text-align: center;
+  }
+}

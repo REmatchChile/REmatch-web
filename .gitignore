@@ -107,3 +107,7 @@ dist
 # BUILDING
 build/
 embuild/
+
+# FIREBASE
+.firebase/
+.firebaserc
