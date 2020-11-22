@@ -71,7 +71,12 @@ class Home extends Component {
     queryEditor.on('change', () => { this.clearMarks() });
 
     let textEditor = CodeMirror(document.getElementById('textEditor'), {
-      value: 'This is an example text!',
+      value: `Nicolas Van Sin Jant
+Vicente Calisto
+Marjorie Bascunan
+Oscar Carcamo
+Cristian Riveros
+Domagoj Vrgoc`,
       mode: 'text/plain',
       placeholder: 'Enter your text...',
       theme: 'material-darker',

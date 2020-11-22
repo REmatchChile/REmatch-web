@@ -2,33 +2,31 @@
 importScripts('./rematch_wasm.js');
 
 // eslint-disable-next-line no-undef
-const { RegEx, RegExOptions } = Module;
+const { RegEx, RegExOptions, Anchor } = Module;
 const MESSAGE_SIZE = 20000;
 
 this.onmessage = (m) => {
     try {
+        let match;
         let i = 0;
         let count = 0;
         let currMatch = [];
         let matches = [];
 
-        let match;
         let rgxOptions = new RegExOptions();
         rgxOptions.early_output = true;
-        rgxOptions.start_anchor = true;
-        rgxOptions.end_anchor = true;
         let rgx = new RegEx(m.data.query, rgxOptions);
 
         /* THIS SHOULD BE IN RegEx OBJECT */
         let schema = [...m.data.query.matchAll(/!([A-Za-z0-9]+)/g)].map((m) => (m[1]));
+        /* THIS SHOULD BE IN RegEx OBJECT */
         this.postMessage({
             type: 'SCHEMA',
             payload: schema,
         })
-        /* THIS SHOULD BE IN RegEx OBJECT */
-
-        while ((match = rgx.findIter(m.data.text))) {
-
+        let iterable = rgx.findIter(m.data.text, Anchor.kUnanchored);
+        while (iterable.hasNext()) {
+            match = iterable.next();
             schema.forEach(variable => {
                 currMatch.push(match.span(variable));
             });
