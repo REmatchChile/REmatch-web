@@ -34,17 +34,21 @@ CodeMirror.defineSimpleMode('REmatchQuery', {
       token: 'm2'
     },
     {
-      regex: /(\(|\)|\||\[|\]|-)/,
+      regex: /(\(|\)|\||\[(\^)?|\]|-)/,
       token: 'm3'
     },
     {
-      regex: /(\+|\*|\.|\+)/,
+      regex: /(\+|\*|\.|\+|\?)/,
       token: 'm1'
     },
     {
-      regex: /<[0-9]+(,[0-9]+)?>/,
+      regex: /\{[0-9]+(,([0-9]+)?)?\}/,
       token: 'm5'
     },
+    {
+      regex: /(\$|\^)/,
+      token: 'm6'
+    }
   ]
 });
 

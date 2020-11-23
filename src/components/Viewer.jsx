@@ -17,6 +17,7 @@ class Viewer extends Component {
       text: props.text,
       // If regex is used
       regex: props.regex,
+      regexIdx: props.regexIdx,
       regexMatches: [],
       // If rematch is used
       worker: props.worker,
@@ -85,10 +86,13 @@ class Viewer extends Component {
     let rgx = new RegExp(this.state.regex, 'g');
     let matches = [];
     let results = this.state.textEditor.getValue().matchAll(rgx);
-    for (let result of results) {
-      matches.push(result);
-    }
-    this.setState({ regexMatches: matches });
+    for (let result of results) matches.push(result);
+    
+    let filter = matches.map(match => ([
+      matches[0], 
+      ...this.state.regexIdx.map(idx => match[idx])
+    ]));
+    this.setState({ regexMatches: filter });
   }
 
   runREmatch() {

@@ -55,6 +55,10 @@ hsl(244, 100%, 81%),
   }
 }
 
+a {
+  text-decoration: none;
+}
+
 .svgIcon {
   width: 24px;
   height: 24px;
@@ -147,7 +151,7 @@ hsl(244, 100%, 81%),
       padding: .5rem 1rem;
 
       .CodeMirror-line {
-        margin: .5rem 0;
+        /*margin: .5rem 0;*/
       }
     }
   }
@@ -343,7 +347,7 @@ hsl(244, 100%, 81%),
 }
 
 .sectionContainer {
-  padding: .5rem 0;
+  padding: 1rem 0;
 
   p {
     margin-top: .25rem;

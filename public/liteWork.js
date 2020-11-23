@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-undef
 importScripts('./rematch_wasm.js');
 
-const { RegEx, RegExOptions } = Module;
+const { RegEx, RegExOptions, Anchor } = Module;
 
 const MAX_MATCHES = 100;
 
@@ -12,8 +12,6 @@ this.onmessage = (m) => {
   let match;
   let rgxOptions = new RegExOptions();
   rgxOptions.early_output = true;
-  rgxOptions.start_anchor = true;
-  rgxOptions.end_anchor = true;
   let rgx = new RegEx(m.data.query, rgxOptions);
   
   /* THIS SHOULD BE IN RegEx OBJECT */
@@ -22,9 +20,9 @@ this.onmessage = (m) => {
     type: 'SCHEMA',
     payload: schema,
   });
-  
-  while ((match = rgx.findIter(m.data.text))) {
-    
+  let iterable = rgx.findIter(m.data.text, Anchor.kUnanchored);
+  while (iterable.hasNext()) {
+    match = iterable.next();
     schema.forEach(variable => {
       currMatch[variable] = match.span(variable);
     })

@@ -45,7 +45,7 @@ class Home extends Component {
   }
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById('queryEditor'), {
-      value: '.*!x{.+}.*',
+      value: '(^|\\n)!x{[A-Z][a-z]{4,}} !y{([A-Z][a-z ]+)+}($|\\n)',
       mode: 'REmatchQuery',
       placeholder: 'Enter your query...',
       theme: 'material-darker',
@@ -71,7 +71,7 @@ class Home extends Component {
     queryEditor.on('change', () => { this.clearMarks() });
 
     let textEditor = CodeMirror(document.getElementById('textEditor'), {
-      value: `Nicolas Van Sin Jant
+      value: `Nicolas Van Sint Jan
 Vicente Calisto
 Marjorie Bascunan
 Oscar Carcamo
@@ -110,7 +110,7 @@ Domagoj Vrgoc`,
     this.state.textEditor.scrollIntoView({
       from: start,
       to: end
-    }, 200);
+    }, 0);
   }
 
   clearMarks = () => {

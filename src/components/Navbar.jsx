@@ -16,7 +16,7 @@ const Navbar = () => (
       </Link>
       <Link to="/about" className="button">
         <Button color="primary" size="large">
-          About (WIP)
+          About
         </Button>
       </Link>
     </Toolbar>

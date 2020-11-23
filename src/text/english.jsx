@@ -11,15 +11,17 @@ let worker = new Worker(WORKPATH);
 const adventures = "You don't know about me without you have read a book by the name of The Adventures of Tom Sawyer but that ain't no matter. That book was made by Mr Mark Twain and he told the truth, mainly. There was things which he stretched, but mainly he told the truth. That is nothing. I never seen anybody but lied one time or another, without it was Aunt Polly or the widow, or maybe Mary. Aunt Polly-Tom's Aunt Polly, she is-and Mary, and the Widow Douglas is all told about in that book, which is mostly a true book, with some stretchers, as I said before.";
 const examples = {
   example1: {
-    rematch: '.*(^|\\.)!sentence{[^\\.]*!noun{[A-Z][a-z]*}( [^\\.]*)?\\.}.*',
-    regex: '(^|\\.)([^\\.]*([A-Z][a-z]*)( [^\\.]*)?\\.)'
+    rematch: '(^|\\.)!sentence{[^\\.]*!noun{[A-Z][a-z]*}( [^\\.]*)?\\.}',
+    regex: '(^|\\.)([^\\.]*([A-Z][a-z]*)( [^\\.]*)?\\.)',
+    regexIdx: [3],
   },
   example2: {
-    rematch: '.*(^|\\.)!sen{[^\\.]*!n1{[A-Z][a-z]*} [^\\.]*!n2{[A-Z][a-z]*}( [^\\.]*)?\\.}.*',
-    regex: '(^|\\.)([^\\.]*([A-Z][a-z]*) [^\\.]*([A-Z][a-z]*)( [^\\.]*)?\\.)'
+    rematch: '(^|\\.)!sen{[^\\.]*!n1{[A-Z][a-z]*} [^\\.]*!n2{[A-Z][a-z]*}( [^\\.]*)?\\.}',
+    regex: '(^|\\.)([^\\.]*([A-Z][a-z]*) [^\\.]*([A-Z][a-z]*)( [^\\.]*)?\\.)',
+    regexIdx: [3, 4],
   },
   example3: {
-    rematch: '.*!x{.+}.*',
+    rematch: '!x{.+}',
   }
 }
 
@@ -28,7 +30,7 @@ const english = {
     title: <Typography variant="h5" color="primary" align="center">About</Typography>,
     regexinrematch:
       <div className="sectionContainer">
-        <Typography variant="subtitle1" color="primary">
+        <Typography variant="h6" color="primary">
           Regular Expressions in REmatch
         </Typography>
         <Typography variant="body1" align="justify">
@@ -43,7 +45,7 @@ const english = {
       </div>,
     anotherlibrary:
       <div className="sectionContainer">
-        <Typography variant="subtitle1" color="primary">
+        <Typography variant="h6" color="primary">
           Another library for regular expressions?
         </Typography>
         <Typography variant="body1" align="justify">
@@ -57,7 +59,7 @@ const english = {
       </div>,
     example1:
       <div className="sectionContainer">
-        <Typography variant="subtitle2" color="primary">
+        <Typography variant="subtitle1" color="primary">
           Example 1
         </Typography>
         <Typography variant="body1" align="justify">
@@ -70,6 +72,7 @@ const english = {
           idx="regex1"
           worker={worker}
           regex={examples.example1.regex}
+          regexIdx={examples.example1.regexIdx}
           text={adventures}
         />
         <Typography variant="body1" align="justify">
@@ -87,7 +90,7 @@ const english = {
       </div>,
     example2:
       <div className="sectionContainer">
-        <Typography variant="subtitle2" color="primary">
+        <Typography variant="subtitle1" color="primary">
           Example 2
         </Typography>
         <Typography variant="body1" align="justify">
@@ -100,6 +103,7 @@ const english = {
           idx="regex2"
           worker={worker}
           regex={examples.example2.regex}
+          regexIdx={examples.example2.regexIdx}
           text={adventures}
         />
         <Typography variant="body1" align="justify">
@@ -117,7 +121,7 @@ const english = {
       </div>,
     example3:
       <div className="sectionContainer">
-        <Typography variant="subtitle2" color="primary">
+        <Typography variant="subtitle1" color="primary">
           Example 3
         </Typography>
         <Typography variant="body1" align="justify">
@@ -139,12 +143,12 @@ const english = {
           While this example might seem very academic, and one might argue that something like overlapping matches might not be very useful (e.g. in a sequence <span className="code">abcde</span> having both the substrings <span className="code">bc</span> and <span className="code">cde</span> might seem and overkill). We however argue that there are many use cases when precisely this type of behaviour is sought after.
         </Typography>
         <Typography variant="body1" align="justify">
-          The classical example here is DNA sequencing, where the DNA strand is represented as a string, and one would like to analyze different proteins involved in defining this DNA strand. The thing here is that proteins can be joined at certain points, meaning that if our strand has the letter sequence <span className="code">abcabbcdefbb</span>, both <span className="code">abcabb</span> (substring from positions 0 to 5), and <span className="code">abbcdefbb</span> (positions 3 to 11) might be two proteins participating in this DNA strand (for simplicity we assume <span className="code">ab</span> to be the start trigger, and <span className="code">bb</span> the end trigger, the situation in real world is much more involved.
+          The classical example here is DNA sequencing, where the DNA strand is represented as a string, and one would like to analyze different proteins involved in defining this DNA strand. The thing here is that proteins can be joined at certain points, meaning that if our strand has the letter sequence <span className="code">abcabbcdefbb</span>, both <span className="code">abcabb</span> (substring from positions 0 to 5), and <span className="code">abbcdefbb</span> (positions 3 to 11) might be two proteins participating in this DNA strand (for simplicity we assume <span className="code">ab</span> to be the start trigger, and <span className="code">bb</span> the end trigger, the situation in real world is much more involved).
         </Typography>
       </div>,
     outputtime:
       <div className="sectionContainer">
-        <Typography variant="subtitle1" color="primary">
+        <Typography variant="h6" color="primary">
           More outputs more time?
         </Typography>
         <Typography variant="body1" align="justify">
@@ -159,7 +163,7 @@ const english = {
       </div>,
     authors:
       <div className="sectionContainer">
-        <Typography variant="subtitle1" color="primary">
+        <Typography variant="h6" color="primary">
           About us
         </Typography>
         <Typography variant="body1" align="justify">

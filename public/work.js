@@ -3,7 +3,7 @@ importScripts('./rematch_wasm.js');
 
 // eslint-disable-next-line no-undef
 const { RegEx, RegExOptions, Anchor } = Module;
-const MESSAGE_SIZE = 20000;
+const MESSAGE_SIZE = 5000;
 
 this.onmessage = (m) => {
     try {
@@ -26,6 +26,7 @@ this.onmessage = (m) => {
         })
         let iterable = rgx.findIter(m.data.text, Anchor.kUnanchored);
         while (iterable.hasNext()) {
+            console.log('Hola');
             match = iterable.next();
             schema.forEach(variable => {
                 currMatch.push(match.span(variable));

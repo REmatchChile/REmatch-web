@@ -520,6 +520,10 @@ code {
   color: #7f34f0 !important;
 }
 
+a {
+  text-decoration: none;
+}
+
 .svgIcon {
   width: 24px;
   height: 24px;
@@ -623,7 +627,7 @@ code {
 }
 
 .mainPaper #textEditor .CodeMirror .CodeMirror-line {
-  margin: .5rem 0;
+  /*margin: .5rem 0;*/
 }
 
 .mainPaper .headContainer {
@@ -852,7 +856,7 @@ code {
 }
 
 .sectionContainer {
-  padding: .5rem 0;
+  padding: 1rem 0;
 }
 
 .sectionContainer p {
