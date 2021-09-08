@@ -8,7 +8,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+ monospace;
 }
 
 /* MainInterface */
@@ -549,6 +550,11 @@ a {
   padding: 96px 0;
 }
 
+.formControl {
+  margin: 1rem 2rem;
+  min-width: 120px;
+}
+
 .backdrop {
   z-index: 6000 !important;
   display: -webkit-box;
@@ -613,7 +619,7 @@ a {
 }
 
 .mainPaper .queryContainer .queryButton {
-  padding: .5rem 2.5rem;
+  padding: .5rem 1.5rem;
   border-radius: 0;
 }
 
@@ -624,10 +630,6 @@ a {
 .mainPaper #textEditor .CodeMirror {
   height: 250px;
   padding: .5rem 1rem;
-}
-
-.mainPaper #textEditor .CodeMirror .CodeMirror-line {
-  /*margin: .5rem 0;*/
 }
 
 .mainPaper .headContainer {
@@ -718,6 +720,7 @@ a {
 /* NavBar */
 .appBar {
   background-color: #212121 !important;
+  margin-bottom: 0.3rem;
 }
 
 .appBar .logo {
@@ -887,3 +890,32 @@ a {
   text-align: center;
 }
 /*# sourceMappingURL=App.css.map */
+
+/* Toolbar */
+.toolbar {
+  min-height: 2rem !important;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  border-style: solid;
+  border-width: thin;
+  border-color: #03DAC6;
+  border-radius: 5px;
+  height: 1rem;
+}
+
+.tools {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.examples {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.toolbar-button {
+  height: 100%;
+  font-size: 0.8rem !important;
+}

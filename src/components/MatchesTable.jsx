@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 
 import Pagination from '@material-ui/lab/Pagination';
 import Button from '@material-ui/core/Button';
 import Backdrop from '@material-ui/core/Backdrop';
 
-import GetApp from '@material-ui/icons/GetApp';
+function MatchesTable(props, ref) {
 
-const MatchesTable = ({
-  matches,
-  schema,
-  textEditor,
-  addMarks,
-  clearMarks
-}) => {
+  const {
+    matches,
+    schema,
+    textEditor,
+    addMarks,
+    clearMarks
+  } = props;
+
   const [state, setState] = useState({
     page: 0,
     rowsPerPage: 12,
@@ -77,6 +78,12 @@ const MatchesTable = ({
     JSONString += ']'
     download(JSONString, `REmatch-${Date.now()}.json`);
   }
+
+  useImperativeHandle(ref, () => ({
+    handleExport() {
+      setState(prevState => ({ ...prevState, open: true }))
+    }
+  }), [])
 
   useEffect(() => {
     if (matches.length === 0) {
@@ -161,19 +168,8 @@ const MatchesTable = ({
           onChange={handleChangePage}
         />
       </div>
-
-      <Button
-        disabled={(matches.length === 0)}
-        color="primary"
-        variant="text"
-        size="small"
-        startIcon={<GetApp />}
-        onClick={() => setState(prevState => ({ ...prevState, open: true }))}
-        className="fullButton">
-        Export matches
-      </Button>
     </>
   )
 }
 
-export default MatchesTable;
+export default forwardRef(MatchesTable);

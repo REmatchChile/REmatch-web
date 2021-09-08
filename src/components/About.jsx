@@ -1,10 +1,10 @@
 import React from 'react';
 
 import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+// import Typography from '@material-ui/core/Typography';
+// import Paper from '@material-ui/core/Paper';
 
-import Viewer from './Viewer';
+// import Viewer from './Viewer';
 
 import english from '../text/english';
 

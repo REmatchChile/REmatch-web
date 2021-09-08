@@ -19,6 +19,8 @@ import Publish from '@material-ui/icons/Publish';
 
 /* Project Components */
 import MatchesTable from './MatchesTable';
+import English from '../text/english';
+import CustomToolbar from './CustomToolbar';
 
 /* CodeMirror */
 import CodeMirror from 'codemirror';
@@ -41,6 +43,7 @@ class Home extends Component {
       running: false,
       howTo: (localStorage.getItem('showHowTo') === null) ? true : false,
       fileProgress: 0,
+      exampleExplanation: '',
     };
   }
   componentDidMount() {
@@ -96,6 +99,14 @@ Domagoj Vrgoc`,
       textEditor,
     });
   }
+
+  setExample = (event) => {
+    const exampleName = event.target.textContent;
+    const query = English.examples.querys[exampleName];
+    const text = English.examples.texts[exampleName];
+    this.state.queryEditor.setValue(query);
+    this.state.textEditor.setValue(text);
+  };
 
   addMarks = (spans) => {
     let start, end;
@@ -184,7 +195,11 @@ Domagoj Vrgoc`,
     this.setState({howTo: false});
   }
 
-  render() {
+  handleExport(event) {
+    this.refs.childMatchesTable.handleExport();
+  }
+  
+  render() {    
     return (
       <Container maxWidth="md" className="mainContainer">
         <Dialog
@@ -221,6 +236,12 @@ Domagoj Vrgoc`,
             Loading ({this.state.fileProgress}%)
           </Typography>
         </Backdrop>
+        <CustomToolbar 
+          onImportFile={(event) => this.handleFile(event)}
+          onExportMatches={(event) => this.handleExport(event)}
+          onSetExample={(event) => this.setExample(event)}
+          canExport={this.state.matches.length === 0}
+        />
         <Paper elevation={5} className="mainPaper">
 
           {/* QUERY */}
@@ -244,19 +265,6 @@ Domagoj Vrgoc`,
             Text
           </div>
           <div id="textEditor"></div>
-          <input accept="*" id="fileInput" type="file" className="invisible" onChange={this.handleFile} />
-          <label htmlFor="fileInput">
-            <Button
-              color="primary"
-              variant="text"
-              component="span"
-              size="small"
-              startIcon={<Publish />}
-              className="fullButton">
-              Import file
-            </Button>
-          </label>
-
           <Divider />
           {/* RESULTS */}
           <div className="sectionTitle">
@@ -268,6 +276,8 @@ Domagoj Vrgoc`,
             textEditor={this.state.textEditor}
             addMarks={this.addMarks}
             clearMarks={this.clearMarks}
+            handleExport={this.handleExport}
+            ref="childMatchesTable"
           />
         </Paper>
       </Container>

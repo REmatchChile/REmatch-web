@@ -12,6 +12,7 @@
     "@tippyjs/react": "^4.0.2",
     "codemirror": "^5.54.0",
     "fontsource-roboto": "^3.0.3",
+    "material-ui-nested-menu-item": "^1.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -35,6 +36,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }

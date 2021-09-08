@@ -20,6 +20,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Navbar from './components/Navbar';
 import About from './components/About';
+import Examples from './components/Examples';
 import Home from './components/Home';
 import 'fontsource-roboto';
 
@@ -97,6 +98,9 @@ const App = () => {
       <Router>
         <Navbar/>
         <Switch>
+          <Route path="/examples">
+            <Examples />
+          </Route>
           <Route path="/about">
             <About />
           </Route>
