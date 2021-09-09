@@ -96,7 +96,9 @@ export default function CustomToolbar(props) {
   }
 
   const handleShowExamples = (event) => {
+    console.log("BEFORE: ", anchorEl);
     setAnchorEl(event.currentTarget);
+    console.log("AFTER: ", anchorEl);
   }
 
   const setExample = (event) => {
@@ -106,6 +108,7 @@ export default function CustomToolbar(props) {
     onSetExample(event); // We call parent function to set query and text
     setInvisibleBadge(false);
     setAnchorEl(null);
+    console.log("ANCHOOOR: ", anchorEl);
   }
   
   return (
@@ -149,8 +152,7 @@ export default function CustomToolbar(props) {
       <StyledMenu
         id="customized-menu"
         anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
+        open={!!anchorEl}
         onClose={ () => setAnchorEl(null) }
       >
         <StyledNestedMenuItem
