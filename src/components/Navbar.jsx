@@ -20,6 +20,11 @@ export default function NavbarComponent() {
           About
         </Button>
       </Link>
+      <Link to="/tutorial" className="button">
+        <Button color="primary" size="large">
+          Tutorial
+        </Button>
+      </Link>
     </Toolbar>
   </AppBar>
   )

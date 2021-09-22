@@ -919,3 +919,15 @@ a {
   height: 100%;
   font-size: 0.8rem !important;
 }
+
+.cardTutorial {
+  width: 100%;
+  margin-top: 60px;
+  border-style: solid;
+  border-width: 0.01rem;
+  border-color: gray;
+}
+
+.link-tutorial {
+  text-decoration: none;
+} 
