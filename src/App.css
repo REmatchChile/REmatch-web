@@ -550,6 +550,20 @@ a {
   padding: 96px 0;
 }
 
+.row {
+  display: flex;
+}
+
+.col-30 {
+  flex: 30%;
+  margin-top: 6rem;
+}
+
+.col-70 {
+  flex: 70%;
+  margin-top: 2rem;
+}
+
 .formControl {
   margin: 1rem 2rem;
   min-width: 120px;
@@ -876,6 +890,10 @@ a {
   background-color: #212121;
   padding: 0 .2rem;
   white-space: nowrap;
+}
+
+.center {
+  align-self: center;
 }
 
 .codeBlock {
