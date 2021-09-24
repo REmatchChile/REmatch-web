@@ -949,3 +949,11 @@ a {
 .link-tutorial {
   text-decoration: none;
 } 
+.text-center {
+  text-align: center;
+}
+
+.text-document {
+  font-style: italic;
+  color: wheat;
+}
