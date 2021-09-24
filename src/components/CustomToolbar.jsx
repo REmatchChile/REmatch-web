@@ -85,6 +85,7 @@ export default function CustomToolbar(props) {
   const [exampleExplanation, setexampleExplanation] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [invisibleBadge, setInvisibleBadge] = useState(true);
+  const [exampleName, setExampleName] = useState('Example');
 
   const handleClickOpenDialog = () => {
     setInvisibleBadge(true);
@@ -108,7 +109,7 @@ export default function CustomToolbar(props) {
     onSetExample(event); // We call parent function to set query and text
     setInvisibleBadge(false);
     setAnchorEl(null);
-    console.log("ANCHOOOR: ", anchorEl);
+    setExampleName(exampleName);
   }
   
   return (
@@ -192,8 +193,8 @@ export default function CustomToolbar(props) {
           maxWidth='md'
           className="dialog"
         >
-          <DialogTitle id="responsive-dialog-title">{"Example explanation"}</DialogTitle>
-          <DialogContent>
+          <DialogTitle id="responsive-dialog-title">{`${exampleName} Explanation`}</DialogTitle>
+          <DialogContent style={{padding: "8px 34px"}}>
             <DialogContentText>
               <Typography variant="body1" align="justify">
                 <div dangerouslySetInnerHTML={{__html:exampleExplanation}} />
