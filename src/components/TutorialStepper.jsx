@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import Box from '@material-ui/core/Box';
+import React, { useState } from 'react';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
