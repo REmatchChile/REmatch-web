@@ -87,10 +87,13 @@ const darkTheme = createMuiTheme({
     secondary: {
       main: '#FCE938',
     },
+    disabled: {
+      main: '#d3d3d3',
+    },
     background: {
       paper: '#212121',
       default: '#424242',
-    }
+    },
   },
 });
 

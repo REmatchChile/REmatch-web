@@ -165,12 +165,12 @@ export default function CustomToolbar(props) {
           <StyledMenuItem onClick={setExample}>BioExample3</StyledMenuItem>
         </StyledNestedMenuItem>
         <StyledNestedMenuItem
-        label={<div class="MuiListItemIcon-root"><div class="MuiListItemIcon-root"><MenuBookIcon fontSize="small"/></div><div class="MuiListItemIcon-root">Literature</div></div>}
+        label={<div class="MuiListItemIcon-root"><div class="MuiListItemIcon-root"><MenuBookIcon fontSize="small"/></div><div class="MuiListItemIcon-root">Linguistics</div></div>}
         parentMenuOpen={!!anchorEl}
         >
           <StyledMenuItem onClick={setExample}>Context Analysis</StyledMenuItem>
-          <StyledMenuItem onClick={setExample}>Literature Example 2</StyledMenuItem>
-          <StyledMenuItem onClick={setExample}>Literature Example 3</StyledMenuItem>
+          <StyledMenuItem onClick={setExample}>Linguistic Example 2</StyledMenuItem>
+          <StyledMenuItem onClick={setExample}>Linguistic Example 3</StyledMenuItem>
         </StyledNestedMenuItem>
         <StyledNestedMenuItem
         label={<div class="MuiListItemIcon-root"><div class="MuiListItemIcon-root"><ComputerIcon fontSize="small"/></div><div class="MuiListItemIcon-root">Computer Science</div></div>}
@@ -186,27 +186,27 @@ export default function CustomToolbar(props) {
       </StyledMenu>
 
       <Dialog
-          open={openDialog}
-          onClose={handleClickCloseDialog}
-          aria-labelledby="responsive-dialog-title"
-          fullWidth={true}
-          maxWidth='md'
-          className="dialog"
-        >
-          <DialogTitle id="responsive-dialog-title">{`${exampleName} Explanation`}</DialogTitle>
-          <DialogContent style={{padding: "8px 34px"}}>
-            <DialogContentText>
-              <Typography variant="body1" align="justify">
-                <div dangerouslySetInnerHTML={{__html:exampleExplanation}} />
-              </Typography>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClickCloseDialog} color="primary" autoFocus>
-              I get it
-            </Button>
-          </DialogActions>
-        </Dialog>
+        open={openDialog}
+        onClose={handleClickCloseDialog}
+        aria-labelledby="responsive-dialog-title"
+        fullWidth={true}
+        maxWidth='md'
+        className="dialog"
+      >
+        <DialogTitle id="responsive-dialog-title">{`${exampleName} Explanation`}</DialogTitle>
+        <DialogContent style={{padding: "8px 34px"}}>
+          <DialogContentText>
+            <Typography variant="body1" align="justify">
+              <div dangerouslySetInnerHTML={{__html:exampleExplanation}} />
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClickCloseDialog} color="primary" autoFocus>
+            I get it
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

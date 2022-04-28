@@ -17,8 +17,8 @@ let worker5 = new Worker(WORKPATH5);
 const email = 'janeeyre@gmail.cl'
 const examples = {
   example1: {
-    rematch: '.*[a-zA-Z0-9_\.]+@!domain{gmail|hotmail}\\.cl.*',
-    regex: '[a-zA-Z0-9_\.]+@(gmail|hotmail)\\.cl'
+    rematch: '(^|[\\n.])!sentence{[^.\\n]*Chile [^.\\n]+(Peru|Argentina|Bolivia)[^.\\n]*\\.}',
+    regex: '[a-zA-Z0-9_\\.]+@(gmail|hotmail)\\.cl'
   },
 //   example2: {
 //     rematch: '.*[\\.^]!sen{[^\\.]*!n1{[A-Z][a-z]* }[^\\.]*!n2{[A-Z][a-z]*}[^\\.]*\\.}.*',
@@ -31,6 +31,7 @@ const examples = {
 
 const Beginner = () => {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [activeSubStep, setActiveSubStep] = React.useState(0);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -43,44 +44,220 @@ const Beginner = () => {
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  const handleNextSubStep = () => {
+    setActiveSubStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBackSubStep = () => {
+    setActiveSubStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleResetSubStep = () => {
+    setActiveSubStep(0);
+  };
+
+  const steppersButtons = () => {
+    return(
+      <div>
+        <Button
+          color="secondary"
+          // variant="contained"
+          variant="outlined"
+          onClick={activeSubStep === 0 ? handleBack : handleBackSubStep}
+          sx={{ mt: 1, mr: 1, }}
+        >
+          Back
+        </Button>
+        <Button
+          color="primary"
+          style={{marginLeft: '0.5rem'}}
+          variant="outlined"
+          onClick={handleNext}
+          sx={{ mt: 1, mr: 1 }}
+          className="button-right-tutorial"
+        >
+          Skip
+        </Button>
+        <Button
+          color="secondary"
+          // variant="contained"
+          variant="outlined"
+          onClick={activeSubStep === 2 ? handleNext : handleNextSubStep}
+          sx={{ mt: 1, mr: 1 }}
+          className="button-right-tutorial"
+        >
+          Continue
+        </Button>
+      </div>
+    )
+  }
+
   return (
-    <Container maxWidth="lg" className="mainContainer">
+    <Container maxWidth="lg" className="top-padding">
       <div className="row">
         <div className="col-30">
           <VerticalLinearStepper 
             activeStep={activeStep}
+            activeSubStep={activeSubStep}
             handleNext={() => handleNext()}
             handleBack={() => handleBack()}
             handleReset={() => handleReset()}
+            handleNextSubStep={() => handleNextSubStep()}
+            handleBackSubStep={() => handleBackSubStep()}
+            handleResetSubStep={() => handleResetSubStep()}
           />
         </div>
         <div className="col-70">
-          <Typography variant="h5" color="primary" align="center" style={{marginBottom: '2rem', fontWeight: '800'}}>Beginner tutorial</Typography>
+          <Typography variant="h5" color="primary" align="center" style={{marginBottom: '.5rem', fontWeight: '800'}}>Beginner tutorial</Typography>
           { activeStep === 0 &&
-            <div>
-            <Typography variant="h6" color="primary" style={{marginBottom: '1rem'}}>
+            <div className="scrollable-tutorial">
+            <Typography variant="h6" color="primary" style={{marginBottom: '1.5rem'}}>
               Setup
             </Typography>
-            <Typography variant="body1" align="justify" style={{marginBottom: '1rem'}}>
-                You need to install the <span className="cm-m0">REmatch</span> library for Python. You can run the next command in any terminal:
+            <Typography variant="body1" align="justify" style={{marginBottom: '1.5rem'}}>
+                &emsp;You need to install the <span className="cm-m0">REmatch</span> library for Python. You can run the next command in any terminal:
                 <br/>
-                <span className="code">!pip3 install pyrematch</span>
+                <pre><xmp className="tutorial-code">{`
+                            !pip3 install pyrematch
+                `}</xmp></pre>
+                {/* <div className="text-center">
+                  <span className="code" style={{padding: ".2rem"}}>!pip3 install pyrematch</span>
+                </div> */}
             </Typography>
-            <Typography variant="body1" align="justify">
-                If you have already installed the library, update to the last version:
+            <Typography variant="body1" align="justify" style={{marginBottom: '3rem'}}>
+                &emsp;If you have already installed the library, update to the last version:
                 <br/>
-                <span className="code">!pip3 install --upgrade pyrematch</span>
+                <pre><xmp className="tutorial-code">{`
+                            !pip3 install --upgrade pyrematch
+                `}</xmp></pre>
+                {/* <div className="text-center">
+                  <span className="code" style={{padding: ".2rem"}}>!pip3 install --upgrade pyrematch</span>
+                </div> */}
             </Typography>
+            <Button
+              color="secondary"
+              // variant="contained"
+              variant="outlined"
+              onClick={handleNext}
+              sx={{ mt: 1, mr: 1 }}
+              className="button-right-tutorial"
+            >
+              Continue
+            </Button>
             </div>
           }
           { activeStep === 1 &&
-            <div>
+            (
+              (
+              activeSubStep === 0 &&
+              <div className="scrollable-tutorial">
+                <Typography variant="h6" color="primary" style={{marginBottom: '1.5rem'}}>
+                  Problem
+                </Typography>
+                <Typography variant="body1" align="justify" style={{marginBottom: '1.5rem'}}>
+                    &emsp;Suponga que usted quiere hacer un análisis lingüístico centrado en las relaciones que tiene Chile con sus países vecinos. 
+                    Un posible punto de inicio sería analizar la página de Wikipedia correspondiente a la Historia de Chile. 
+                    El artículo (de Wikipedia en inglés) está proporcionado en formato de texto plano en <span className="code">chile_wiki.txt</span>.
+                    <br/>
+                    {/* style={{backgroundColor: "#212121"}} */}
+                    <pre><xmp className="tutorial-code">{`
+                    with open('chile_wiki.txt') as file:
+                        text = file.read()
+                    `}</xmp></pre>
+                </Typography>
+                <Typography variant="body1" align="justify" style={{marginBottom: '1.5rem'}}>
+                    &emsp;Suponga ahora que usted desea extraer todas las oraciones del artículo de Wikipedia que mencionan primero a Chile y luego a alguno de sus países vecinos (Argentina, Bolivia o Perú). 
+                    Entiéndase por una oración como un string que no posee ni saltos de línea ni puntos. 
+                    Realizar esto en Python sin la ayuda de una librería puede resultar complicado. Un intento podría ser:
+                    <br/>
+                    {/* style={{backgroundColor: "#212121"}} */}
+                    <pre><xmp className="tutorial-code">{`
+                    count = 1
+                    for line in text.split('\\n'):
+                        for sentence in line.split('.'):
+                            x = sentence.find("Chile ")
+                            if x != -1:
+                                for pais in ["Peru", "Argentina", "Bolivia"]:
+                                    y = sentence.find(pais, x)
+                                    if y != -1:
+                                        print("{}. {}".format(count, sentence))
+                                        count += 1
+                                        break
+                    `}</xmp></pre>
+                </Typography>
+                <Typography variant="body1" align="justify" style={{marginBottom: '1.5rem'}}>
+                    &emsp;Donde, por cada línea del documento, se hace uso de el método <span className="code">find</span> de un string en Python para buscar las palabras relevantes.
+                    <br/><br/>
+                    &emsp;Sin embargo, esta tarea no requiere mucho esfuerzo de su parte. 
+                    <br/><br/>
+                    &emsp;Ahora, imagine que como experto en datos usted requiere hacer esta tarea multiples veces al dia, con distintos data sets 
+                    (potencialmente con grandes volumenes de datos) y donde los requerimientos para la extracción es muy distinta. 
+                    Si bien escribir y probar este código le puede tomar 10 minutos a 30 minutos en promedio, realizar esta tarea reiteradas veces puede ser un costo innecesario para su quehacer como experto en datos. 
+                    Por último, lo más seguro es que su programa en Python no será muy eficiente y puede que tome varios minutos en terminar para documentos de gran tamaño.
+                    <br/>
+                </Typography>
+                { steppersButtons() }
+              </div>
+              )
+              ||
+              (
+              activeSubStep === 1  &&
+              <div className="scrollable-tutorial">
+              <Typography variant="h6" color="primary" style={{marginBottom: '1.5rem'}}>
+                An efficent solution
+              </Typography>
+              <Typography variant="body1" align="justify" style={{marginBottom: '1.5rem'}}>
+                  &emsp;La misma tarea anterior se puede hacer con las siguientes lineas de código, usando la librería <span className="cm-m0">REmatch</span>.
+                  <br/>
+                  <pre><xmp className="tutorial-code">{`
+  import pyrematch as re
 
-            </div>
+  rgx = re.compile("(^|[\\n.])!sentence{[^.\\n]*Chile [^.\\n]+(Peru|Argentina|Bolivia)[^.\\n]*\\.}")
+
+  for idx, match in enumerate(rgx.finditer(text)):
+      print("{}. {sentence}".format(idx+1, **match.groupdict()))
+                  `}</xmp></pre>
+                  <br/>
+                  &emsp;Hagamos la misma consulta en la version <span className="cm-m0">REmatch</span> para navegador.
+              </Typography>
+              <Viewer
+                idx="rematch1"
+                worker={worker5}
+                regex={examples.example1.rematch}
+                text={email}
+              />
+              <Typography variant="body1" align="justify" style={{marginBottom: '3rem'}}>
+                  &emsp;La mayor parte de las lineas del código anterior son para llamar y ejecutar la librería REmatch. De hecho, toda la tarea se encuentra descrita en:
+                  <span className="code" style={{padding: ".2rem"}}>!pip3 install --upgrade pyrematch</span>
+                  el cuál es un patron que describe la tarea de extracción que debe hacer la librería. El lenguaje de este patrón se conoce como expresiones regulares 
+                  (también llamados regex ó RE). Las expresiones regulares es un lenguaje de caracteres y operadores especiales que nos permiten describir grupos de secuencias en strings, 
+                  que a uno le gustaría identificar, verificar, y extraer. Estas expresiones nos facilitarán la tarea de extracción de información de documentos, 
+                  permitiendonos definir nuestra tarea y dejando que una librería como REmatch se encargue de ejecutar y optimizar la tarea de la mejor forma posible. 
+                  Las expresiones regulares nos pueden servir para otras tareas como validación de formularios, búsqueda y reemplazo, transformación de texto, y procesamiento de registros.
+                  En esta unidad usted aprenderá el lenguaje de expresiones regulares para verificar patrones sencillos en strings, 
+                  para después aprovechar estos patrones para extraer información desde documentos con la librería REmatch.
+                  <br/>
+                  <div className="text-center">
+                    <span className="code" style={{padding: ".2rem"}}>!pip3 install --upgrade pyrematch</span>
+                  </div>
+              </Typography>
+              { steppersButtons() }
+              </div>
+              )
+              ||
+              (
+              activeSubStep === 2  &&
+              <div className="scrollable-tutorial">
+                { steppersButtons() }
+              </div>
+              )
+            )
           }
           { activeStep === 2 &&
+            activeSubStep === 0 &&
             <div>
-              
+              Holas
             </div>
           }
           { activeStep === 3 &&

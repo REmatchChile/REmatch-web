@@ -201,7 +201,7 @@ Domagoj Vrgoc`,
   
   render() {    
     return (
-      <Container maxWidth="md" className="mainContainer">
+      <Container maxWidth="md" className="top-padding">
         <Dialog
           className="dialog"
           open={this.state.howTo}

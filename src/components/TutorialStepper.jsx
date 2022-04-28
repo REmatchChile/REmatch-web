@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -38,7 +38,35 @@ const steps = [
 ];
 // const steps = ['Setup', 'Motivation', 'Regular Expressions', 'REmatch functionalities', 'Why REmatch?'];
 
-export default function VerticalLinearStepper({ activeStep, handleNext, handleBack, handleReset }) {
+const subSetpsOnLabel = (index, activeStep, activeSubStep) => {
+  return(
+    (index === 1 && activeStep === 1 &&
+      <div>
+        <Typography variant="caption" color={activeSubStep === 0 ? 'secondary' : 'disabled'}>Problem</Typography>
+        <br/>
+        <Typography variant="caption" color={activeSubStep === 1 ? 'secondary' : 'disabled'}>An efficient solution</Typography>
+        <br/>
+        <Typography variant="caption" color={activeSubStep === 2 ? 'secondary' : 'disabled'}>Last step</Typography>
+      </div>)
+    ||
+    (index === 2 && activeStep === 2 &&
+    <div>
+      <Typography variant="caption" onClick={()=> console.log('a')}>Larvita</Typography>
+    </div>)
+  )
+}
+
+export default function VerticalLinearStepper(props) {
+  const { 
+    activeStep,
+    activeSubStep,
+    handleNext,
+    handleBack,
+    handleReset,
+    handleNextSubStep,
+    handleBackSubStep,
+    handleResetSubStep,
+  } = props;
   return (
     // <Box sx={{ maxWidth: 400 }}>
       
@@ -48,17 +76,13 @@ export default function VerticalLinearStepper({ activeStep, handleNext, handleBa
         {steps.map((step, index) => (
           <Step key={step.label}>
             <StepLabel
-              optional={
-                index === 2 ? (
-                  <Typography variant="caption">Last step</Typography>
-                ) : null
-              }
+              optional={ subSetpsOnLabel(index, activeStep, activeSubStep) }
             >
               {step.label}
             </StepLabel>
             <StepContent>
               {/* <Typography>{step.description}</Typography> */}
-              <Box sx={{ mb: 2 }}>
+              {/* <Box sx={{ mb: 2 }}>
                 <div>
                   <Button
                     variant="contained"
@@ -75,7 +99,7 @@ export default function VerticalLinearStepper({ activeStep, handleNext, handleBa
                     Back
                   </Button>
                 </div>
-              </Box>
+              </Box> */}
             </StepContent>
           </Step>
         ))}

@@ -32,7 +32,7 @@ const texts = {
   Proteina 2
   Aminoacido 1
   Procarionte 3`,
-  literature: `Libro 1
+  linguistic: `Libro 1
   Autor 2
   Obra 1
   Dramaturgo 3`
@@ -40,7 +40,7 @@ const texts = {
 
 const explanaitions = {
   biology: 'The classical example here is DNA sequencing, where the DNA strand is represented as a string, and one would like to analyze different proteins involved in defining this DNA strand. The thing here is that proteins can be joined at certain points, meaning that if our strand has the letter sequence <span class="code">abcabbcdefbb</span>, both <span class="code">abcabb</span> (substring from positions 0 to 5), and <span class="code">abbcdefbb</span> (positions 3 to 11) might be two proteins participating in this DNA strand (for simplicity we assume <span class="code">ab</span> to be the start trigger, and <span class="code">bb</span> the end trigger, the situation in real world is much more involved).',
-  literature: 'While this example might seem very academic, and one might argue that something like overlapping matches might not be very useful (e.g. in a sequence <span class="code">abcde</span> having both the substrings <span class="code">bc</span> and <span class="code">cde</span> might seem and overkill). We however argue that there are many use cases when precisely this type of behaviour is sought after.',
+  linguistic: 'While this example might seem very academic, and one might argue that something like overlapping matches might not be very useful (e.g. in a sequence <span class="code">abcde</span> having both the substrings <span class="code">bc</span> and <span class="code">cde</span> might seem and overkill). We however argue that there are many use cases when precisely this type of behaviour is sought after.',
 }
 
 
@@ -75,7 +75,7 @@ const Examples = () => {
           onChange={changeSelect}
         >
           <MenuItem value={'biology'}>Biology</MenuItem>
-          <MenuItem value={'literature'}>Literature</MenuItem>
+          <MenuItem value={'linguistic'}>Linguistics</MenuItem>
           <MenuItem value={'computing'}>Computer Science</MenuItem>
         </Select>
       </FormControl>
