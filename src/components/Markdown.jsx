@@ -1,10 +1,10 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
+import React from "react";
+import ReactMarkdown from "react-markdown";
 
 const COLORS = {
-  primary: '#03DAC6',
-  secondary: '#FCE938',
-  codeBackground: '#212121',
+  primary: "#03DAC6",
+  secondary: "#FCE938",
+  codeBackground: "#212121",
 };
 
 const Markdown = ({ text }) => {
@@ -28,7 +28,7 @@ const Markdown = ({ text }) => {
             style={{
               background: COLORS.codeBackground,
               padding: 2,
-              fontFamily: 'Roboto Mono',
+              fontFamily: "Roboto Mono",
             }}
             {...props}
           />
@@ -40,9 +40,9 @@ const Markdown = ({ text }) => {
           <blockquote
             style={{
               background: COLORS.codeBackground,
-              padding: '4px 20px',
+              padding: "4px 20px",
               borderRadius: 4,
-              fontFamily: 'Roboto Mono',
+              fontFamily: "Roboto Mono",
             }}
             {...props}
           />
