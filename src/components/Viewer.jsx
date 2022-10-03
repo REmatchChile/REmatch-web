@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-
 import PlayArrow from "@material-ui/icons/PlayArrow";
 
 import CodeMirror from "codemirror";

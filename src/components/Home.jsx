@@ -12,10 +12,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-
 import PlayArrow from "@material-ui/icons/PlayArrow";
 import Stop from "@material-ui/icons/Stop";
-import Publish from "@material-ui/icons/Publish";
+//import Publish from "@material-ui/icons/Publish";
 
 /* Project Components */
 import MatchesTable from "./MatchesTable";
@@ -81,7 +80,9 @@ Vicente Calisto
 Marjorie Bascunan
 Oscar Carcamo
 Cristian Riveros
-Domagoj Vrgoc`,
+Domagoj Vrgoc
+Ignacio Pereira
+Kyle Bossonney`,
       mode: "text/plain",
       placeholder: "Enter your text...",
       theme: "material-darker",
@@ -245,8 +246,7 @@ Domagoj Vrgoc`,
               encountered results. To see where a result appears inside the
               text, you can click on it. You can also upload the text from a
               file by clicking the <span className='cm-m1'>Import File</span>{" "}
-              button and selecting a text file{" "}
-              <span className='cm-m1'>(.txt)</span> on your computer.
+              button and selecting a text file on your computer.
             </DialogContentText>
           </DialogContent>
           <DialogActions>

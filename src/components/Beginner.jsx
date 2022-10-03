@@ -2,10 +2,10 @@ import React from "react";
 
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
+//import Paper from "@material-ui/core/Paper";
+//import Stepper from "@material-ui/core/Stepper";
+//import Step from "@material-ui/core/Step";
+//import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Viewer from "./Viewer";
 import VerticalLinearStepper from "./TutorialStepper";

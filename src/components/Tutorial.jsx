@@ -7,7 +7,8 @@ import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
-import Viewer from './Viewer';
+
+//import Viewer from './Viewer';
 
 const Tutorial = () => {
   return (

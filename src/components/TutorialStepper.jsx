@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import Box from "@material-ui/core/Box";
+import React from "react"; //{ useState } from "react";
+
+//import Box from "@material-ui/core/Box";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -75,12 +76,12 @@ export default function VerticalLinearStepper(props) {
   const {
     activeStep,
     activeSubStep,
-    handleNext,
-    handleBack,
+    /*handleNext,
+    handleBack,*/
     handleReset,
-    handleNextSubStep,
+    /*handleNextSubStep,
     handleBackSubStep,
-    handleResetSubStep,
+    handleResetSubStep,*/
   } = props;
   return (
     // <Box sx={{ maxWidth: 400 }}>
