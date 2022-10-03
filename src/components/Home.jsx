@@ -26,6 +26,7 @@ import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
 import { Typography } from "@material-ui/core";
+import FileUploadPage from "./Uploading";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
@@ -82,7 +83,8 @@ Oscar Carcamo
 Cristian Riveros
 Domagoj Vrgoc
 Ignacio Pereira
-Kyle Bossonney`,
+Kyle Bossonney
+`,
       mode: "text/plain",
       placeholder: "Enter your text...",
       theme: "material-darker",
@@ -306,6 +308,7 @@ Kyle Bossonney`,
             ref='childMatchesTable'
           />
         </Paper>
+        <FileUploadPage />
       </Container>
     );
   }
