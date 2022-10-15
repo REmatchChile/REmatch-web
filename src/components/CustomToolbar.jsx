@@ -118,7 +118,7 @@ export default function CustomToolbar(props) {
         <Toolbar className="toolbar">
 
           <div className="tools">
-            <input accept="*" id="fileInput" type="file" className="invisible" onChange={onImportFile} />
+            <input accept=".csv, .txt, .md" id="fileInput" type="file" className="invisible" onChange={onImportFile} />
             <Tooltip title="Import File" arrow>
               <label htmlFor="fileInput">
                 <IconButton color="primary" className="toolbar-button" component="span">
