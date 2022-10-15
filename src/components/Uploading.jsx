@@ -7,13 +7,19 @@ function FileUploadPage(){
 
 	const [selectedFile, setSelectedFile] = useState();
 	const [isSelected, setIsSelected] = useState(false);
+    const [isEncoded, setIsEncoded] = useState();
 
-	const changeHandler = (event) => {
+	/*async*/ function changeHandler(event) {
 		setSelectedFile(event.target.files[0]);
 		setIsSelected(true);
         languageEncoding(selectedFile).then(
-            (fileInfo) => console.log(Object.values(fileInfo)[0])
-            );
+            (fileInfo) => 
+            setIsEncoded(Object.values(fileInfo)[0]));
+
+        /*const selFi = await languageEncoding(selectedFile);
+        const enc = await Object.values(selFi)[0];
+        setIsEncoded(enc);
+        console.log(enc);*/
 
     };
 
@@ -25,14 +31,14 @@ function FileUploadPage(){
 
 	return(
         <div>
-        <input type="file" name="file" onChange={changeHandler} />
-        {isSelected ? (
+        <input type="file" accept=".csv, .txt, .md, .text, .plain" name="file" onChange={changeHandler} />
+        {isSelected && isEncoded ? (
     
             <div>
                 <p>Filename: {selectedFile.name}</p>
                 <p>Filetype: {selectedFile.type}</p>
                 <p>Size: {selectedFile.size} Bytes</p>
-                <p>Encoding: {selectedFile.info} </p>       
+                <p>Encoding: {isEncoded} </p>       
             </div>
         ) : (
             <p>Select a file to show details</p>
