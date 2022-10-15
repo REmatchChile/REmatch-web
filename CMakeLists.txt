@@ -13,5 +13,3 @@ add_subdirectory(REmatch-js)
 
 # The output path for .wasm and .js files
 # set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/public")
-
-

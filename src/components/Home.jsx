@@ -85,7 +85,7 @@ Domagoj Vrgoc
 Ignacio Pereira
 Kyle Bossonney
 `,
-      mode: "text/plain",
+      mode: {name: "text/html"}, 
       placeholder: "Enter your text...",
       theme: "material-darker",
       lineNumbers: true,

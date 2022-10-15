@@ -10,7 +10,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 
 import Viewer from "./Viewer";
-
 import english from "../text/english";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/liteWork.js`;
