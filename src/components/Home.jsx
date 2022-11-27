@@ -20,14 +20,13 @@ import Stop from "@material-ui/icons/Stop";
 import MatchesTable from "./MatchesTable";
 import English from "../text/english";
 import CustomToolbar from "./CustomToolbar";
+import FileUploadingPrev from "./FileUploadingPrev";
 
 /* CodeMirror */
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
 import { Typography } from "@material-ui/core";
-import FileUploadPage from "./Uploading";
-
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
@@ -308,7 +307,7 @@ Kyle Bossonney
             ref='childMatchesTable'
           />
         </Paper>
-        <FileUploadPage />
+        <FileUploadingPrev />
       </Container>
     );
   }
