@@ -136,12 +136,8 @@ Kyle Bossonney
       mark.clear();
     });
   };
-
-  handleFile = async (event) => {
-    let file = event.target.files[0];
-    if (!file) {
-      return;
-    }
+  
+  preloadedFile = async (file) => {
     this.state.textEditor.setValue("");
     this.clearMarks();
     this.setState({
@@ -169,6 +165,15 @@ Kyle Bossonney
     console.log("upload done");
     this.setState({ uploadingFile: false });
   };
+
+  handleFile = async (event) => {
+    let file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+    this.preloadedFile(file);
+  };
+
 
   restartWorker = () => {
     worker.terminate();
@@ -307,7 +312,7 @@ Kyle Bossonney
             ref='childMatchesTable'
           />
         </Paper>
-        <FileUploadingPrev />
+        <FileUploadingPrev preloadedFile={this.preloadedFile}/>
       </Container>
     );
   }

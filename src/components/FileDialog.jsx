@@ -7,19 +7,15 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 export default function AlertDialogSlide(props) {
-  const [open, setOpen] = React.useState(true);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   console.log(props.content);
 
   return (
     <div>
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={props.open}
+        onClose={props.onClose}
+        keepMounted
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle>{"Uploaded File Data"}</DialogTitle>
@@ -29,12 +25,12 @@ export default function AlertDialogSlide(props) {
             <p>File type: {props.content[1]}</p>
             <p>File size: {props.content[2]} bytes</p>
             <p>File encoding: {props.content[3]}</p>
-            <p>File content: {props.content[4]}</p>
+            <p>File content preview: {props.content[4]}</p>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose}>Agree</Button>
+          <Button onClick={props.onClose} color="primary">Disagree</Button>
+          <Button onClick={props.handleAgree} color="primary">Agree</Button>
         </DialogActions>
       </Dialog>
     </div>
