@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import languageEncoding from "detect-file-encoding-and-language";
 import AlertDialogSlide from './FileDialog';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import Publish from '@material-ui/icons/Publish';
 
 export default function FileUploadingPrev(props) {
   const [preFile, setPreFile] = useState(null);
@@ -55,7 +58,7 @@ export default function FileUploadingPrev(props) {
                   handleAgree={handleAgree}
                   preloadedFile={props.preloadedFile}
                   /> : (
-        <p>Upload a file</p>
+        null
       )}
       
     </div>

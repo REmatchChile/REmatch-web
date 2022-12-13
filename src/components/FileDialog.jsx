@@ -8,7 +8,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 export default function AlertDialogSlide(props) {
 
-  console.log(props.content);
+  //console.log("AlertDialogSlide");
+  console.log(props);
 
   return (
     <div>

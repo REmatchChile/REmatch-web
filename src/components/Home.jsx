@@ -20,13 +20,16 @@ import Stop from "@material-ui/icons/Stop";
 import MatchesTable from "./MatchesTable";
 import English from "../text/english";
 import CustomToolbar from "./CustomToolbar";
-import FileUploadingPrev from "./FileUploadingPrev";
+import AlertDialogSlide from './FileDialog';
 
 /* CodeMirror */
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
 import { Typography } from "@material-ui/core";
+
+/* NPM */
+import languageEncoding from "detect-file-encoding-and-language";
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
@@ -43,8 +46,12 @@ class Home extends Component {
       howTo: localStorage.getItem("showHowTo") === null ? true : false,
       fileProgress: 0,
       exampleExplanation: "",
+      preFile: null, //fileUploadingPrev
+      content: null, //fileUploadingPrev
+      open: false //fileUploadingPrev
     };
-  }
+  }  
+
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById("queryEditor"), {
       value: "(^|\\n)!x{[A-Z][a-z]{4,}} !y{([A-Z][a-z ]+)+}($|\\n)",
@@ -103,6 +110,7 @@ Kyle Bossonney
       textEditor,
     });
   }
+  
 
   setExample = (event) => {
     const exampleName = event.target.textContent;
@@ -224,6 +232,51 @@ Kyle Bossonney
     this.refs.childMatchesTable.handleExport();
   }
 
+  handleClose = () => {
+    this.open= false;
+  };
+
+  handleAgree = () => {
+      this.handleClose();
+      this.preloadedFile(this.preFile);
+  };
+
+  getEncoding = async (file) => { //SOLO UTF-8
+    try {
+      return await languageEncoding(file);
+    } catch (err) {
+      alert(err);
+    }
+  }
+
+  showFile = async (e) => {
+    // 1. Obtener archivo y setearlo en file
+    const file = e.target.files[0];
+    if (!file) return;
+    // 2. Obtener encoding y setearlo
+    const encoding = await this.getEncoding(file);
+    // 3. Leer N caracteres del archivo (500) y setear arr y content
+    const N_CHARS = 500;
+    const fileHead = await file.slice(0, N_CHARS).text();
+
+    this.content= [file.name,
+        file.type,
+        file.size,
+        encoding.encoding,
+        fileHead];
+      
+    this.open= true 
+
+    this.preFile= file;
+   
+
+    console.log(this.content);
+    console.log(this.preFile);
+    console.log(this.open);
+    //this.preloadedFile(this.preFile);
+  }
+
+
   render() {
     return (
       <Container maxWidth='md' className='top-padding'>
@@ -275,7 +328,7 @@ Kyle Bossonney
           </Typography>
         </Backdrop>
         <CustomToolbar
-          onImportFile={(event) => this.handleFile(event)}
+          onImportFile={(event) => this.showFile(event)} // BOTÓN ANTIGUO
           onExportMatches={(event) => this.handleExport(event)}
           onSetExample={(event) => this.setExample(event)}
           canExport={this.state.matches.length === 0}
@@ -312,7 +365,15 @@ Kyle Bossonney
             ref='childMatchesTable'
           />
         </Paper>
-        <FileUploadingPrev preloadedFile={this.preloadedFile}/>
+        {this.open ? <AlertDialogSlide 
+                  content={this.content}
+                  open={this.open}
+                  onClose={this.handleClose}
+                  handleAgree={this.handleAgree}
+                  preloadedFiles={this.preFile}
+                  /> : (
+        <p>AQUI NO HAY NADA</p>
+      )}
       </Container>
     );
   }

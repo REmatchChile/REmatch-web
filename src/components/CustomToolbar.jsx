@@ -119,7 +119,7 @@ export default function CustomToolbar(props) {
 
           <div className="tools">
             <input accept="text/*" id="fileInput" type="file" className="invisible" onChange={onImportFile} />
-            <Tooltip title="Import File" arrow>
+            <Tooltip title="Import File (ONLY UTF-8 ENCODING)" arrow>
               <label htmlFor="fileInput">
                 <IconButton color="primary" className="toolbar-button" component="span">
                   <Publish fontSize="small" />
