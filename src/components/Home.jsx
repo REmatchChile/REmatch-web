@@ -233,12 +233,13 @@ Kyle Bossonney
   }
 
   handleClose = () => {
-    this.open= false;
+    this.setState({open: false});
+    console.log(this.state.close);
   };
 
   handleAgree = () => {
       this.handleClose();
-      this.preloadedFile(this.preFile);
+      this.preloadedFile(this.state.preFile);
   };
 
   getEncoding = async (file) => { //SOLO UTF-8
@@ -259,21 +260,13 @@ Kyle Bossonney
     const N_CHARS = 500;
     const fileHead = await file.slice(0, N_CHARS).text();
 
-    this.content= [file.name,
-        file.type,
-        file.size,
-        encoding.encoding,
-        fileHead];
+    //this.content= ;
       
-    this.open= true 
-
-    this.preFile= file;
-   
-
-    console.log(this.content);
-    console.log(this.preFile);
-    console.log(this.open);
-    //this.preloadedFile(this.preFile);
+    this.setState({ open: true, preFile: file, content: [file.name,
+      file.type,
+      file.size,
+      encoding.encoding,
+      fileHead]});
   }
 
 
@@ -365,15 +358,13 @@ Kyle Bossonney
             ref='childMatchesTable'
           />
         </Paper>
-        {this.open ? <AlertDialogSlide 
-                  content={this.content}
-                  open={this.open}
-                  onClose={this.handleClose}
-                  handleAgree={this.handleAgree}
-                  preloadedFiles={this.preFile}
-                  /> : (
-        <p>AQUI NO HAY NADA</p>
-      )}
+        <AlertDialogSlide 
+          content={this.state.content}
+          open={this.state.open}
+          onClose={this.handleClose}
+          handleAgree={this.handleAgree}
+          preloadedFiles={this.state.preFile}
+        />
       </Container>
     );
   }

@@ -11,6 +11,8 @@ export default function AlertDialogSlide(props) {
   //console.log("AlertDialogSlide");
   console.log(props);
 
+  if (!props.content) return null;
+
   return (
     <div>
       <Dialog
