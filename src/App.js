@@ -20,7 +20,11 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Navbar from './components/Navbar';
 import About from './components/About';
+import Examples from './components/Examples';
 import Home from './components/Home';
+import Tutorial from './components/Tutorial';
+import Beginner from './components/Beginner';
+import Advanced from './components/Advanced';
 import 'fontsource-roboto';
 
 CodeMirror.defineSimpleMode('REmatchQuery', {
@@ -83,10 +87,13 @@ const darkTheme = createMuiTheme({
     secondary: {
       main: '#FCE938',
     },
+    disabled: {
+      main: '#d3d3d3',
+    },
     background: {
       paper: '#212121',
       default: '#424242',
-    }
+    },
   },
 });
 
@@ -97,8 +104,17 @@ const App = () => {
       <Router>
         <Navbar/>
         <Switch>
+          <Route exact path="/tutorial">
+            <Tutorial />
+          </Route>
           <Route path="/about">
             <About />
+          </Route>
+          <Route exact path="/beginner">
+            <Beginner />
+          </Route>
+          <Route exact path="/advanced">
+            <Advanced />
           </Route>
           <Route path="/">
             <Home />

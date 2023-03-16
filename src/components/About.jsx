@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import Container from "@material-ui/core/Container";
 
-import Viewer from './Viewer';
+import Markdown from "./Markdown";
 
-import english from '../text/english';
+const aboutURL =
+  "https://raw.githubusercontent.com/REmatchChile/REmatch-docs/master/about.md";
 
 const About = () => {
+  const [content, setContent] = useState("");
+  useEffect(() => {
+    fetch(aboutURL)
+      .then((response) => response.text())
+      .then((text) => setContent(text));
+  }, []);
+
   return (
-    <Container maxWidth="md" className="mainContainer">
-      {english.about.title}
-      {english.about.regexinrematch}
-      {english.about.anotherlibrary}
-      {english.about.example1}
-      {english.about.example2}
-      {english.about.example3}
-      {english.about.outputtime}
-      {english.about.authors}
+    <Container maxWidth='md' className='mainContainer'>
+      <Markdown text={content} />
     </Container>
-  )
-}
+  );
+};
 
 export default About;
