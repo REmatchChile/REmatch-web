@@ -13,10 +13,10 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
         
-      - name: Node version
+      - name: Node version 🥸
         uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: 16
           
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: |
