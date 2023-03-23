@@ -31,7 +31,7 @@ import { Typography } from "@material-ui/core";
 /* NPM */
 import languageEncoding from "detect-file-encoding-and-language";
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
+const CHUNK_SIZE = 1 * 10 ** 8; // 100 MB
 let worker = new Worker(WORKPATH);
 
 /* MAIN INTERFACE */
@@ -260,8 +260,8 @@ Kyle Bossonney
     const N_CHARS = 500;
     const fileHead = await file.slice(0, N_CHARS).text();
 
-    //this.content= ;
-      
+    //¿Hay una mejor opción para leer el archivo?
+
     this.setState({ open: true, preFile: file, content: [file.name,
       file.type,
       file.size,
