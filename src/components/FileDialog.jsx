@@ -8,12 +8,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 export default function AlertDialogSlide(props) {
 
-  //console.log("AlertDialogSlide");
-  //console.log(props);
-
   if (!props.content) return null;
 
-  if (props.content[2] > (1 * 10 ** 8)) {
+  /*if (props.content[2] > (1 * 10 ** 8)) {
     return (
       <div>
         <Dialog
@@ -36,7 +33,7 @@ export default function AlertDialogSlide(props) {
         </Dialog>
       </div>
     );
-  }
+  }*/
     return (
       <div>
         <Dialog
@@ -66,7 +63,7 @@ export default function AlertDialogSlide(props) {
               </p>
               <p> 
                 <span className='cm-m0'>File content preview: </span> 
-                <span className='cm-m1'>{props.content[4]}</span> 
+                {props.content[4]}
               </p>
             </DialogContentText>
           </DialogContent>
