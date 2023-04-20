@@ -258,10 +258,6 @@ Kyle Bossonney
 
     console.log(file); // datos del archivo
 
-    if (file.size > CHUNK_SIZE) {
-      console.log("NO")
-    }
-
     const encoding = await this.getEncoding(file);
     // 3. Leer N caracteres del archivo (500) y setear arr y content
     const N_CHARS = 500;

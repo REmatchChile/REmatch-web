@@ -8,6 +8,7 @@ import React, {
 import Pagination from "@material-ui/lab/Pagination";
 import Button from "@material-ui/core/Button";
 import Backdrop from "@material-ui/core/Backdrop";
+import Tooltip from '@material-ui/core/Tooltip';
 
 const MAX_CHARS = 7;
 
@@ -168,35 +169,36 @@ function MatchesTable(props, ref) {
           : matches
         ).map((row, idxRow) => (
           <div
-            
-            key={idxRow}
-            className='matchesRow'
-            onClick={() => handleMarkText(row)}>
-            <div className='matchesIdx'>
-              {state.page * state.rowsPerPage + idxRow}
-            </div>
-            {row.map((col, idxCol) => {
-              const lowerBound = col[0];
-              const upperBound = col[0] + Math.min(col[1] - col[0], MAX_CHARS);
-              const renderDots = col[1] - col[0] > MAX_CHARS 
-              return (
-                <div key={idxCol} className='matchesItem'>
-                  {textEditor
-                    .getRange(
-                      textEditor.posFromIndex(lowerBound),
-                      textEditor.posFromIndex(upperBound) 
-                    )
-                    .replaceAll(" ", "␣") // 7 caracteres, después ... y finalmente ON HOVER
-                    .replaceAll(/\r?\n/g, "¬")
-                    
-                  }
-                  {
-                    renderDots ? "..." : ""
-                  }
-                </div>
-              );
-            })}
-          </div>
+  key={idxRow}
+  className='matchesRow'
+  onClick={() => handleMarkText(row)}
+  title={row.map(col => textEditor.getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1]))).join(' ')}
+>
+  <div className='matchesIdx'>
+    {state.page * state.rowsPerPage + idxRow}
+  </div>
+  {row.map((col, idxCol) => {
+    const lowerBound = col[0];
+    const upperBound = col[0] + Math.min(col[1] - col[0], MAX_CHARS);
+    const renderDots = col[1] - col[0] > MAX_CHARS;
+    return (
+      <div key={idxCol} className='matchesItem'>
+        {textEditor
+          .getRange(
+            textEditor.posFromIndex(lowerBound),
+            textEditor.posFromIndex(upperBound) 
+          )
+          .replaceAll(" ", "␣")
+          .replaceAll(/\r?\n/g, "¬")
+        }
+        {
+          renderDots ? "..." : ""
+        }
+      </div>
+    );
+  })}
+</div>
+
         ))}
       </div>
       <div className='paginationContainer'>

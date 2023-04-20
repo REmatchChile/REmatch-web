@@ -10,30 +10,6 @@ export default function AlertDialogSlide(props) {
 
   if (!props.content) return null;
 
-  /*if (props.content[2] > (1 * 10 ** 8)) {
-    return (
-      <div>
-        <Dialog
-          open={props.open}
-          onClose={props.onClose}
-          keepMounted
-          aria-describedby="alert-dialog-slide-description"
-        >
-          <DialogTitle> <span className='cm-m0'>{"Uploaded File Too Big"}</span></DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              <p>
-                <span className='cm-m1'>Please upload a file smaller than 100 MB</span>
-              </p>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={props.onClose} color="primary">Ok</Button>
-          </DialogActions>
-        </Dialog>
-      </div>
-    );
-  }*/
     return (
       <div>
         <Dialog
