@@ -14,7 +14,6 @@ const MAX_CHARS = 7;
 
 function MatchesTable(props, ref) {
   const { matches, schema, textEditor, addMarks, clearMarks } = props;
-
   const [state, setState] = useState({
     page: 0,
     rowsPerPage: 12,
@@ -105,6 +104,10 @@ function MatchesTable(props, ref) {
     }
   }, [matches]);
 
+  
+
+
+
   return (
     <>
       <Backdrop
@@ -161,46 +164,45 @@ function MatchesTable(props, ref) {
         </div>
       </div>
       <div className='matchesContainer'>
-        {(state.rowsPerPage > 0
-          ? matches.slice(
-              state.page * state.rowsPerPage,
-              state.page * state.rowsPerPage + state.rowsPerPage
-            )
-          : matches
-        ).map((row, idxRow) => (
-          <div
-  key={idxRow}
-  className='matchesRow'
-  onClick={() => handleMarkText(row)}
-  title={row.map(col => textEditor.getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1]))).join(' ')}
->
-  <div className='matchesIdx'>
-    {state.page * state.rowsPerPage + idxRow}
-  </div>
-  {row.map((col, idxCol) => {
-    const lowerBound = col[0];
-    const upperBound = col[0] + Math.min(col[1] - col[0], MAX_CHARS);
-    const renderDots = col[1] - col[0] > MAX_CHARS;
-    return (
-      <div key={idxCol} className='matchesItem'>
-        {textEditor
-          .getRange(
-            textEditor.posFromIndex(lowerBound),
-            textEditor.posFromIndex(upperBound) 
-          )
-          .replaceAll(" ", "␣")
-          .replaceAll(/\r?\n/g, "¬")
-        }
-        {
-          renderDots ? "..." : ""
-        }
+  {(state.rowsPerPage > 0
+    ? matches.slice(
+        state.page * state.rowsPerPage,
+        state.page * state.rowsPerPage + state.rowsPerPage
+      )
+    : matches
+  ).map((row, idxRow) => (
+    <Tooltip title={row.map(col => textEditor.getRange(textEditor.posFromIndex(col[0]), textEditor.posFromIndex(col[1]))).join(' ')} key={idxRow}>
+      <div
+        className='matchesRow'
+        onClick={() => handleMarkText(row)}
+      >
+        <div className='matchesIdx'>
+          {state.page * state.rowsPerPage + idxRow}
+        </div>
+        {row.map((col, idxCol) => {
+          const lowerBound = col[0];
+          const upperBound = col[0] + Math.min(col[1] - col[0], MAX_CHARS);
+          const renderDots = col[1] - col[0] > MAX_CHARS;
+          return (
+            <div key={idxCol} className='matchesItem'>
+              {textEditor
+                .getRange(
+                  textEditor.posFromIndex(lowerBound),
+                  textEditor.posFromIndex(upperBound) 
+                )
+                .replaceAll(" ", "␣")
+                .replaceAll(/\r?\n/g, "¬")
+              }
+              {
+                renderDots ? "..." : ""
+              }
+            </div>
+          );
+        })}
       </div>
-    );
-  })}
+    </Tooltip>
+  ))}
 </div>
-
-        ))}
-      </div>
       <div className='paginationContainer'>
         <Pagination
           page={state.page + 1}
