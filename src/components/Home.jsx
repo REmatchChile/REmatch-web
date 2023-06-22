@@ -21,6 +21,7 @@ import MatchesTable from "./MatchesTable";
 import English from "../text/english";
 import CustomToolbar from "./CustomToolbar";
 import AlertDialogSlide from './FileDialog';
+import CollapsibleTable from "./CollapsibleTable";
 
 /* CodeMirror */
 import CodeMirror from "codemirror";
@@ -360,6 +361,7 @@ Kyle Bossonney
             handleExport={this.handleExport}
             ref='childMatchesTable'
           />
+          <CollapsibleTable />
         </Paper>
         <AlertDialogSlide 
           content={this.state.content}
