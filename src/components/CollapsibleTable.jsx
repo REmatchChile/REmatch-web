@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Box from '@material-ui/core/Box/Box';
+import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,109 +20,105 @@ function joinAndTruncateValues(values) {
   return joinedString;
 }
 
-function createData(dictionary) {
-  const keys = Object.keys(dictionary.match);
-  const rows = keys.map((key) => {
-    const values = dictionary.match[key];
-    const preview = joinAndTruncateValues(values[0]); // Use the first value for the preview
+function exportJSON(matches, schema, textEditor) {
+    const result = [];
+    
+    matches.forEach((match) => {
+      const obj = {};
+      
+      match.forEach((span, idx) => {
+        const value = textEditor.getRange(
+          textEditor.posFromIndex(span[0]),
+          textEditor.posFromIndex(span[1])
+        );
+        
+        obj[schema[idx]] = value;
+      });
+      
+      result.push(obj);
+    });
+    
+    return JSON.stringify(result);
+  }
+  
 
-    return {
-      key,
-      values,
-      preview,
-    };
-  });
-
-  return rows;
-}
-
-const columns = {
-  match: {
-    "Nicolas Van Sint Jan": [
-      ["Nicolas"],
-      ["Nicolas"],
-      ["icolas"],
-      ["Van"],
-      ["Van"],
-      ["Sint"],
-      ["Sint"],
-      ["Jan"],
-      ["Jan"],
-    ],
-  },
-};
-
-const ROW_WIDTH = 100 / columns.match["Nicolas Van Sint Jan"].length;
-
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
-  const truncatedKey = row.key.length > 5 ? `${row.key.substring(0, 5)}...` : row.key;
-  const truncatedValues = row.values.map((value) =>
-    value.length > 5 ? `${value.substring(0, 5)}...` : value
-  );
-
-  return (
-    <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row" style={{ width: `${ROW_WIDTH}%` }}>
-          {truncatedKey}
-        </TableCell>
-        {truncatedValues.map((value, index) => (
-          <TableCell key={index} style={{ width: `${ROW_WIDTH}%` }}>
-            {value[0].length > 5 ? `${value[0].substring(0, 5)}...` : value}
+  function Row(props) {
+    const { row, width } = props;
+    const [open, setOpen] = React.useState(false);
+  
+    const entries = Object.entries(row);
+    const truncatedKey = entries[0][1].length > 5 ? `${entries[0][1].substring(0, 5)}...` : entries[0][1];
+    const truncatedValues = entries.slice(1).map(([key, value]) =>
+      value.length > 5 ? `${value.substring(0, 5)}...` : value
+    );
+  
+    return (
+      <React.Fragment>
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+          <TableCell>
+            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
           </TableCell>
-        ))}
-      </TableRow>
-      {open && (
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={row.values.length + 1}>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Matches
-              </Typography>
-              <Table size="small" aria-label="matches">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>Dictionary Key</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.values.map((value, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{value}</TableCell>
-                      <TableCell>{index === 0 ? row.key : ''}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
+          <TableCell component="th" scope="row" style={{ width: `${width}%` }}>
+            {truncatedKey}
           </TableCell>
+          {truncatedValues.map((value, index) => (
+            <TableCell key={index} style={{ width: `${width}%` }}>
+              {value[0].length > 5 ? `${value[0].substring(0, 5)}...` : value}
+            </TableCell>
+          ))}
         </TableRow>
-      )}
-    </React.Fragment>
-  );
-}
+        {open && (
+          <TableRow>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={entries.length}>
+              <Box sx={{ margin: 1 }}>
+                <Typography variant="h6" gutterBottom component="div">
+                  Matches
+                </Typography>
+                <Table size="small" aria-label="matches">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell />
+                      <TableCell>Dictionary Key</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {entries.slice(1).map(([key, value], index) => (
+                      <TableRow key={index}>
+                        <TableCell>{value}</TableCell>
+                        <TableCell>{index === 0 ? entries[0][0] : ''}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </TableCell>
+          </TableRow>
+        )}
+      </React.Fragment>
+    );
+  }
+  
 
 Row.propTypes = {
   row: PropTypes.shape({
     key: PropTypes.string.isRequired,
     values: PropTypes.arrayOf(PropTypes.string).isRequired,
     preview: PropTypes.string.isRequired,
+    width: PropTypes.number.isRequired,
   }).isRequired,
 };
 
-const data = createData(columns);
+export default function CollapsibleTable(props) {
+  if (props.matches.length === 0) {
+    return null;
+  }
 
-export default function CollapsibleTable() {
-  const numValues = columns.match["Nicolas Van Sint Jan"].length;
+  const ROW_WIDTH = 100 / props.matches.length;
+
+  const data = JSON.parse(exportJSON(props.matches, props.schema, props.textEditor));
+  const numValues = props.schema.length;
   const TRUNCATE_LIMIT = 5;
   const truncatedValues = Array.from({ length: numValues }, (_, index) => {
     const value = String.fromCharCode(65 + index);
@@ -136,14 +132,14 @@ export default function CollapsibleTable() {
           <TableRow>
             <TableCell />
             <TableCell>Dictionary Key</TableCell>
-            {truncatedValues.map((value, index) => (
-              <TableCell key={index}>Value {value}</TableCell>
+            {props.schema.map((variable, schIdx) => (
+              <TableCell key={schIdx}>{variable}</TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map((row, index) => (
-            <Row key={index} row={row} />
+            <Row key={index} row={row} preview={row.preview} width={ROW_WIDTH} />
           ))}
         </TableBody>
       </Table>

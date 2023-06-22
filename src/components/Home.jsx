@@ -361,7 +361,10 @@ Kyle Bossonney
             handleExport={this.handleExport}
             ref='childMatchesTable'
           />
-          <CollapsibleTable />
+          <CollapsibleTable 
+          matches={this.state.matches}             
+          schema={this.state.schema}
+          textEditor={this.state.textEditor} />
         </Paper>
         <AlertDialogSlide 
           content={this.state.content}
