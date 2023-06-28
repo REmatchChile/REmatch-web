@@ -90,8 +90,7 @@ Oscar Carcamo
 Cristian Riveros
 Domagoj Vrgoc
 Ignacio Pereira
-Kyle Bossonney
-`,
+Kyle Bossonney`,
       mode: {name: "text/html"}, 
       placeholder: "Enter your text...",
       theme: "material-darker",
@@ -364,7 +363,10 @@ Kyle Bossonney
           <CollapsibleTable 
           matches={this.state.matches}             
           schema={this.state.schema}
-          textEditor={this.state.textEditor} />
+          textEditor={this.state.textEditor} 
+          addMarks={this.addMarks}
+          clearMarks={this.clearMarks}
+          />
         </Paper>
         <AlertDialogSlide 
           content={this.state.content}

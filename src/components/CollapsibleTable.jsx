@@ -11,58 +11,70 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Pagination from '@material-ui/lab/Pagination';
 
-function Row({ row, width }) {
+function Row({ row, width, addMarks, clearMarks, span }) {
   const [open, setOpen] = useState(false);
 
-  const entries = Object.entries(row);
-  const truncatedKey = entries[0][1].length > 5 ? `${entries[0][1].substring(0, 5)}...` : entries[0][1];
+  const { span: rowSpan, ...rowData } = row;
+
+  const entries = Object.entries(rowData).filter(([, value]) => value && value.value !== undefined);
+  const truncatedKey = entries[0][1].value.length > 5 ? `${entries[0][1].value.substring(0, 5)}...` : entries[0][1].value;
   const truncatedValues = entries.slice(1).map(([key, value]) =>
-    value.length > 5 ? `${value.substring(0, 5)}...` : value
+    value.value.length > 5 ? `${value.value.substring(0, 5)}...` : value.value
   );
+
+  const handleRowClick = () => {
+    clearMarks();
+    if (span && Array.isArray(span)) {
+      addMarks(span);
+    }
+  };
 
   return (
     <>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        
-        <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
+      <TableRow sx={{ '& > *': { borderBottom: 'unset', flex: 1 } }}>
+  <TableCell>
+    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+      {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+    </IconButton>
+  </TableCell>
 
-        <TableCell component="th" scope="row" style={{ width: `${width}%` }}>
-          {truncatedKey}
-        </TableCell>
+  <TableCell component="th" scope="row" sx={{ flex: 1 }}>
+    {truncatedKey}
+  </TableCell>
 
-        {truncatedValues.map((value, index) => (
-          <TableCell key={index} style={{ width: `${width}%` }}>
-            {value[0].length > 5 ? `${value[0].substring(0, 5)}...` : value}
-          </TableCell>
-        ))}
+  {truncatedValues.map((value, index) => (
+    <TableCell key={index} sx={{ flex: 1 }}>
+      {value.length > 5 ? `${value.substring(0, 5)}...` : value}
+    </TableCell>
+  ))}
+</TableRow>
 
-      </TableRow>
       {open && (
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={entries.length + 1}>
+          <TableCell colSpan={entries.length + 2}>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Matches
-              </Typography>
               <Table size="small" aria-label="matches">
                 <TableHead>
                   <TableRow>
                     <TableCell />
                     <TableCell>Variable</TableCell>
                     <TableCell>Value</TableCell>
+                    <TableCell>Span</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {entries.map(([key, value], index) => (
-                    <TableRow key={key}>
+                    <TableRow key={index}>
                       <TableCell></TableCell>
-                      <TableCell>{key}</TableCell>
-                      <TableCell>{value}</TableCell>
+                      <TableCell onClick={() => handleRowClick()} className={`cm-m${index} matchesItem`}>{key}</TableCell>
+                      <TableCell onClick={() => handleRowClick()}>{value.value}</TableCell>
+                      <TableCell onClick={() => handleRowClick()}>
+                        {span && span[index] && span[index].map((s, idx) => (
+                          <span key={idx}>{`${s} `}</span>
+                        ))}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -81,10 +93,20 @@ Row.propTypes = {
     values: PropTypes.arrayOf(PropTypes.string).isRequired,
     preview: PropTypes.string.isRequired,
     width: PropTypes.number.isRequired,
+    span: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)), // Added propType for span
   }).isRequired,
+  addMarks: PropTypes.func.isRequired,
+  clearMarks: PropTypes.func.isRequired,
 };
 
-export default function CollapsibleTable({ matches, schema, textEditor }) {
+export default function CollapsibleTable({ matches, schema, textEditor, addMarks, clearMarks, handleMarkText }) {
+  const [state, setState] = useState({
+    page: 0,
+    rowsPerPage: 7,
+    open: false,
+  });
+  const { page, rowsPerPage } = state;
+
   if (matches.length === 0) {
     return null;
   }
@@ -99,35 +121,58 @@ export default function CollapsibleTable({ matches, schema, textEditor }) {
         textEditor.posFromIndex(span[0]),
         textEditor.posFromIndex(span[1])
       );
-
-      obj[schema[idx]] = value;
+      obj[schema[idx]] = {
+        value,
+        span,
+      };
     });
 
-    return obj;
+    return { ...obj, key: match.join('_'), span: match };
   });
+
+  const handleChangePage = (_, newPage) => {
+    setState((prevState) => ({ ...prevState, page: newPage - 1 }));
+  };
+
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedData = data.slice(startIndex, endIndex);
 
   return (
     <Paper>
       <Table aria-label="collapsible table">
-        
         <TableHead>
           <TableRow>
             <TableCell />
-            {schema.map((variable) => (
-            <TableCell key={variable} style={{ width: `${ROW_WIDTH}%` }}>
+            {schema.map((variable, schIdx) => (
+              <TableCell key={variable} className={`cm-m${schIdx} matchesItem`}>
                 {variable}
-            </TableCell>
+              </TableCell>
             ))}
-            </TableRow>
+          </TableRow>
         </TableHead>
-
         <TableBody>
-          {data.map((row, index) => (
-            <Row key={index} row={row} width={ROW_WIDTH} />
+          {paginatedData.map((row, index) => (
+            <Row
+              key={index}
+              row={row}
+              width={ROW_WIDTH}
+              addMarks={addMarks}
+              clearMarks={clearMarks}
+              handleMarkText={handleMarkText}
+              span={row.span}
+            />
           ))}
         </TableBody>
-        
       </Table>
+      <div className="paginationContainer">
+        <Pagination
+          page={page + 1}
+          style={{ display: 'block' }}
+          count={Math.ceil(data.length / rowsPerPage)}
+          onChange={handleChangePage}
+        />
+      </div>
     </Paper>
   );
 }

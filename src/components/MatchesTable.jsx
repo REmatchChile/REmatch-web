@@ -16,7 +16,7 @@ function MatchesTable(props, ref) {
   const { matches, schema, textEditor, addMarks, clearMarks } = props;
   const [state, setState] = useState({
     page: 0,
-    rowsPerPage: 12,
+    rowsPerPage: 7,
     open: false,
   });
 
