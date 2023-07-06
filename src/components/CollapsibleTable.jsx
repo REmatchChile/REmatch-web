@@ -19,9 +19,9 @@ function Row({ row, width, addMarks, clearMarks, span }) {
   const { span: rowSpan, ...rowData } = row;
 
   const entries = Object.entries(rowData).filter(([, value]) => value && value.value !== undefined);
-  const truncatedKey = entries[0][1].value.length > 5 ? `${entries[0][1].value.substring(0, 5)}...` : entries[0][1].value;
+  const truncatedKey = entries[0][1].value.length > 10 ? `${entries[0][1].value.substring(0, 10)}...` : entries[0][1].value;
   const truncatedValues = entries.slice(1).map(([key, value]) =>
-    value.value.length > 5 ? `${value.value.substring(0, 5)}...` : value.value
+    value.value.length > 10 ? `${value.value.substring(0, 10)}...` : value.value
   );
 
   const handleRowClick = () => {
@@ -30,7 +30,7 @@ function Row({ row, width, addMarks, clearMarks, span }) {
       addMarks(span);
     }
   };
-
+  // largo de caracteres variable
   return (
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset', flex: 1 } }}>
@@ -46,7 +46,7 @@ function Row({ row, width, addMarks, clearMarks, span }) {
 
   {truncatedValues.map((value, index) => (
     <TableCell key={index} sx={{ flex: 1 }}>
-      {value.length > 5 ? `${value.substring(0, 5)}...` : value}
+      {value.length > 10 ? `${value.substring(0, 10)}...` : value}
     </TableCell>
   ))}
 </TableRow>
@@ -71,10 +71,11 @@ function Row({ row, width, addMarks, clearMarks, span }) {
                       <TableCell onClick={() => handleRowClick()} className={`cm-m${index} matchesItem`}>{key}</TableCell>
                       <TableCell onClick={() => handleRowClick()}>{value.value}</TableCell>
                       <TableCell onClick={() => handleRowClick()}>
-                        {span && span[index] && span[index].map((s, idx) => (
-                          <span key={idx}>{`${s} `}</span>
-                        ))}
-                      </TableCell>
+                      {span && span[index] && (
+  <span>
+    {`[${span[index][0]}, ${span[index][1]}${span[index].length > 2 ? ']' : '>'}`}
+  </span>
+)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
