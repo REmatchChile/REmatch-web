@@ -378,3 +378,21 @@ a {
     text-align: center;
   }
 }
+
+.newRows {
+
+  &.disabled {
+    cursor: default !important;
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, .2);
+  }
+
+}
+
+.TableRow {
+  &.hovered {
+    background-color: rgba(255, 255, 255, .4);
+  }
+}

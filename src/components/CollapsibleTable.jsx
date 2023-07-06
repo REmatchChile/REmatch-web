@@ -12,17 +12,49 @@ import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Pagination from '@material-ui/lab/Pagination';
+import { makeStyles } from '@material-ui/core/styles';
 
-function Row({ row, width, addMarks, clearMarks, span }) {
+const useStyles = makeStyles((theme) => ({
+  hovered: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    },
+  },
+}));
+
+
+function Row({ row, width, addMarks, clearMarks, span, index }) {
+  //console.log(width)
+
+  //const MAX_CHARS = Math.floor(width * (3/4) );
+  const MAX_CHARS =  Math.floor(width);
+  //console.log(MAX_CHARS)
   const [open, setOpen] = useState(false);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   const { span: rowSpan, ...rowData } = row;
 
+  const classes = useStyles();
+
   const entries = Object.entries(rowData).filter(([, value]) => value && value.value !== undefined);
-  const truncatedKey = entries[0][1].value.length > 10 ? `${entries[0][1].value.substring(0, 10)}...` : entries[0][1].value;
+  const truncatedKey = entries[0][1].value.length > MAX_CHARS ? `${entries[0][1].value.substring(0, MAX_CHARS)}...` : entries[0][1].value;
   const truncatedValues = entries.slice(1).map(([key, value]) =>
-    value.value.length > 10 ? `${value.value.substring(0, 10)}...` : value.value
+    value.value.length > MAX_CHARS ? `${value.value.substring(0, MAX_CHARS)}...` : value.value
   );
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    // Perform any action or call any function when the cursor enters the desired part
+    console.log("hola");
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    // Perform any action or call any function when the cursor leaves the desired part
+    console.log("adios");
+  };
 
   const handleRowClick = () => {
     clearMarks();
@@ -30,7 +62,7 @@ function Row({ row, width, addMarks, clearMarks, span }) {
       addMarks(span);
     }
   };
-  // largo de caracteres variable
+  
   return (
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset', flex: 1 } }}>
@@ -41,49 +73,67 @@ function Row({ row, width, addMarks, clearMarks, span }) {
   </TableCell>
 
   <TableCell component="th" scope="row" sx={{ flex: 1 }}>
+          {index} {/* Add index as ID */}
+  </TableCell>
+
+  <TableCell component="th" scope="row" sx={{ flex: 1 }}>
     {truncatedKey}
   </TableCell>
 
   {truncatedValues.map((value, index) => (
     <TableCell key={index} sx={{ flex: 1 }}>
-      {value.length > 10 ? `${value.substring(0, 10)}...` : value}
+      {value.length > MAX_CHARS ? `${value.substring(0, MAX_CHARS)}...` : value}
     </TableCell>
   ))}
 </TableRow>
 
-      {open && (
-        <TableRow>
-          <TableCell colSpan={entries.length + 2}>
-            <Box sx={{ margin: 1 }}>
-              <Table size="small" aria-label="matches">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>Variable</TableCell>
-                    <TableCell>Value</TableCell>
-                    <TableCell>Span</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {entries.map(([key, value], index) => (
-                    <TableRow key={index}>
-                      <TableCell></TableCell>
-                      <TableCell onClick={() => handleRowClick()} className={`cm-m${index} matchesItem`}>{key}</TableCell>
-                      <TableCell onClick={() => handleRowClick()}>{value.value}</TableCell>
-                      <TableCell onClick={() => handleRowClick()}>
-                      {span && span[index] && (
-  <span>
-    {`[${span[index][0]}, ${span[index][1]}${span[index].length > 2 ? ']' : '>'}`}
-  </span>
-)}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </TableCell>
-        </TableRow>
-      )}
+{open && (
+  <TableRow
+  key={index}
+  className={isHovered ? classes.hovered : ''}
+  onMouseEnter={handleMouseEnter}
+  onMouseLeave={handleMouseLeave}
+>
+    <TableCell colSpan={entries.length + 2}>
+      <Box sx={{ margin: 1 }}>
+        <Table size="small" aria-label="matches">
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ textAlign: 'left' }}>Variable</TableCell>
+              <TableCell style={{ textAlign: 'left' }}>Value</TableCell>
+              <TableCell style={{ textAlign: 'left' }}>Span</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+  {entries.map(([key, value], index) => (
+    <TableRow key={index} >
+      <TableCell
+        onClick={() => handleRowClick()}
+        className={`cm-m${index} matchesItem`}
+        style={{ textAlign: 'left' }}
+      >
+          {key}
+      </TableCell>
+      <TableCell onClick={() => handleRowClick()} style={{ textAlign: 'left' }}>
+        {value.value}
+      </TableCell>
+      <TableCell onClick={() => handleRowClick()} style={{ textAlign: 'left' }}>
+        {span && span[index] && (
+          <span>
+            {`[${span[index][0]}, ${span[index][1]}${span[index].length > 2 ? ']' : '>'}`}
+          </span>
+        )}
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
+        </Table>
+      </Box>
+    </TableCell>
+  </TableRow>
+)}
+
     </>
   );
 }
@@ -112,23 +162,28 @@ export default function CollapsibleTable({ matches, schema, textEditor, addMarks
     return null;
   }
 
-  const ROW_WIDTH = 100 / matches.length;
+  //console.log("schema", schema);
+  //console.log("matches", matches.length);
+  const ROW_WIDTH = 100 / schema.length;
 
-  const data = matches.map((match) => {
+  //console.log("ROW_WIDTH", ROW_WIDTH);
+
+  const data = matches.map((match, idxs) => {
     const obj = {};
-
+    //console.log(idxs) MATCH
     match.forEach((span, idx) => {
       const value = textEditor.getRange(
         textEditor.posFromIndex(span[0]),
         textEditor.posFromIndex(span[1])
       );
+      //console.log(idx); VARIABLE
       obj[schema[idx]] = {
         value,
         span,
       };
     });
 
-    return { ...obj, key: match.join('_'), span: match };
+    return { ...obj, key: match.join('_'), span: match, index: idxs };
   });
 
   const handleChangePage = (_, newPage) => {
@@ -144,8 +199,11 @@ export default function CollapsibleTable({ matches, schema, textEditor, addMarks
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell />
+            <TableCell /> {/* Add empty cell for expand icon */}
+            <TableCell>id</TableCell> {/* Add ID column header */}
+            
             {schema.map((variable, schIdx) => (
+        
               <TableCell key={variable} className={`cm-m${schIdx} matchesItem`}>
                 {variable}
               </TableCell>
@@ -162,6 +220,7 @@ export default function CollapsibleTable({ matches, schema, textEditor, addMarks
               clearMarks={clearMarks}
               handleMarkText={handleMarkText}
               span={row.span}
+              index={index}
             />
           ))}
         </TableBody>

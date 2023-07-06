@@ -351,15 +351,6 @@ Kyle Bossonney`,
           <Divider />
           {/* RESULTS */}
           <div className='sectionTitle'>Matches</div>
-          <MatchesTable
-            matches={this.state.matches}
-            schema={this.state.schema}
-            textEditor={this.state.textEditor}
-            addMarks={this.addMarks}
-            clearMarks={this.clearMarks}
-            handleExport={this.handleExport}
-            ref='childMatchesTable'
-          />
           <CollapsibleTable 
           matches={this.state.matches}             
           schema={this.state.schema}
