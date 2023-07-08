@@ -93,6 +93,7 @@ function Row({ row, width, addMarks, clearMarks, span, index }) {
   className={isHovered ? classes.hovered : ''}
   onMouseEnter={handleMouseEnter}
   onMouseLeave={handleMouseLeave}
+  onClick={() => handleRowClick()}
 >
     <TableCell colSpan={entries.length + 2}>
       <Box sx={{ margin: 1 }}>
