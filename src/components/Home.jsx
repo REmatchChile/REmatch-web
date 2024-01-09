@@ -14,13 +14,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import PlayArrow from "@material-ui/icons/PlayArrow";
 import Stop from "@material-ui/icons/Stop";
-//import Publish from "@material-ui/icons/Publish";
+import Publish from "@material-ui/icons/Publish";
 
 /* Project Components */
 import MatchesTable from "./MatchesTable";
 import English from "../text/english";
 import CustomToolbar from "./CustomToolbar";
-import AlertDialogSlide from './FileDialog';
 
 /* CodeMirror */
 import CodeMirror from "codemirror";
@@ -29,7 +28,6 @@ import "codemirror/theme/material-darker.css";
 import { Typography } from "@material-ui/core";
 
 /* NPM */
-import languageEncoding from "detect-file-encoding-and-language";
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
 let worker = new Worker(WORKPATH);
@@ -48,9 +46,9 @@ class Home extends Component {
       exampleExplanation: "",
       preFile: null, //fileUploadingPrev
       content: null, //fileUploadingPrev
-      open: false //fileUploadingPrev
+      open: false, //fileUploadingPrev
     };
-  }  
+  }
 
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById("queryEditor"), {
@@ -90,8 +88,9 @@ Cristian Riveros
 Domagoj Vrgoc
 Ignacio Pereira
 Kyle Bossonney
+Gustavo Toro
 `,
-      mode: {name: "text/html"}, 
+      mode: { name: "text/html" },
       placeholder: "Enter your text...",
       theme: "material-darker",
       lineNumbers: true,
@@ -110,7 +109,6 @@ Kyle Bossonney
       textEditor,
     });
   }
-  
 
   setExample = (event) => {
     const exampleName = event.target.textContent;
@@ -144,44 +142,28 @@ Kyle Bossonney
       mark.clear();
     });
   };
-  
-  preloadedFile = async (file) => {
-    this.state.textEditor.setValue("");
+
+  handleFile = async (event) => {
+    let file = event.target.files[0];
+    if (!file) return;
+    this.state.textEditor.setValue('');
     this.clearMarks();
-    this.setState({
-      matches: [],
-      schema: [],
-      uploadingFile: true,
-      fileProgress: 0,
-    });
+    this.setState({ matches: [], schema: [], uploadingFile: true, fileProgress: 0 });
     let start = 0;
     let end = CHUNK_SIZE;
     while (start < file.size) {
-      await file
-        .slice(start, end)
-        .text()
+      await file.slice(start, end).text()
         // eslint-disable-next-line no-loop-func
         .then((textChunk) => {
-          this.setState({
-            fileProgress: Math.round((100 * 100 * start) / file.size) / 100,
-          });
+          this.setState({ fileProgress: Math.round(100 * 100 * start / file.size) / 100 })
           this.state.textEditor.replaceRange(textChunk, { line: Infinity });
           start = end;
           end += CHUNK_SIZE;
         });
     }
-    console.log("upload done");
-    this.setState({ uploadingFile: false });
-  };
-
-  handleFile = async (event) => {
-    let file = event.target.files[0];
-    if (!file) {
-      return;
-    }
-    this.preloadedFile(file);
-  };
-
+    console.log('upload done');
+    this.setState({ uploadingFile: false })
+  }
 
   restartWorker = () => {
     worker.terminate();
@@ -233,57 +215,25 @@ Kyle Bossonney
   }
 
   handleClose = () => {
-    this.setState({open: false});
+    this.setState({ open: false });
     console.log(this.state.close);
   };
 
-  handleAgree = () => {
-      this.handleClose();
-      this.preloadedFile(this.state.preFile);
-  };
-
-  getEncoding = async (file) => { //SOLO UTF-8
-    try {
-      return await languageEncoding(file);
-    } catch (err) {
-      alert(err);
-    }
-  }
-
-  showFile = async (e) => {
-    // 1. Obtener archivo y setearlo en file
-    const file = e.target.files[0];
-    if (!file) return;
-    // 2. Obtener encoding y setearlo
-    const encoding = await this.getEncoding(file);
-    // 3. Leer N caracteres del archivo (500) y setear arr y content
-    const N_CHARS = 500;
-    const fileHead = await file.slice(0, N_CHARS).text();
-
-    //this.content= ;
-      
-    this.setState({ open: true, preFile: file, content: [file.name,
-      file.type,
-      file.size,
-      encoding.encoding,
-      fileHead]});
-  }
-
-
   render() {
     return (
-      <Container maxWidth='md' className='top-padding'>
+      <Container maxWidth="lg" className="top-padding">
         <Dialog
-          className='dialog'
+          className="dialog"
           open={this.state.howTo}
-          onClose={() => this.setState({ howTo: false })}>
+          onClose={() => this.setState({ howTo: false })}
+        >
           <DialogTitle>How to use this page?</DialogTitle>
           <DialogContent>
             <DialogContentText>
               This page serves as a visualisation tool for the{" "}
-              <a target='_blank' href='https://github.com/REmatchChile'>
+              <a target="_blank" href="https://github.com/REmatchChile">
                 {" "}
-                <span className='cm-m0'>REmatch</span>
+                <span className="cm-m0">REmatch</span>
               </a>{" "}
               library, which allows users to run regular expressions over a text
               document, and extract certain pieces of information of their
@@ -291,63 +241,76 @@ Kyle Bossonney
             </DialogContentText>
             <DialogContentText>
               The basic usage is simple: you enter your regular expression in
-              the <span className='cm-m1'>Query</span> field of the main page,
-              and your text in the <span className='cm-m1'>Text</span> field.
-              Once you hit the <span className='cm-m1'>Run</span> button, the
-              field <span className='cm-m1'>Matches</span> will fill up with the
+              the <span className="cm-m1">Query</span> field of the main page,
+              and your text in the <span className="cm-m1">Text</span> field.
+              Once you hit the <span className="cm-m1">Run</span> button, the
+              field <span className="cm-m1">Matches</span> will fill up with the
               encountered results. To see where a result appears inside the
               text, you can click on it. You can also upload the text from a
-              file by clicking the <span className='cm-m1'>Import File</span>{" "}
+              file by clicking the <span className="cm-m1">Import File</span>{" "}
               button and selecting a text file on your computer.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button
               onClick={this.handleCloseForever.bind(this)}
-              color='primary'>
+              color="primary"
+            >
               Don't show this again
             </Button>
             <Button
               onClick={() => this.setState({ howTo: false })}
-              color='primary'>
+              color="primary"
+            >
               OK
             </Button>
           </DialogActions>
         </Dialog>
-        <Backdrop className='backdrop' open={this.state.uploadingFile}>
-          <CircularProgress color='primary' size='3rem' />
-          <Typography component='div' variant='h5' className='loading'>
+        <Backdrop className="backdrop" open={this.state.uploadingFile}>
+          <CircularProgress color="primary" size="3rem" />
+          <Typography component="div" variant="h5" className="loading">
             Loading ({this.state.fileProgress}%)
           </Typography>
         </Backdrop>
         <CustomToolbar
-          onImportFile={(event) => this.showFile(event)} // BOTÓN ANTIGUO
+          onImportFile={(event) => {}} // BOTÓN ANTIGUO
           onExportMatches={(event) => this.handleExport(event)}
           onSetExample={(event) => this.setExample(event)}
           canExport={this.state.matches.length === 0}
         />
-        <Paper elevation={5} className='mainPaper'>
+        <Paper elevation={5} className="mainPaper">
           {/* QUERY */}
-          <div className='sectionTitle'>Query</div>
-          <div className='queryContainer'>
-            <div id='queryEditor'></div>
+          <div className="sectionTitle">Query</div>
+          <div className="queryContainer">
+            <div id="queryEditor"></div>
             <Button
-              className='queryButton'
-              color='primary'
+              className="queryButton"
+              color="primary"
               startIcon={this.state.running ? <Stop /> : <PlayArrow />}
-              onClick={
-                this.state.running ? this.restartWorker : this.runWorker
-              }>
+              onClick={this.state.running ? this.restartWorker : this.runWorker}
+            >
               {this.state.running ? "Stop" : "Run"}
             </Button>
           </div>
           <Divider />
           {/* EDITOR */}
-          <div className='sectionTitle'>Text</div>
-          <div id='textEditor'></div>
+          <div className="sectionTitle">Text</div>
+          <div id="textEditor"></div>
+          <input accept="*" id="fileInput" type="file" className="invisible" onChange={this.handleFile} />
+          <label htmlFor="fileInput">
+            <Button
+              color="primary"
+              variant="text"
+              component="span"
+              size="small"
+              startIcon={<Publish />}
+              className="fullButton">
+              Import file
+            </Button>
+          </label>
           <Divider />
           {/* RESULTS */}
-          <div className='sectionTitle'>Matches</div>
+          <div className="sectionTitle">Matches</div>
           <MatchesTable
             matches={this.state.matches}
             schema={this.state.schema}
@@ -355,16 +318,9 @@ Kyle Bossonney
             addMarks={this.addMarks}
             clearMarks={this.clearMarks}
             handleExport={this.handleExport}
-            ref='childMatchesTable'
+            ref="childMatchesTable"
           />
         </Paper>
-        <AlertDialogSlide 
-          content={this.state.content}
-          open={this.state.open}
-          onClose={this.handleClose}
-          handleAgree={this.handleAgree}
-          preloadedFiles={this.state.preFile}
-        />
       </Container>
     );
   }

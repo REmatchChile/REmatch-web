@@ -938,17 +938,6 @@ a {
   font-size: 0.8rem !important;
 }
 
-.cardTutorial {
-  width: 100%;
-  margin-top: 60px;
-  border-style: solid;
-  border-width: 0.01rem;
-  border-color: gray;
-}
-
-.link-tutorial {
-  text-decoration: none;
-} 
 .text-center {
   text-align: center;
 }
@@ -956,37 +945,6 @@ a {
 .text-document {
   font-style: italic;
   color: wheat;
-}
-
-.last-tutorial-text {
-  margin-bottom: 2rem;
-}
-
-.button-right-tutorial {
-  float: right;
-  margin-top: 2rem;
-}
-
-.button-left-tutorial {
-  float: left;
-  margin-top: 2rem;
-}
-
-.tutorial-code {
-  background-color: #212121;
-  border-radius: .3rem;
-  font-size: 16px;
-}
-
-.tutorial-stepper {
-  padding-right: 0;
-}
-
-.scrollable-tutorial {
-  overflow: auto;
-  /* overflow-y: auto; */
-  max-height: 80vh;
-  padding-right: 1rem;
 }
 
 .top-padding {

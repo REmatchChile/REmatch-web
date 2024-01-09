@@ -1,9 +1,3 @@
-/*
-TODO:
-  - finish about
-  - fix bug worker doesn't stop onpagechange
-  - start/stop worker
-*/
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -15,17 +9,13 @@ import CodeMirror from 'codemirror';
 import 'codemirror/addon/mode/simple';
 import 'codemirror/theme/material-darker.css';
 
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import Navbar from './components/Navbar';
-import About from './components/About';
-import Examples from './components/Examples';
 import Home from './components/Home';
-import Tutorial from './components/Tutorial';
-import Beginner from './components/Beginner';
-import Advanced from './components/Advanced';
 import 'fontsource-roboto';
+import './App.scss';
 
 CodeMirror.defineSimpleMode('REmatchQuery', {
   start: [
@@ -56,29 +46,8 @@ CodeMirror.defineSimpleMode('REmatchQuery', {
   ]
 });
 
-CodeMirror.defineSimpleMode('RegExQuery', {
-  start: [
-    {
-      regex: /\(|\)/,
-      token: 'm0'
-    },
-    {
-      regex: /(\\d)|(\\w)|(\\s)|(\\t)|(\\r)|(\\n)|(\\\()|(\\\))|(\\\[)|(\\\])|(\\\{)|(\\\})|(\\\.)|(\\-)|(\\_)/i,
-      token: 'm2'
-    },
-    {
-      regex: /\[|\]|-/,
-      token: 'm3'
-    },
-    {
-      regex: /(\+|\*|\.|\+)/,
-      token: 'm1'
-    },
-  ]
-});
-
 /* MATERIAL UI DARK THEME */
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
   palette: {
     type: 'dark',
     primary: {
@@ -104,18 +73,6 @@ const App = () => {
       <Router>
         <Navbar/>
         <Switch>
-          <Route exact path="/tutorial">
-            <Tutorial />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route exact path="/beginner">
-            <Beginner />
-          </Route>
-          <Route exact path="/advanced">
-            <Advanced />
-          </Route>
           <Route path="/">
             <Home />
           </Route>
