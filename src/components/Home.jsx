@@ -1,31 +1,29 @@
 import React, { Component } from "react";
 
 /* MaterialUI */
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Backdrop from "@material-ui/core/Backdrop";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Divider from "@material-ui/core/Divider";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import PlayArrow from "@material-ui/icons/PlayArrow";
-import Stop from "@material-ui/icons/Stop";
-import Publish from "@material-ui/icons/Publish";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Backdrop from "@mui/material/Backdrop";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Divider from "@mui/material/Divider";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import PlayArrow from "@mui/icons-material/PlayArrow";
+import Stop from "@mui/icons-material/Stop";
+import Publish from "@mui/icons-material/Publish";
 
 /* Project Components */
 import MatchesTable from "./MatchesTable";
-import English from "../text/english";
-import CustomToolbar from "./CustomToolbar";
 
 /* CodeMirror */
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
-import { Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
 
 /* NPM */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
@@ -110,14 +108,6 @@ Gustavo Toro
     });
   }
 
-  setExample = (event) => {
-    const exampleName = event.target.textContent;
-    const query = English.examples.querys[exampleName];
-    const text = English.examples.texts[exampleName];
-    this.state.queryEditor.setValue(query);
-    this.state.textEditor.setValue(text);
-  };
-
   addMarks = (spans) => {
     let start, end;
     spans.forEach((span, idx) => {
@@ -143,27 +133,36 @@ Gustavo Toro
     });
   };
 
-  handleFile = async (event) => {
+  handleImportFile = async (event) => {
     let file = event.target.files[0];
     if (!file) return;
-    this.state.textEditor.setValue('');
+    this.state.textEditor.setValue("");
     this.clearMarks();
-    this.setState({ matches: [], schema: [], uploadingFile: true, fileProgress: 0 });
+    this.setState({
+      matches: [],
+      schema: [],
+      uploadingFile: true,
+      fileProgress: 0,
+    });
     let start = 0;
     let end = CHUNK_SIZE;
     while (start < file.size) {
-      await file.slice(start, end).text()
+      await file
+        .slice(start, end)
+        .text()
         // eslint-disable-next-line no-loop-func
         .then((textChunk) => {
-          this.setState({ fileProgress: Math.round(100 * 100 * start / file.size) / 100 })
+          this.setState({
+            fileProgress: Math.round((100 * 100 * start) / file.size) / 100,
+          });
           this.state.textEditor.replaceRange(textChunk, { line: Infinity });
           start = end;
           end += CHUNK_SIZE;
         });
     }
-    console.log('upload done');
-    this.setState({ uploadingFile: false })
-  }
+    console.log("upload done");
+    this.setState({ uploadingFile: false });
+  };
 
   restartWorker = () => {
     worker.terminate();
@@ -210,10 +209,6 @@ Gustavo Toro
     this.setState({ howTo: false });
   }
 
-  handleExport(event) {
-    this.refs.childMatchesTable.handleExport();
-  }
-
   handleClose = () => {
     this.setState({ open: false });
     console.log(this.state.close);
@@ -221,9 +216,9 @@ Gustavo Toro
 
   render() {
     return (
-      <Container maxWidth="lg" className="top-padding">
+      <Container maxWidth="lg">
         <Dialog
-          className="dialog"
+          sx={{ textAlign: "justify" }}
           open={this.state.howTo}
           onClose={() => this.setState({ howTo: false })}
         >
@@ -266,19 +261,21 @@ Gustavo Toro
             </Button>
           </DialogActions>
         </Dialog>
-        <Backdrop className="backdrop" open={this.state.uploadingFile}>
+        <Backdrop
+          sx={{
+            zIndex: 6000,
+            display: "flex",
+            flexDirection: "column",
+            gap: "2rem",
+          }}
+          open={this.state.uploadingFile}
+        >
           <CircularProgress color="primary" size="3rem" />
-          <Typography component="div" variant="h5" className="loading">
+          <Typography component="div" variant="h5">
             Loading ({this.state.fileProgress}%)
           </Typography>
         </Backdrop>
-        <CustomToolbar
-          onImportFile={(event) => {}} // BOTÓN ANTIGUO
-          onExportMatches={(event) => this.handleExport(event)}
-          onSetExample={(event) => this.setExample(event)}
-          canExport={this.state.matches.length === 0}
-        />
-        <Paper elevation={5} className="mainPaper">
+        <Paper elevation={2} className="mainPaper">
           {/* QUERY */}
           <div className="sectionTitle">Query</div>
           <div className="queryContainer">
@@ -296,18 +293,17 @@ Gustavo Toro
           {/* EDITOR */}
           <div className="sectionTitle">Text</div>
           <div id="textEditor"></div>
-          <input accept="*" id="fileInput" type="file" className="invisible" onChange={this.handleFile} />
-          <label htmlFor="fileInput">
-            <Button
-              color="primary"
-              variant="text"
-              component="span"
-              size="small"
-              startIcon={<Publish />}
-              className="fullButton">
-              Import file
-            </Button>
-          </label>
+          <Button
+            component="label"
+            color="primary"
+            variant="text"
+            size="small"
+            startIcon={<Publish />}
+            className="fullButton"
+          >
+            Import file
+            <input type="file" hidden onChange={this.handleImportFile} />
+          </Button>
           <Divider />
           {/* RESULTS */}
           <div className="sectionTitle">Matches</div>
@@ -317,8 +313,6 @@ Gustavo Toro
             textEditor={this.state.textEditor}
             addMarks={this.addMarks}
             clearMarks={this.clearMarks}
-            handleExport={this.handleExport}
-            ref="childMatchesTable"
           />
         </Paper>
       </Container>

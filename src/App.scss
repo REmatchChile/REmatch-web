@@ -59,25 +59,9 @@ a {
   text-decoration: none;
 }
 
-.svgIcon {
-  width: 24px;
-  height: 24px;
-}
-
-.invisible {
-  display: none;
-}
-
-.CodeMirror {
+.CodeMirror, .CodeMirror-gutters {
+  background-color: transparent !important;
   font-family: 'Roboto Mono', monospace;
-}
-
-.CodeMirror-scrollbar-filler {
-  background-color: $darkest !important;
-}
-
-.CodeMirror pre.CodeMirror-placeholder {
-  color: $darker;
 }
 
 .mainContainer {
@@ -223,61 +207,4 @@ a {
     width: 100%;
     padding: 1rem;
   }
-}
-
-/* NavBar */
-.appBar {
-  background-color: $darkest !important;
-
-  .logo {
-    display: block;
-    height: 36px;
-
-    &:hover {
-      filter: drop-shadow(0 0 2px #03DAC6);
-    }
-  }
-
-  .button {
-    text-decoration: none;
-    color: nth($colors, 1);
-    margin-left: 1rem;
-  }
-}
-
-.sectionContainer {
-  padding: 1rem 0;
-
-  p {
-    margin-top: .25rem;
-  }
-}
-
-.important {
-  background-color: red;
-  color: white;
-}
-
-.code {
-  font-family: 'Roboto Mono', monospace;
-  background-color: $darkest;
-  padding: 0 .2rem;
-  white-space: nowrap;
-
-}
-
-.codeBlock {
-  font-family: 'Roboto Mono', monospace;
-  text-align: justify;
-  padding: 1rem;
-  margin: 1rem auto;
-  width: 90%;
-
-  &.centered {
-    text-align: center;
-  }
-}
-
-.top-padding {
-  padding: 96px 0 0 0;
 }
