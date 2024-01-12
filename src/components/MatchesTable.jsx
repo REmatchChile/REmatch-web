@@ -1,15 +1,14 @@
 import React, { useState, useEffect, forwardRef } from "react";
 
 import Pagination from "@mui/material/Pagination";
-import Button from "@mui/material/Button";
-import Backdrop from "@mui/material/Backdrop";
+import Box from "@mui/material/Box";
 
 function MatchesTable(props) {
   const { matches, schema, textEditor, addMarks, clearMarks } = props;
 
   const [state, setState] = useState({
     page: 0,
-    rowsPerPage: 12,
+    rowsPerPage: 10,
   });
 
   const handleChangePage = (_, newPage) => {
@@ -20,12 +19,6 @@ function MatchesTable(props) {
     clearMarks();
     addMarks(row);
   };
-
-  useEffect(() => {
-    if (matches.length === 0) {
-      setState((prevState) => ({ ...prevState, page: 0 }));
-    }
-  }, [matches]);
 
   useEffect(() => {
     if (matches.length === 0) {
@@ -46,7 +39,7 @@ function MatchesTable(props) {
             ))
           ) : (
             <div className="matchesRow">
-              <div className="matchesItem">No matches.</div>
+              <div className="matchesItem">No matches</div>
             </div>
           )}
         </div>
@@ -82,14 +75,15 @@ function MatchesTable(props) {
           </div>
         ))}
       </div>
-      <div className="paginationContainer">
+
+      <Box sx={{display: "flex", justifyContent: "space-around", alignItems: "center", padding: "1rem"}}>
         <Pagination
           page={state.page + 1}
           style={{ display: "block" }}
           count={Math.ceil(matches.length / state.rowsPerPage)}
           onChange={handleChangePage}
         />
-      </div>
+      </Box>
     </>
   );
 }

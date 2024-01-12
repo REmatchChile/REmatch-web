@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 /* MaterialUI */
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Backdrop from "@mui/material/Backdrop";
@@ -216,7 +217,7 @@ Gustavo Toro
 
   render() {
     return (
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ paddingTop: "96px" }}>
         <Dialog
           sx={{ textAlign: "justify" }}
           open={this.state.howTo}
@@ -226,7 +227,7 @@ Gustavo Toro
           <DialogContent>
             <DialogContentText>
               This page serves as a visualisation tool for the{" "}
-              <a target="_blank" href="https://github.com/REmatchChile">
+              <a href="https://github.com/REmatchChile">
                 {" "}
                 <span className="cm-m0">REmatch</span>
               </a>{" "}
@@ -277,21 +278,40 @@ Gustavo Toro
         </Backdrop>
         <Paper elevation={2} className="mainPaper">
           {/* QUERY */}
-          <div className="sectionTitle">Query</div>
-          <div className="queryContainer">
+          <Box sx={{ pl: 2, pt: 1 }}>
+            <Typography
+              component="span"
+              color="text.secondary"
+              variant="caption"
+            >
+              Query
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex" }}>
             <div id="queryEditor"></div>
             <Button
-              className="queryButton"
+              sx={{
+                borderRadius: 0,
+                padding: ".5rem 2rem",
+              }}
               color="primary"
               startIcon={this.state.running ? <Stop /> : <PlayArrow />}
               onClick={this.state.running ? this.restartWorker : this.runWorker}
             >
               {this.state.running ? "Stop" : "Run"}
             </Button>
-          </div>
+          </Box>
           <Divider />
           {/* EDITOR */}
-          <div className="sectionTitle">Text</div>
+          <Box sx={{ pl: 2, pt: 1 }}>
+            <Typography
+              component="span"
+              color="text.secondary"
+              variant="caption"
+            >
+              Text
+            </Typography>
+          </Box>
           <div id="textEditor"></div>
           <Button
             component="label"
@@ -299,14 +319,26 @@ Gustavo Toro
             variant="text"
             size="small"
             startIcon={<Publish />}
-            className="fullButton"
+            sx={{
+              width: "100%",
+              padding: "1rem",
+              borderRadius: 0,
+            }}
           >
             Import file
             <input type="file" hidden onChange={this.handleImportFile} />
           </Button>
           <Divider />
-          {/* RESULTS */}
-          <div className="sectionTitle">Matches</div>
+          {/* MATCHES */}
+          <Box sx={{ pl: 2, pt: 1 }}>
+            <Typography
+              component="span"
+              color="text.secondary"
+              variant="caption"
+            >
+              Matches
+            </Typography>
+          </Box>
           <MatchesTable
             matches={this.state.matches}
             schema={this.state.schema}

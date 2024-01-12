@@ -64,82 +64,28 @@ a {
   font-family: 'Roboto Mono', monospace;
 }
 
-.mainContainer {
-  padding: 1.5*64px 0;
+.CodeMirror-placeholder {
+  color: $darker !important;
 }
 
-.backdrop {
-  z-index: 6000 !important;
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
-
-  .loading {
-    margin-top: 1rem;
+#textEditor {
+  height: 300px;
+  .CodeMirror {
+    height: inherit;
+    padding: 0 .5rem;
   }
 }
 
-.dialog {
-  text-align: justify;
-
-  .code {
-    font-family: 'Roboto Mono', monospace;
-    background-color: $darker;
-    color: white;
+#queryEditor {
+  padding-left: 1rem;
+  flex: 1;
+  overflow: hidden;
+  .CodeMirror {
+    height: auto;
   }
 }
 
 .mainPaper {
-  overflow: hidden;
-  font-size: 14px;
-  font-family: 'Roboto Mono', monospace;
-
-  .CodeMirror {
-    font-size: 14px;
-  }
-
-  .sectionTitle {
-    padding: 1rem 1rem 0rem 1rem;
-    font-size: 12px;
-    color: $dark;
-  }
-
-  .queryContainer {
-    padding: 0;
-    display: flex;
-    height: auto;
-
-
-    #queryEditor {
-      padding-left: 1rem;
-      flex: 1;
-      overflow: hidden;
-
-      .CodeMirror {
-        height: auto;
-        padding: .5rem 0;
-      }
-    }
-
-    .queryButton {
-      padding: .5rem 2.5rem;
-      border-radius: 0;
-    }
-  }
-
-  #textEditor {
-    height: 250px;
-
-    .CodeMirror {
-      height: 250px;
-      padding: .5rem 1rem;
-
-      // .CodeMirror-line {
-      //   /*margin: .5rem 0;*/
-      // }
-    }
-  }
-
   .headContainer {
     padding: 0 1rem;
 
@@ -195,16 +141,4 @@ a {
     }
   }
 
-  .paginationContainer {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 1rem 0;
-  }
-
-  .fullButton {
-    border-radius: 0;
-    width: 100%;
-    padding: 1rem;
-  }
 }
