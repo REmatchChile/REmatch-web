@@ -161,7 +161,6 @@ Gustavo Toro
           end += CHUNK_SIZE;
         });
     }
-    console.log("upload done");
     this.setState({ uploadingFile: false });
   };
 
@@ -172,7 +171,6 @@ Gustavo Toro
   };
 
   runWorker = () => {
-    console.log("STARTED");
     this.setState({ running: true });
     this.clearMarks();
     this.setState({ matches: [], schema: [] });
@@ -195,9 +193,8 @@ Gustavo Toro
           break;
         case "ERROR":
           this.setState({ running: false });
-          console.log("ERROR:", m.data.payload);
+          console.error("ERROR:", m.data.payload);
           this.restartWorker();
-          console.log("WORKER HAS BEEN RELOADED");
           break;
         default:
           break;
@@ -212,7 +209,6 @@ Gustavo Toro
 
   handleClose = () => {
     this.setState({ open: false });
-    console.log(this.state.close);
   };
 
   render() {

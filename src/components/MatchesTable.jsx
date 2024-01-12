@@ -1,91 +1,101 @@
-import React, { useState, useEffect, forwardRef } from "react";
+import React, { useState, useEffect } from "react";
 
-import Pagination from "@mui/material/Pagination";
 import Box from "@mui/material/Box";
+import Pagination from "@mui/material/Pagination";
+import PaginationItem from "@mui/material/PaginationItem";
+import {
+  DataGrid,
+  gridPageCountSelector,
+  gridPageSelector,
+  useGridApiContext,
+  useGridSelector,
+} from "@mui/x-data-grid";
 
-function MatchesTable(props) {
+const CustomPagination = () => {
+  const apiRef = useGridApiContext();
+  const page = useGridSelector(apiRef, gridPageSelector);
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+  return (
+    <Pagination
+      sx={{ margin: "auto" }}
+      page={page + 1}
+      count={pageCount}
+      renderItem={(props2) => <PaginationItem {...props2} />}
+      onChange={(event, value) => apiRef.current.setPage(value - 1)}
+    />
+  );
+};
+
+const MatchesTable = (props) => {
   const { matches, schema, textEditor, addMarks, clearMarks } = props;
+  const [columns, setColumns] = useState([]);
+  const [rows, setRows] = useState([]);
 
-  const [state, setState] = useState({
-    page: 0,
-    rowsPerPage: 10,
-  });
-
-  const handleChangePage = (_, newPage) => {
-    setState((prevState) => ({ ...prevState, page: newPage - 1 }));
-  };
-
-  const handleMarkText = (row) => {
+  const handleRowClick = (params) => {
+    console.log(params.row.matchData);
     clearMarks();
-    addMarks(row);
+    addMarks(params.row.matchData);
   };
 
   useEffect(() => {
-    if (matches.length === 0) {
-      setState((prevState) => ({ ...prevState, page: 0 }));
-    }
+    setColumns(
+      schema.length
+        ? [
+            {
+              field: "id",
+              headerName: "Index",
+              cellClassName: "MuiDataGrid-index-column"
+            },
+            ...schema.map((name, idx) => ({
+              field: `var-${idx}`,
+              headerName: `!${name}`,
+              flex: 1,
+            })),
+          ]
+        : []
+    );
+  }, [schema]);
+
+  useEffect(() => {
+    setRows(
+      matches.map((match, idxMatch) => {
+        const res = { id: idxMatch, matchData: match };
+        match.forEach((span, idxSpan) => {
+          res[`var-${idxSpan}`] = textEditor.getRange(
+            textEditor.posFromIndex(span[0]),
+            textEditor.posFromIndex(span[1])
+          );
+        });
+        return res;
+      })
+    );
   }, [matches]);
 
   return (
-    <>
-      <div className="headContainer">
-        <div className="matchesRow">
-          {matches.length > 0 ? <div className="matchesIdx">id</div> : null}
-          {matches.length > 0 ? (
-            schema.map((variable, schIdx) => (
-              <div key={schIdx} className={`cm-m${schIdx} matchesItem`}>
-                {variable}
-              </div>
-            ))
-          ) : (
-            <div className="matchesRow">
-              <div className="matchesItem">No matches</div>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="matchesContainer">
-        {(state.rowsPerPage > 0
-          ? matches.slice(
-              state.page * state.rowsPerPage,
-              state.page * state.rowsPerPage + state.rowsPerPage
-            )
-          : matches
-        ).map((row, idxRow) => (
-          <div
-            key={idxRow}
-            className="matchesRow"
-            onClick={() => handleMarkText(row)}
-          >
-            <div className="matchesIdx">
-              {state.page * state.rowsPerPage + idxRow}
-            </div>
-            {row.map((col, idxCol) => {
-              return (
-                <div key={idxCol} className="matchesItem">
-                  {textEditor
-                    .getRange(
-                      textEditor.posFromIndex(col[0]),
-                      textEditor.posFromIndex(col[1])
-                    )
-                    .replaceAll(/\r?\n/g, "¬")}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      <Box sx={{display: "flex", justifyContent: "space-around", alignItems: "center", padding: "1rem"}}>
-        <Pagination
-          page={state.page + 1}
-          style={{ display: "block" }}
-          count={Math.ceil(matches.length / state.rowsPerPage)}
-          onChange={handleChangePage}
-        />
-      </Box>
-    </>
+    <Box sx={{ height: 400, width: "100%" }}>
+      <DataGrid
+        onRowClick={handleRowClick}
+        sx={{
+          columnSeparator: "none",
+        }}
+        rows={rows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 25,
+            },
+          },
+        }}
+        density="compact"
+        pageSizeOptions={[50]}
+        slots={{
+          pagination: CustomPagination,
+        }}
+        hideFooterSelectedRowCount
+      />
+    </Box>
   );
-}
+};
 
-export default forwardRef(MatchesTable);
+export default MatchesTable;

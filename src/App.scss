@@ -142,3 +142,30 @@ a {
   }
 
 }
+
+
+.MuiDataGrid-root {
+  border: none !important;
+  .MuiDataGrid-cell {
+    // border: none !important;
+    &:focus-within {
+      outline: none !important;
+    }
+  }
+  .MuiDataGrid-columnHeaders {
+    border: none !important;
+  }
+
+  .MuiDataGrid-footerContainer {
+    border: none !important;
+  }
+
+  .MuiDataGrid-row:hover {
+    cursor: pointer;
+  }
+
+  .MuiDataGrid-index-column {
+    color: $dark !important;
+  }
+}
+

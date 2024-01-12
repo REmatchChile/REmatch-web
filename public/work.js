@@ -26,18 +26,16 @@ this.onmessage = (m) => {
         })
         let iterable = rgx.findIter(m.data.text, Anchor.kUnanchored);
         while (iterable.hasNext()) {
-            console.log('Hola');
             match = iterable.next();
             schema.forEach(variable => {
                 currMatch.push(match.span(variable));
             });
-            
+
             matches.push(currMatch);
             currMatch = [];
             count++;
 
             if (matches.length === MESSAGE_SIZE) {
-                console.log('SEND CHUNK');
                 this.postMessage({
                     type: 'MATCHES',
                     payload: matches,
@@ -48,7 +46,6 @@ this.onmessage = (m) => {
         }
 
         if (matches.length > 0) {
-            console.log('SEND LAST CHUNK');
             this.postMessage({
                 type: 'MATCHES',
                 payload: matches,
