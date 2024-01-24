@@ -27,26 +27,25 @@ const CustomPagination = () => {
 };
 
 const MatchesTable = (props) => {
-  const { matches, schema, textEditor, addMarks, clearMarks } = props;
+  const { matches, variables, textEditor, addMarks, clearMarks } = props;
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
   const handleRowClick = (params) => {
-    console.log(params.row.matchData);
     clearMarks();
     addMarks(params.row.matchData);
   };
 
   useEffect(() => {
     setColumns(
-      schema.length
+      variables.length
         ? [
             {
               field: "id",
               headerName: "Index",
               cellClassName: "MuiDataGrid-index-column"
             },
-            ...schema.map((name, idx) => ({
+            ...variables.map((name, idx) => ({
               field: `var-${idx}`,
               headerName: `!${name}`,
               flex: 1,
@@ -54,7 +53,7 @@ const MatchesTable = (props) => {
           ]
         : []
     );
-  }, [schema]);
+  }, [variables]);
 
   useEffect(() => {
     setRows(

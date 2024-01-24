@@ -1,70 +1,76 @@
-// eslint-disable-next-line no-undef
-importScripts('./rematch_wasm.js');
+import REmatch from "./emscripten_binding.js";
 
-// eslint-disable-next-line no-undef
-const { RegEx, RegExOptions, Anchor } = Module;
-const MESSAGE_SIZE = 5000;
+// Minimum number of matches to send in a single message
+const MIN_MESSAGE_SIZE = 5000;
 
-this.onmessage = (m) => {
-    try {
-        let match;
-        let i = 0;
-        let count = 0;
-        let currMatch = [];
-        let matches = [];
+// Initialize WASM
+let REmatchModuleInstance = null;
+(async () => {
+  REmatchModuleInstance = await REmatch();
+})();
 
-        let rgxOptions = new RegExOptions();
-        rgxOptions.early_output = true;
-        let rgx = new RegEx(m.data.query, rgxOptions);
+addEventListener("message", (e) => {
+  if (REmatchModuleInstance === null) {
+    postMessage({ type: "ERROR", payload: "WASM module not loaded yet" });
+    return;
+  }
 
-        /* THIS SHOULD BE IN RegEx OBJECT */
-        let schema = [...m.data.query.matchAll(/!([A-Za-z0-9]+)/g)].map((m) => (m[1]));
-        /* THIS SHOULD BE IN RegEx OBJECT */
-        this.postMessage({
-            type: 'SCHEMA',
-            payload: schema,
-        })
-        let iterable = rgx.findIter(m.data.text, Anchor.kUnanchored);
-        while (iterable.hasNext()) {
-            match = iterable.next();
-            schema.forEach(variable => {
-                currMatch.push(match.span(variable));
-            });
+  try {
+    const { pattern, document } = e.data;
+    const flags = new REmatchModuleInstance.Flags();
+    const rgx = REmatchModuleInstance.compile(pattern, flags);
+    const match_iterator = rgx.finditer(document);
 
-            matches.push(currMatch);
-            currMatch = [];
-            count++;
+    // Get variables
+    const variables_vector = match_iterator.variables();
+    const variables = [];
+    for (let i = 0; i < variables_vector.size(); ++i)
+      variables.push(variables_vector.get(i));
+    postMessage({ type: "VARIABLES", payload: variables });
 
-            if (matches.length === MESSAGE_SIZE) {
-                this.postMessage({
-                    type: 'MATCHES',
-                    payload: matches,
-                })
-                matches = [];
-                count = 0;
-            }
-        }
+    // Get matches
+    let matchesBuffer = [];
+    let match = match_iterator.next();
+    while (match != null) {
+      const currentMatch = [];
+      variables.forEach((variable) => {
+        currentMatch.push([match.start(variable), match.end(variable)]);
+      });
+      matchesBuffer.push(currentMatch);
 
-        if (matches.length > 0) {
-            this.postMessage({
-                type: 'MATCHES',
-                payload: matches,
-            });
-        }
-
-        this.postMessage({
-            type: 'FINISHED',
-        })
-
-        // Send a message of finished for disable/enable button
-
-        rgxOptions.delete();
-        rgx.delete();
-
-    } catch (err) {
-        this.postMessage({
-            type: 'ERROR',
-            payload: err,
+      if (matchesBuffer.length === MIN_MESSAGE_SIZE) {
+        postMessage({
+          type: "MATCHES",
+          payload: matchesBuffer,
         });
+        matchesBuffer = [];
+      }
+
+      match = match_iterator.next();
     }
-}
+
+    // Send remaining matches if any
+    if (matchesBuffer.length > 0) {
+      postMessage({
+        type: "MATCHES",
+        payload: matchesBuffer,
+      });
+    }
+
+    // Notify that we're done
+    postMessage({
+      type: "FINISHED",
+    });
+
+    // Free WASM objects memory manually
+    flags.delete();
+    rgx.delete();
+    match_iterator.delete();
+  } catch (err) {
+    const [type, message] = REmatchModuleInstance.getExceptionMessage(err);
+    postMessage({
+      type: "ERROR",
+      payload: `${type.slice(9)}: ${message}`,
+    });
+  }
+});

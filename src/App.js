@@ -7,6 +7,7 @@ import "codemirror/theme/material-darker.css";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { SnackbarProvider } from 'notistack'
 
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
@@ -67,6 +68,12 @@ const App = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+      <SnackbarProvider
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        style={{ whiteSpace: "pre-wrap", fontFamily: "'Roboto Mono', monospace" }}
+        autoHideDuration={4000}
+        hideIconVariant
+      />
       <Router>
         <Navbar />
         <Switch>

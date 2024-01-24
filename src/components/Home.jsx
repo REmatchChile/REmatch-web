@@ -1,42 +1,43 @@
 import React, { Component } from "react";
 
 /* MaterialUI */
+import PlayArrow from "@mui/icons-material/PlayArrow";
+import Publish from "@mui/icons-material/Publish";
+import Stop from "@mui/icons-material/Stop";
+import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
-import Backdrop from "@mui/material/Backdrop";
 import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Divider from "@mui/material/Divider";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import PlayArrow from "@mui/icons-material/PlayArrow";
-import Stop from "@mui/icons-material/Stop";
-import Publish from "@mui/icons-material/Publish";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import { enqueueSnackbar } from 'notistack';
 
 /* Project Components */
 import MatchesTable from "./MatchesTable";
 
 /* CodeMirror */
+import { Typography } from "@mui/material";
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
-import { Typography } from "@mui/material";
 
-/* NPM */
+/* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-const CHUNK_SIZE = 1 * 10 ** 8; // 100MB
-let worker = new Worker(WORKPATH);
+const FILE_CHUNK_SIZE = 100 * 1024 * 1024; // 100MB
+let worker = new Worker(WORKPATH, { type : "module" });
 
 /* MAIN INTERFACE */
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      schema: [],
+      variables: [],
       matches: [],
       uploadingFile: false,
       running: false,
@@ -141,12 +142,12 @@ Gustavo Toro
     this.clearMarks();
     this.setState({
       matches: [],
-      schema: [],
+      variables: [],
       uploadingFile: true,
       fileProgress: 0,
     });
     let start = 0;
-    let end = CHUNK_SIZE;
+    let end = FILE_CHUNK_SIZE;
     while (start < file.size) {
       await file
         .slice(start, end)
@@ -158,7 +159,7 @@ Gustavo Toro
           });
           this.state.textEditor.replaceRange(textChunk, { line: Infinity });
           start = end;
-          end += CHUNK_SIZE;
+          end += FILE_CHUNK_SIZE;
         });
     }
     this.setState({ uploadingFile: false });
@@ -166,22 +167,21 @@ Gustavo Toro
 
   restartWorker = () => {
     worker.terminate();
-    worker = new Worker(WORKPATH);
+    worker = new Worker(WORKPATH, { type: "module" });
     this.setState({ running: false });
   };
 
   runWorker = () => {
-    this.setState({ running: true });
+    this.setState({ running: true, matches: [], variables: [] });
     this.clearMarks();
-    this.setState({ matches: [], schema: [] });
     worker.postMessage({
-      text: this.state.textEditor.getValue(),
-      query: this.state.queryEditor.getValue(),
+      pattern: this.state.queryEditor.getValue(),
+      document: this.state.textEditor.getValue(),
     });
     worker.onmessage = (m) => {
       switch (m.data.type) {
-        case "SCHEMA":
-          this.setState({ schema: m.data.payload });
+        case "VARIABLES":
+          this.setState({ variables: m.data.payload });
           break;
         case "MATCHES":
           this.setState((prevState) => ({
@@ -193,10 +193,12 @@ Gustavo Toro
           break;
         case "ERROR":
           this.setState({ running: false });
-          console.error("ERROR:", m.data.payload);
+          console.error(m.data.payload);
+          enqueueSnackbar(m.data.payload, { variant: "error" });
           this.restartWorker();
           break;
         default:
+          console.error("UNHANDLED WORKER MESSAGE:", m);
           break;
       }
     };
@@ -337,7 +339,7 @@ Gustavo Toro
           </Box>
           <MatchesTable
             matches={this.state.matches}
-            schema={this.state.schema}
+            variables={this.state.variables}
             textEditor={this.state.textEditor}
             addMarks={this.addMarks}
             clearMarks={this.clearMarks}
