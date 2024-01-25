@@ -9,6 +9,26 @@ let REmatchModuleInstance = null;
   REmatchModuleInstance = await REmatch();
 })();
 
+const utf8IndexToStringIndex = (str, utf8Index) => {
+  let utf8Counter = 0;
+  let stringIndex = 0;
+  while (utf8Counter < utf8Index) {
+    const code = str.codePointAt(stringIndex);
+    if (code >= 0x10000) {
+      utf8Counter += 4;
+      ++stringIndex;
+    } else if (code >= 0x0800) {
+      utf8Counter += 3;
+    } else if (code >= 0x0080) {
+      utf8Counter += 2;
+    } else {
+      ++utf8Counter;
+    }
+    ++stringIndex;
+  }
+  return stringIndex;
+};
+
 addEventListener("message", (e) => {
   if (REmatchModuleInstance === null) {
     postMessage({ type: "ERROR", payload: "WASM module not loaded yet" });
@@ -34,7 +54,9 @@ addEventListener("message", (e) => {
     while (match != null) {
       const currentMatch = [];
       variables.forEach((variable) => {
-        currentMatch.push([match.start(variable), match.end(variable)]);
+        const start = match.start(variable);
+        const end = match.end(variable);
+        currentMatch.push([utf8IndexToStringIndex(document, start), utf8IndexToStringIndex(document, end)]);
       });
       matchesBuffer.push(currentMatch);
 
