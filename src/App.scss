@@ -146,12 +146,20 @@ a {
 
 .MuiDataGrid-root {
   border: none !important;
+  font-family: 'Roboto Mono', monospace !important;
   .MuiDataGrid-cell {
-    // border: none !important;
     &:focus-within {
       outline: none !important;
     }
   }
+
+  :not(.MuiDataGrid-index-column) > .MuiDataGrid-cellContent  {
+    border-left: 1px dotted $dark;
+    border-right: 1px dotted $dark;
+    padding: 0 4px;
+    white-space: pre;
+  }
+
   .MuiDataGrid-columnHeaders {
     border: none !important;
   }
@@ -167,5 +175,6 @@ a {
   .MuiDataGrid-index-column {
     color: $dark !important;
   }
+
 }
 

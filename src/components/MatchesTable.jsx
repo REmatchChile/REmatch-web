@@ -63,7 +63,7 @@ const MatchesTable = (props) => {
           res[`var-${idxSpan}`] = textEditor.getRange(
             textEditor.posFromIndex(span[0]),
             textEditor.posFromIndex(span[1])
-          );
+          ).replaceAll("\n", "↓");
         });
         return res;
       })
