@@ -100,6 +100,7 @@ Gustavo Toro
       showInvisibles: true,
       undoDepth: 100,
       viewportMargin: 15,
+      lineWrapping: true,
     });
 
     textEditor.on("change", () => this.clearMarks());
