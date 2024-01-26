@@ -52,7 +52,7 @@ class Home extends Component {
 
   componentDidMount() {
     let queryEditor = CodeMirror(document.getElementById("queryEditor"), {
-      value: "(^|\\n)!x{[A-Z][a-z]{4,}} !y{([A-Z][a-z ]+)+}($|\\n)",
+      value: "(^|\\n)!x{[A-Z][a-z]+} !y{([A-Z][a-z ]+)+}($|\\n)",
       mode: "REmatchQuery",
       placeholder: "Enter your query...",
       theme: "material-darker",
