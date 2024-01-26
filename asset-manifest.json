@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/REmatch-web/static/css/main.7a280816.css",
-    "main.js": "/REmatch-web/static/js/main.2928866e.js",
+    "main.js": "/REmatch-web/static/js/main.ba23ad6c.js",
     "static/media/roboto-all-400-italic.woff": "/REmatch-web/static/media/roboto-all-400-italic.63782d1445ad031af14d.woff",
     "static/media/roboto-all-400-normal.woff": "/REmatch-web/static/media/roboto-all-400-normal.b5a0a0df312d3423493b.woff",
     "static/media/roboto-latin-400-italic.woff2": "/REmatch-web/static/media/roboto-latin-400-italic.d022bc70dc1bf7b3425d.woff2",
@@ -69,10 +69,10 @@
     "static/media/roboto-greek-ext-700-normal.woff": "/REmatch-web/static/media/roboto-greek-ext-700-normal.249853776d22a271b2b5.woff",
     "index.html": "/REmatch-web/index.html",
     "main.7a280816.css.map": "/REmatch-web/static/css/main.7a280816.css.map",
-    "main.2928866e.js.map": "/REmatch-web/static/js/main.2928866e.js.map"
+    "main.ba23ad6c.js.map": "/REmatch-web/static/js/main.ba23ad6c.js.map"
   },
   "entrypoints": [
     "static/css/main.7a280816.css",
-    "static/js/main.2928866e.js"
+    "static/js/main.ba23ad6c.js"
   ]
 }
