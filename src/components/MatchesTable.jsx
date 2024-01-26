@@ -87,6 +87,7 @@ const MatchesTable = (props) => {
           },
         }}
         density="compact"
+        rowHeight={40}
         pageSizeOptions={[50]}
         slots={{
           pagination: CustomPagination,
