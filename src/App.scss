@@ -30,7 +30,7 @@ hsl(244, 100%, 81%),
 
 @for $i from 0 to length($colors) {
   .m#{$i} {
-    background-color: nth($colors, $i+1) !important;
+    background-color: nth($colors, $i+1);
     color: black !important;
     border-top: 4px solid nth($colors, $i+1);
     border-bottom: 4px solid nth($colors, $i+1);
@@ -42,8 +42,8 @@ hsl(244, 100%, 81%),
 
         @for $k from $j+1 to length($colors) {
           &.m#{$k} {
-            border-top: 4px solid nth($colors, $j+1);
-            border-bottom: 4px solid nth($colors, $i+1);
+            border-top: 4px solid nth($colors, $i+1);
+            border-bottom: 4px solid nth($colors, $j+1);
           }
         }
       }
