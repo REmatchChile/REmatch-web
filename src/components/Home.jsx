@@ -196,6 +196,7 @@ Gustavo Toro
   onExampleClick = (example) => {
     this.clearMarks();
     this.state.matches = [];
+    this.state.variables = [];
 
     this.state.patternEditor.setValue(example.pattern);
     this.state.documentEditor.setValue(example.document);
@@ -288,7 +289,7 @@ Gustavo Toro
                 color="text.secondary"
                 variant="caption"
               >
-                Matches
+                Matches ({this.state.matches.length})
               </Typography>
             </Box>
             <MatchesTable
