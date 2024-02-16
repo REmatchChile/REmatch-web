@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import CodeMirror from "codemirror";
@@ -7,7 +8,7 @@ import "codemirror/theme/material-darker.css";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { SnackbarProvider } from 'notistack'
+import { SnackbarProvider } from "notistack";
 
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
@@ -18,7 +19,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-CodeMirror.defineSimpleMode("REmatchQuery", {
+CodeMirror.defineSimpleMode("REQL", {
   start: [
     {
       regex: /(![A-Za-z0-9]+\{|\})/,
@@ -65,20 +66,28 @@ const darkTheme = createTheme({
 });
 
 const App = () => {
+  const [openExamplesDialog, setOpenExamplesDialog] = useState(false);
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <SnackbarProvider
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        style={{ whiteSpace: "pre-wrap", fontFamily: "'Roboto Mono', monospace" }}
+        style={{
+          whiteSpace: "pre-wrap",
+          fontFamily: "'Roboto Mono', monospace",
+        }}
         autoHideDuration={4000}
         hideIconVariant
       />
       <Router>
-        <Navbar />
+        <Navbar setOpenExamplesDialog={setOpenExamplesDialog} />
         <Switch>
           <Route path="/">
-            <Home />
+            <Home
+              openExamplesDialog={openExamplesDialog}
+              setOpenExamplesDialog={setOpenExamplesDialog}
+            />
           </Route>
         </Switch>
       </Router>

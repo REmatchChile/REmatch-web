@@ -68,7 +68,7 @@ a {
   color: $darker !important;
 }
 
-#textEditor {
+#documentEditor {
   height: 250px;
   .CodeMirror {
     height: inherit;
@@ -76,7 +76,7 @@ a {
   }
 }
 
-#queryEditor {
+#patternEditor {
   padding-left: 1rem;
   flex: 1;
   overflow: hidden;
