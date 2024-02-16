@@ -4,13 +4,15 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
+import Divider from "@mui/material/Divider";
 import InputAdornment from "@mui/material/InputAdornment";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import TextField from "@mui/material/TextField";
-import { Divider } from "@mui/material";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
 
 const EXAMPLES = [
   {
@@ -23,7 +25,7 @@ const EXAMPLES = [
   },
   {
     title: "Get all matches, overlapping",
-    description: "Match all the ocurrences of the word \"that\"",
+    description: 'Match all the ocurrences of the word "that"',
     pattern: "!x{that}",
     document: "thathathat",
   },
@@ -48,6 +50,39 @@ const FilterTextField = ({ onFilterChange }) => {
   );
 };
 
+const NoMaxWidthTooltip = styled(({ className, ...props }) => (
+  <Tooltip
+    {...props}
+    classes={{ popper: className }}
+    placement="top-end"
+    slotProps={{
+      popper: {
+        modifiers: [
+          {
+            name: "offset",
+            options: {
+              offset: [16, -24],
+            },
+          },
+        ],
+      },
+    }}
+    enterDelay={1}
+    leaveDelay={1}
+  />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.common.black,
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.black,
+    maxWidth: "none",
+    fontSize: "12px",
+    fontFamily: "'Roboto Mono', monospace",
+    userSelect: "none",
+  },
+}));
+
 const ExamplesList = ({ examples, onExampleClick }) => {
   return (
     <Box sx={{ height: 600, width: "100%" }}>
@@ -55,12 +90,14 @@ const ExamplesList = ({ examples, onExampleClick }) => {
         {examples.map((example, index) => (
           <React.Fragment key={index}>
             <ListItem disablePadding>
-              <ListItemButton onClick={() => onExampleClick(example)}>
-                <ListItemText
-                  primary={example.title}
-                  secondary={example.description}
-                />
-              </ListItemButton>
+              <NoMaxWidthTooltip title={example.pattern}>
+                <ListItemButton onClick={() => onExampleClick(example)}>
+                  <ListItemText
+                    primary={example.title}
+                    secondary={example.description}
+                  />
+                </ListItemButton>
+              </NoMaxWidthTooltip>
             </ListItem>
             <Divider />
           </React.Fragment>
