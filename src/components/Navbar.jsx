@@ -33,7 +33,7 @@ export default function NavbarComponent({ setOpenExamplesDialog }) {
         <Box sx={{ flexGrow: 1 }}>
           <Button
             variant="text"
-            onClick={setOpenExamplesDialog}
+            onClick={() => setOpenExamplesDialog(true)}
             sx={{ color: "white", display: "block" }}
           >
             Examples

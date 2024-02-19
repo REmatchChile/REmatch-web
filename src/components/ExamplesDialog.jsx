@@ -11,8 +11,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import TextField from "@mui/material/TextField";
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
+import { Typography } from "@mui/material";
 
 const EXAMPLES = [
   {
@@ -50,54 +49,23 @@ const FilterTextField = ({ onFilterChange }) => {
   );
 };
 
-const NoMaxWidthTooltip = styled(({ className, ...props }) => (
-  <Tooltip
-    {...props}
-    classes={{ popper: className }}
-    placement="top-end"
-    slotProps={{
-      popper: {
-        modifiers: [
-          {
-            name: "offset",
-            options: {
-              offset: [16, -24],
-            },
-          },
-        ],
-      },
-    }}
-    enterDelay={1}
-    leaveDelay={1}
-  />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: theme.palette.common.black,
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.black,
-    maxWidth: "none",
-    fontSize: "12px",
-    fontFamily: "'Roboto Mono', monospace",
-    userSelect: "none",
-  },
-}));
-
-const ExamplesList = ({ examples, onExampleClick }) => {
+const ExamplesList = ({ examples, onExampleClick, setHoveredPattern }) => {
   return (
     <Box sx={{ height: 600, width: "100%" }}>
-      <List dense>
+      <List>
         {examples.map((example, index) => (
           <React.Fragment key={index}>
-            <ListItem disablePadding>
-              <NoMaxWidthTooltip title={example.pattern}>
-                <ListItemButton onClick={() => onExampleClick(example)}>
-                  <ListItemText
-                    primary={example.title}
-                    secondary={example.description}
-                  />
-                </ListItemButton>
-              </NoMaxWidthTooltip>
+            <ListItem
+              disablePadding
+              onMouseEnter={() => setHoveredPattern(example.pattern)}
+              onMouseLeave={() => setHoveredPattern("")}
+            >
+              <ListItemButton onClick={() => onExampleClick(example)}>
+                <ListItemText
+                  primary={example.title}
+                  secondary={example.description}
+                />
+              </ListItemButton>
             </ListItem>
             <Divider />
           </React.Fragment>
@@ -109,6 +77,7 @@ const ExamplesList = ({ examples, onExampleClick }) => {
 
 const ExamplesDialog = ({ open, setOpen, onExampleClick }) => {
   const [examples, setExamples] = React.useState(EXAMPLES);
+  const [hoveredPattern, setHoveredPattern] = React.useState("");
 
   const filterExamples = (input) => {
     const inputLower = input.toLowerCase();
@@ -126,11 +95,45 @@ const ExamplesDialog = ({ open, setOpen, onExampleClick }) => {
   };
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ pb: 0 }}>REQL Examples</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={() => {
+        setOpen(false);
+        setHoveredPattern("");
+      }}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>REQL Examples</DialogTitle>
+      <Typography
+        component="span"
+        color="text.secondary"
+        variant="caption"
+        sx={{ ml: 2 }}
+      >
+        Pattern preview
+      </Typography>
+      <Box
+        sx={{
+          textAlign: "center",
+          py: 2,
+          mx: 2,
+          my: 1,
+          borderRadius: "4px",
+          fontSize: "16px",
+          background: "rgba(18, 18, 18, 0.64)",
+          fontFamily: "'Roboto Mono', monospace",
+        }}
+      >
+        {hoveredPattern || "..."}
+      </Box>
       <Box sx={{ p: 2 }}>
         <FilterTextField onFilterChange={onFilterChange} />
-        <ExamplesList examples={examples} onExampleClick={onExampleClick} />
+        <ExamplesList
+          examples={examples}
+          onExampleClick={onExampleClick}
+          setHoveredPattern={setHoveredPattern}
+        />
       </Box>
     </Dialog>
   );
