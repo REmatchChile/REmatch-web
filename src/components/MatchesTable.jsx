@@ -60,14 +60,15 @@ const MatchesTable = (props) => {
       matches.map((match, idxMatch) => {
         const res = { id: idxMatch, matchData: match };
         match.forEach((span, idxSpan) => {
-          res[`var-${idxSpan}`] = documentEditor.getRange(
-            documentEditor.posFromIndex(span[0]),
-            documentEditor.posFromIndex(span[1])
+          res[`var-${idxSpan}`] = documentEditor.current.getRange(
+            documentEditor.current.posFromIndex(span[0]),
+            documentEditor.current.posFromIndex(span[1])
           ).replaceAll("\n", "↓");
         });
         return res;
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matches]);
 
   return (

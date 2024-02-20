@@ -109,9 +109,9 @@ const ExamplesDialog = ({ open, setOpen, onExampleClick }) => {
         component="span"
         color="text.secondary"
         variant="caption"
-        sx={{ ml: 2 }}
+        sx={{ userSelect: "none", ml: 2 }}
       >
-        Pattern preview
+        REQL query preview
       </Typography>
       <Box
         sx={{
