@@ -72,7 +72,7 @@ const MatchesTable = (props) => {
   }, [matches]);
 
   return (
-    <Box sx={{ height: 400, width: "100%" }}>
+    <Box sx={{ height: "100%", width: "100%" }}>
       <DataGrid
         onRowClick={handleRowClick}
         sx={{

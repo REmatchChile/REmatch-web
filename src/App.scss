@@ -69,9 +69,8 @@ a {
 }
 
 #documentEditor {
-  height: 250px;
   .CodeMirror {
-    height: inherit;
+    height: 100%;
     padding: 0 .5rem;
   }
 }
@@ -178,3 +177,8 @@ a {
 
 }
 
+
+
+.react-resizable-hide > .react-resizable-handle {
+  display: none;
+}

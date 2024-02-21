@@ -13,7 +13,7 @@ import Logo from "../assets/logo-dark.png";
 
 export default function NavbarComponent({ setOpenExamplesDialog }) {
   return (
-    <AppBar position="fixed">
+    <AppBar position="static">
       <Toolbar>
         <Link to="/">
           <Box

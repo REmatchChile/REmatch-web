@@ -1,40 +1,31 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
 import PlayArrow from "@mui/icons-material/PlayArrow";
-import Publish from "@mui/icons-material/Publish";
 import Stop from "@mui/icons-material/Stop";
-import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
-import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
 import { enqueueSnackbar } from "notistack";
+import { Responsive, WidthProvider } from "react-grid-layout";
 import ExamplesDialog from "./ExamplesDialog";
-
-/* Project Components */
 import MatchesTable from "./MatchesTable";
+import ResizableGridWindow from "./ResizableGridWindow";
 
-/* CodeMirror */
-import { Typography } from "@mui/material";
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
 
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
 /* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-const FILE_CHUNK_SIZE = 100 * 1024 * 1024; // 100MB
 let worker = new Worker(WORKPATH, { type: "module" });
 
 /* MAIN INTERFACE */
 const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
-  const [uploadingFile, setUploadingFile] = useState(false);
   const [running, setRunning] = useState(false);
-  const [fileProgress, setFileProgress] = useState(0);
   const patternEditor = useRef(null);
   const documentEditor = useRef(null);
 
@@ -62,32 +53,6 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
     documentEditor.current.getAllMarks().forEach((mark) => {
       mark.clear();
     });
-  };
-
-  const handleImportFile = async (event) => {
-    let file = event.target.files[0];
-    if (!file) return;
-    documentEditor.current.setValue("");
-    setUploadingFile(true);
-    setFileProgress(0);
-    clearMarks();
-    setMatches([]);
-    setVariables([]);
-    let start = 0;
-    let end = FILE_CHUNK_SIZE;
-    while (start < file.size) {
-      await file
-        .slice(start, end)
-        .text()
-        // eslint-disable-next-line no-loop-func
-        .then((textChunk) => {
-          setFileProgress(Math.round((100 * 100 * start) / file.size) / 100);
-          documentEditor.current.replaceRange(textChunk, { line: Infinity });
-          start = end;
-          end += FILE_CHUNK_SIZE;
-        });
-    }
-    setUploadingFile(false);
   };
 
   const restartWorker = () => {
@@ -198,35 +163,81 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
         setOpen={setOpenExamplesDialog}
         onExampleClick={onExampleClick}
       />
-      <Backdrop
-        sx={{
-          zIndex: 6000,
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
+      <ResponsiveGridLayout
+        className="layout"
+        rowHeight={48}
+        resizeHandles={["nw", "ne", "sw", "se"]}
+        breakpoints={{ lg: 1280, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        draggableHandle=".drag-handle"
+        layouts={{
+          lg: [
+            { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 6,
+              h: 14,
+            },
+            { i: "matchesWindow", x: 6, y: 1, w: 6, h: 14 },
+          ],
+          md: [
+            { i: "patternWindow", x: 0, y: 0, w: 10, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 5,
+              h: 14,
+            },
+            { i: "matchesWindow", x: 5, y: 1, w: 5, h: 14 },
+          ],
+          sm: [
+            { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 3,
+              h: 14,
+            },
+            { i: "matchesWindow", x: 4, y: 1, w: 3, h: 14 },
+          ],
+          xs: [
+            { i: "patternWindow", x: 0, y: 0, w: 4, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 4,
+              h: 6,
+            },
+            { i: "matchesWindow", x: 0, y: 2, w: 4, h: 8 },
+          ],
+          xxs: [
+            { i: "patternWindow", x: 0, y: 0, w: 2, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 2,
+              h: 6,
+            },
+            { i: "matchesWindow", x: 0, y: 2, w: 2, h: 6 },
+          ],
         }}
-        open={uploadingFile}
       >
-        <CircularProgress color="primary" size="3rem" />
-        <Typography component="div" variant="h5">
-          Loading ({fileProgress}%)
-        </Typography>
-      </Backdrop>
-      <Container maxWidth="lg" sx={{ paddingTop: "96px" }}>
-        <Paper elevation={2} className="mainPaper">
-          {/* PATTERN */}
-          <Box sx={{ pl: 2, pt: 1 }}>
-            <Typography
-              sx={{ userSelect: "none" }}
-              component="span"
-              color="text.secondary"
-              variant="caption"
-            >
-              REQL query
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex" }}>
-            <div id="patternEditor"></div>
+        <ResizableGridWindow key="patternWindow">
+          <Box
+            sx={{
+              display: "flex",
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box id="patternEditor"></Box>
             <Button
               sx={{
                 borderRadius: 0,
@@ -239,46 +250,11 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
               {running ? "Stop" : "Run"}
             </Button>
           </Box>
-          <Divider />
-          {/* EDITOR */}
-          <Box sx={{ pl: 2, pt: 1 }}>
-            <Typography
-              component="span"
-              color="text.secondary"
-              variant="caption"
-              sx={{ userSelect: "none" }}
-            >
-              Document
-            </Typography>
-          </Box>
-          <div id="documentEditor"></div>
-          <Button
-            component="label"
-            color="primary"
-            variant="text"
-            size="small"
-            startIcon={<Publish />}
-            sx={{
-              width: "100%",
-              padding: "1rem",
-              borderRadius: 0,
-            }}
-          >
-            Import file
-            <input type="file" hidden onChange={handleImportFile} />
-          </Button>
-          <Divider />
-          {/* MATCHES */}
-          <Box sx={{ pl: 2, pt: 1 }}>
-            <Typography
-              component="span"
-              color="text.secondary"
-              variant="caption"
-              sx={{ userSelect: "none" }}
-            >
-              Matches ({matches.length})
-            </Typography>
-          </Box>
+        </ResizableGridWindow>
+        <ResizableGridWindow key="documentWindow">
+          <Box id="documentEditor" sx={{ height: "100%" }}></Box>
+        </ResizableGridWindow>
+        <ResizableGridWindow key="matchesWindow">
           <MatchesTable
             matches={matches}
             variables={variables}
@@ -286,8 +262,8 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
             addMarks={addMarks}
             clearMarks={clearMarks}
           />
-        </Paper>
-      </Container>
+        </ResizableGridWindow>
+      </ResponsiveGridLayout>
     </>
   );
 };
