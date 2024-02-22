@@ -58,6 +58,7 @@ const ResponsiveButtonPatternEditor = ({ name, onClick, startIcon, color }) => {
   const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Button
+    disableElevation
       variant="contained"
       size="small"
       sx={{
