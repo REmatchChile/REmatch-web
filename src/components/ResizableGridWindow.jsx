@@ -11,7 +11,6 @@ const DragHandle = ({ title, isStatic }) => {
       variant="caption"
       sx={{
         userSelect: "none",
-        cursor: isStatic ? "default" : "move",
         pl: "12px",
         py: "4px",
         fontSize: ".75rem",

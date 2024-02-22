@@ -26,6 +26,34 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
   const [running, setRunning] = useState(false);
+  const [layouts, setLayouts] = useState({
+    lg: [
+      { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
+      {
+        i: "documentWindow",
+        x: 0,
+        y: 1,
+        w: 6,
+        h: 11,
+        minW: 2,
+        minH: 4,
+      },
+      { i: "matchesWindow", x: 6, y: 1, w: 6, h: 11, minW: 3, minH: 4 },
+    ],
+    sm: [
+      { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
+      {
+        i: "documentWindow",
+        x: 0,
+        y: 1,
+        w: 6,
+        h: 5,
+        minW: 3,
+        minH: 4,
+      },
+      { i: "matchesWindow", x: 4, y: 1, w: 6, h: 6, minW: 3, minH: 4 },
+    ],
+  });
   const patternEditor = useRef(null);
   const documentEditor = useRef(null);
 
@@ -105,6 +133,10 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
     setOpenExamplesDialog(false);
   };
 
+  const onLayoutChange = (layout, layouts) => {
+    setLayouts(layouts);
+  };
+
   useEffect(() => {
     patternEditor.current = CodeMirror(
       document.getElementById("patternEditor"),
@@ -166,67 +198,13 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
       <ResponsiveGridLayout
         className="layout"
         rowHeight={64}
-        breakpoints={{ lg: 1280, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        breakpoints={{ lg: 996, sm: 0 }}
+        cols={{ lg: 12, sm: 6 }}
         draggableHandle=".drag-handle"
-        compactType="horizontal"
-        layouts={{
-          lg: [
-            { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, maxH: 1, minW: 4 },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 6,
-              h: 11,
-            },
-            { i: "matchesWindow", x: 6, y: 1, w: 6, h: 11 },
-          ],
-          md: [
-            { i: "patternWindow", x: 0, y: 0, w: 10, h: 1 },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 5,
-              h: 11,
-            },
-            { i: "matchesWindow", x: 5, y: 1, w: 5, h: 11 },
-          ],
-          sm: [
-            { i: "patternWindow", x: 0, y: 0, w: 6, h: 1 },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 3,
-              h: 11,
-            },
-            { i: "matchesWindow", x: 4, y: 1, w: 3, h: 11 },
-          ],
-          xs: [
-            { i: "patternWindow", x: 0, y: 0, w: 4, h: 1 },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 4,
-              h: 6,
-            },
-            { i: "matchesWindow", x: 0, y: 2, w: 4, h: 8 },
-          ],
-          xxs: [
-            { i: "patternWindow", x: 0, y: 0, w: 2, h: 1 },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 2,
-              h: 6,
-            },
-            { i: "matchesWindow", x: 0, y: 2, w: 2, h: 6 },
-          ],
-        }}
+        compactType="vertical"
+        resizeHandles={["se", "ne", "nw", "sw"]}
+        layouts={layouts}
+        onLayoutChange={(layout, layouts) => onLayoutChange(layout, layouts)}
       >
         <ResizableGridWindow key="patternWindow" title="REQL query">
           <Box
@@ -255,7 +233,7 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
           </Box>
         </ResizableGridWindow>
         <ResizableGridWindow key="documentWindow" title="Document">
-          <Box id="documentEditor" sx={{ height: "100%" }}></Box>
+          <Box id="documentEditor" sx={{ height: "100%", pb: "16px" }}></Box>
         </ResizableGridWindow>
         <ResizableGridWindow key="matchesWindow" title="Matches">
           <Box sx={{ height: "100%" }}>
