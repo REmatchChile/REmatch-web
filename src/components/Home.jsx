@@ -10,6 +10,7 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import ExamplesDialog from "./ExamplesDialog";
 import MatchesTable from "./MatchesTable";
 import ResizableGridWindow from "./ResizableGridWindow";
+import { insertLS, getLS } from "../utils/localStorage";
 
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
@@ -21,39 +22,41 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 let worker = new Worker(WORKPATH, { type: "module" });
 
+const DEFAULT_LAYOUT = {
+  lg: [
+    { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
+    {
+      i: "documentWindow",
+      x: 0,
+      y: 1,
+      w: 6,
+      h: 11,
+      minW: 2,
+      minH: 4,
+    },
+    { i: "matchesWindow", x: 6, y: 1, w: 6, h: 11, minW: 3, minH: 4 },
+  ],
+  sm: [
+    { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
+    {
+      i: "documentWindow",
+      x: 0,
+      y: 1,
+      w: 6,
+      h: 5,
+      minW: 3,
+      minH: 4,
+    },
+    { i: "matchesWindow", x: 4, y: 1, w: 6, h: 6, minW: 3, minH: 4 },
+  ],
+};
+
 /* MAIN INTERFACE */
 const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
   const [running, setRunning] = useState(false);
-  const [layouts, setLayouts] = useState({
-    lg: [
-      { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
-      {
-        i: "documentWindow",
-        x: 0,
-        y: 1,
-        w: 6,
-        h: 11,
-        minW: 2,
-        minH: 4,
-      },
-      { i: "matchesWindow", x: 6, y: 1, w: 6, h: 11, minW: 3, minH: 4 },
-    ],
-    sm: [
-      { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
-      {
-        i: "documentWindow",
-        x: 0,
-        y: 1,
-        w: 6,
-        h: 5,
-        minW: 3,
-        minH: 4,
-      },
-      { i: "matchesWindow", x: 4, y: 1, w: 6, h: 6, minW: 3, minH: 4 },
-    ],
-  });
+  const [layouts, setLayouts] = useState(getLS("layouts") || DEFAULT_LAYOUT);
   const patternEditor = useRef(null);
   const documentEditor = useRef(null);
 
@@ -134,6 +137,7 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
   };
 
   const onLayoutChange = (layout, layouts) => {
+    insertLS("layouts", layouts);
     setLayouts(layouts);
   };
 
