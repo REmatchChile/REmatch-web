@@ -117,6 +117,7 @@ const ExamplesDialog = ({ open, setOpen, onExampleClick }) => {
         sx={{
           textAlign: "center",
           py: 2,
+          px: 1,
           mx: 2,
           my: 1,
           borderRadius: "4px",

@@ -43,7 +43,7 @@ const GithubButton = () => (
   </Tooltip>
 );
 
-const MenuButton = ({ setOpenExamplesDialog }) => {
+const MenuButton = () => {
   const [anchorElMenu, setAnchorElMenu] = React.useState(null);
 
   const handleOpenMenu = (event) => {
@@ -76,20 +76,15 @@ const MenuButton = ({ setOpenExamplesDialog }) => {
           display: { md: "none", xs: "block" },
         }}
       >
-        <MenuItem
-          onClick={() => {
-            setOpenExamplesDialog(true);
-            handleCloseMenu();
-          }}
-        >
-          Examples
+        <MenuItem component={Link} to="/documentation">
+          Documentation
         </MenuItem>
       </Menu>
     </>
   );
 };
 
-export default function NavbarComponent({ setOpenExamplesDialog }) {
+export default function NavbarComponent() {
   return (
     <AppBar position="static">
       {/* Desktop */}
@@ -102,14 +97,12 @@ export default function NavbarComponent({ setOpenExamplesDialog }) {
         }}
       >
         <AppLogo height={32} />
-        <Box sx={{ flexGrow: 1, ml: 2 }}>
-          <Button
-            variant="text"
-            onClick={() => setOpenExamplesDialog(true)}
-            sx={{ color: "white", display: "block" }}
-          >
-            Examples
-          </Button>
+        <Box sx={{ flexGrow: 1, ml: 2, display: "flex", gap: 1 }}>
+          <Link to="/documentation">
+            <Button variant="text" sx={{ color: "white" }}>
+              Documentation
+            </Button>
+          </Link>
         </Box>
         <GithubButton />
       </Toolbar>
@@ -124,7 +117,7 @@ export default function NavbarComponent({ setOpenExamplesDialog }) {
           width: "100%",
         }}
       >
-        <MenuButton setOpenExamplesDialog={setOpenExamplesDialog} />
+        <MenuButton />
         <AppLogo height={24} />
         <GithubButton />
       </Toolbar>

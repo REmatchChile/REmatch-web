@@ -3,14 +3,16 @@ import React, { useEffect, useRef, useState } from "react";
 /* MaterialUI */
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Stop from "@mui/icons-material/Stop";
+import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import { useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { enqueueSnackbar } from "notistack";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import ExamplesDialog from "./ExamplesDialog";
-import MatchesTable from "./MatchesTable";
-import ResizableGridWindow from "./ResizableGridWindow";
-import { insertLS, getLS } from "../utils/localStorage";
+import { getLS, insertLS } from "../utils/localStorage";
+import ExamplesDialog from "../components/ExamplesDialog";
+import MatchesTable from "../components/MatchesTable";
+import ResizableGridWindow from "../components/ResizableGridWindow";
 
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
@@ -51,12 +53,40 @@ const DEFAULT_LAYOUT = {
   ],
 };
 
+const ResponsiveButtonPatternEditor = ({ name, onClick, startIcon, color }) => {
+  const theme = useTheme();
+  const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
+  return (
+    <Button
+      variant="contained"
+      size="small"
+      sx={{
+        minWidth: "48px",
+        flexShrink: 0,
+        borderRadius: 0,
+        px: 2,
+        height: "100%",
+        ".MuiButton-startIcon": {
+          ml: isBreakpointBelowSm ? 0 : "-2px",
+          mr: isBreakpointBelowSm ? 0 : "8px",
+        },
+      }}
+      color={color}
+      startIcon={startIcon}
+      onClick={onClick}
+    >
+      {!isBreakpointBelowSm && name}
+    </Button>
+  );
+};
+
 /* MAIN INTERFACE */
-const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
+const Home = () => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
   const [running, setRunning] = useState(false);
   const [layouts, setLayouts] = useState(getLS("layouts") || DEFAULT_LAYOUT);
+  const [openExamplesDialog, setOpenExamplesDialog] = useState(false);
   const patternEditor = useRef(null);
   const documentEditor = useRef(null);
 
@@ -212,7 +242,7 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
         layouts={layouts}
         onLayoutChange={(layout, layouts) => onLayoutChange(layout, layouts)}
       >
-        <ResizableGridWindow key="patternWindow" title="REQL query">
+        <ResizableGridWindow key="patternWindow" name="REQL query">
           <Box
             sx={{
               display: "flex",
@@ -220,25 +250,25 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
               alignItems: "center",
             }}
           >
+            <ResponsiveButtonPatternEditor
+              name="Examples"
+              onClick={setOpenExamplesDialog}
+              startIcon={<TipsAndUpdatesIcon />}
+              color="secondary"
+            />
             <Box
               id="patternEditor"
-              sx={{ height: "auto", flexGrow: 1, pl: 2 }}
+              sx={{ height: "auto", flexGrow: 1, px: 1 }}
             ></Box>
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: 0,
-                px: 3,
-              }}
-              color="primary"
-              startIcon={running ? <Stop /> : <PlayArrow />}
+            <ResponsiveButtonPatternEditor
+              name={running ? "Stop" : "Run"}
               onClick={running ? restartWorker : runWorker}
-            >
-              {running ? "Stop" : "Run"}
-            </Button>
+              startIcon={running ? <Stop /> : <PlayArrow />}
+              color="primary"
+            />
           </Box>
         </ResizableGridWindow>
-        <ResizableGridWindow key="documentWindow" title="Document">
+        <ResizableGridWindow key="documentWindow" name="Document">
           <Box id="documentEditor" sx={{ height: "100%", pb: "16px" }}></Box>
         </ResizableGridWindow>
         <ResizableGridWindow

@@ -86,7 +86,7 @@ a {
 }
 
 #patternEditor {
-  overflow: hidden;
+  overflow-x: hidden;
   .CodeMirror {
     height: auto;
   }

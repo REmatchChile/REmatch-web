@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import CodeMirror from "codemirror";
@@ -11,7 +10,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
 
 import Navbar from "./components/Navbar";
-import Home from "./components/Home";
+import Home from "./pages/Home";
+import Documentation from "./pages/Documentation";
 import "fontsource-roboto";
 import "./App.scss";
 import "@fontsource/roboto/300.css";
@@ -84,8 +84,6 @@ const darkTheme = createTheme({
 });
 
 const App = () => {
-  const [openExamplesDialog, setOpenExamplesDialog] = useState(false);
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -99,13 +97,13 @@ const App = () => {
         hideIconVariant
       />
       <Router>
-        <Navbar setOpenExamplesDialog={setOpenExamplesDialog} />
+        <Navbar />
         <Switch>
+          <Route path="/documentation">
+            <Documentation />
+          </Route>
           <Route path="/">
-            <Home
-              openExamplesDialog={openExamplesDialog}
-              setOpenExamplesDialog={setOpenExamplesDialog}
-            />
+            <Home />
           </Route>
         </Switch>
       </Router>

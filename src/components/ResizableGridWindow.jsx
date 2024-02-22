@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 
-const DragHandle = ({ title, isStatic }) => {
+const DragHandle = ({ name, isStatic }) => {
   return (
     <Box
       className={!isStatic && "drag-handle"}
@@ -17,7 +17,7 @@ const DragHandle = ({ title, isStatic }) => {
         fontFamily: "'Roboto Mono', monospace",
       }}
     >
-      {title}
+      {name}
     </Box>
   );
 };
@@ -48,7 +48,7 @@ const ResizableGridWindow = React.forwardRef(
         {...props}
       >
         <DragHandle
-          title={props.title}
+          name={props.name}
           isStatic={className.includes("static")}
         />
         <Divider />
