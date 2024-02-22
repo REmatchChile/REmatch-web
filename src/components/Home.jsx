@@ -239,7 +239,7 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
         <ResizableGridWindow key="documentWindow" title="Document">
           <Box id="documentEditor" sx={{ height: "100%", pb: "16px" }}></Box>
         </ResizableGridWindow>
-        <ResizableGridWindow key="matchesWindow" title="Matches">
+        <ResizableGridWindow key="matchesWindow" title={`Matches (${matches.length})`}>
           <Box sx={{ height: "100%" }}>
             <MatchesTable
               matches={matches}

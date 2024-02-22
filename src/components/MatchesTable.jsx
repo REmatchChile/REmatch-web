@@ -16,7 +16,7 @@ const CustomPagination = () => {
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
   return (
     <Pagination
-      sx={{ margin: "auto" }}
+      sx={{ margin: "auto", userSelect: "none" }}
       page={page + 1}
       count={pageCount}
       renderItem={(props2) => <PaginationItem {...props2} />}
