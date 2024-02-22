@@ -75,9 +75,6 @@ const MatchesTable = (props) => {
   return (
     <DataGrid
       onRowClick={handleRowClick}
-      sx={{
-        columnSeparator: "none",
-      }}
       rows={rows}
       columns={columns}
       initialState={{

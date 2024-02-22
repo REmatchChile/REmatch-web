@@ -188,7 +188,9 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
         lineWrapping: true,
       }
     );
-    documentEditor.current.on("change", () => clearMarks());
+    documentEditor.current.on("change", () => {
+      clearMarks();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -239,7 +241,10 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
         <ResizableGridWindow key="documentWindow" title="Document">
           <Box id="documentEditor" sx={{ height: "100%", pb: "16px" }}></Box>
         </ResizableGridWindow>
-        <ResizableGridWindow key="matchesWindow" title={`Matches (${matches.length})`}>
+        <ResizableGridWindow
+          key="matchesWindow"
+          title={`Matches (${matches.length})`}
+        >
           <Box sx={{ height: "100%" }}>
             <MatchesTable
               matches={matches}

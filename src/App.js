@@ -21,6 +21,22 @@ import "@fontsource/roboto/700.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
+// Keep app version in localStorage. Clear localStorage if app version changes
+const APP_VERSION = process.env.REACT_APP_CURRENT_GIT_SHA;
+if (
+  typeof global.localStorage.APP_VERSION === "undefined" ||
+  global.localStorage.APP_VERSION === null
+) {
+  global.localStorage.setItem("APP_VERSION", APP_VERSION);
+}
+if (global.localStorage.APP_VERSION !== APP_VERSION) {
+  console.log(
+    `localStorage cleared because app version changed to ${APP_VERSION}`
+  );
+  global.localStorage.clear();
+  global.localStorage.setItem("APP_VERSION", APP_VERSION);
+}
+
 CodeMirror.defineSimpleMode("REQL", {
   start: [
     {
