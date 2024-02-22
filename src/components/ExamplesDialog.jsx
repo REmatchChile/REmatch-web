@@ -120,7 +120,7 @@ const ExamplesDialog = ({ open, setOpen, onExampleClick }) => {
           mx: 2,
           my: 1,
           borderRadius: "4px",
-          fontSize: "16px",
+          fontSize: "1rem",
           background: "rgba(18, 18, 18, 0.64)",
           fontFamily: "'Roboto Mono', monospace",
         }}

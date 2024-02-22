@@ -165,47 +165,47 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
       />
       <ResponsiveGridLayout
         className="layout"
-        rowHeight={48}
-        resizeHandles={["nw", "ne", "sw", "se"]}
+        rowHeight={64}
         breakpoints={{ lg: 1280, md: 996, sm: 768, xs: 480, xxs: 0 }}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         draggableHandle=".drag-handle"
+        compactType="horizontal"
         layouts={{
           lg: [
-            { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
+            { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, maxH: 1, minW: 4 },
             {
               i: "documentWindow",
               x: 0,
               y: 1,
               w: 6,
-              h: 14,
+              h: 11,
             },
-            { i: "matchesWindow", x: 6, y: 1, w: 6, h: 14 },
+            { i: "matchesWindow", x: 6, y: 1, w: 6, h: 11 },
           ],
           md: [
-            { i: "patternWindow", x: 0, y: 0, w: 10, h: 1, static: true },
+            { i: "patternWindow", x: 0, y: 0, w: 10, h: 1 },
             {
               i: "documentWindow",
               x: 0,
               y: 1,
               w: 5,
-              h: 14,
+              h: 11,
             },
-            { i: "matchesWindow", x: 5, y: 1, w: 5, h: 14 },
+            { i: "matchesWindow", x: 5, y: 1, w: 5, h: 11 },
           ],
           sm: [
-            { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
+            { i: "patternWindow", x: 0, y: 0, w: 6, h: 1 },
             {
               i: "documentWindow",
               x: 0,
               y: 1,
               w: 3,
-              h: 14,
+              h: 11,
             },
-            { i: "matchesWindow", x: 4, y: 1, w: 3, h: 14 },
+            { i: "matchesWindow", x: 4, y: 1, w: 3, h: 11 },
           ],
           xs: [
-            { i: "patternWindow", x: 0, y: 0, w: 4, h: 1, static: true },
+            { i: "patternWindow", x: 0, y: 0, w: 4, h: 1 },
             {
               i: "documentWindow",
               x: 0,
@@ -216,7 +216,7 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
             { i: "matchesWindow", x: 0, y: 2, w: 4, h: 8 },
           ],
           xxs: [
-            { i: "patternWindow", x: 0, y: 0, w: 2, h: 1, static: true },
+            { i: "patternWindow", x: 0, y: 0, w: 2, h: 1 },
             {
               i: "documentWindow",
               x: 0,
@@ -228,20 +228,23 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
           ],
         }}
       >
-        <ResizableGridWindow key="patternWindow">
+        <ResizableGridWindow key="patternWindow" title="REQL query">
           <Box
             sx={{
               display: "flex",
               height: "100%",
               alignItems: "center",
-              justifyContent: "center",
             }}
           >
-            <Box id="patternEditor"></Box>
+            <Box
+              id="patternEditor"
+              sx={{ height: "auto", flexGrow: 1, pl: 2 }}
+            ></Box>
             <Button
+              variant="contained"
               sx={{
                 borderRadius: 0,
-                padding: ".5rem 2rem",
+                px: 3,
               }}
               color="primary"
               startIcon={running ? <Stop /> : <PlayArrow />}
@@ -251,17 +254,19 @@ const Home = ({ openExamplesDialog, setOpenExamplesDialog }) => {
             </Button>
           </Box>
         </ResizableGridWindow>
-        <ResizableGridWindow key="documentWindow">
+        <ResizableGridWindow key="documentWindow" title="Document">
           <Box id="documentEditor" sx={{ height: "100%" }}></Box>
         </ResizableGridWindow>
-        <ResizableGridWindow key="matchesWindow">
-          <MatchesTable
-            matches={matches}
-            variables={variables}
-            documentEditor={documentEditor}
-            addMarks={addMarks}
-            clearMarks={clearMarks}
-          />
+        <ResizableGridWindow key="matchesWindow" title="Matches">
+          <Box sx={{ height: "100%" }}>
+            <MatchesTable
+              matches={matches}
+              variables={variables}
+              documentEditor={documentEditor}
+              addMarks={addMarks}
+              clearMarks={clearMarks}
+            />
+          </Box>
         </ResizableGridWindow>
       </ResponsiveGridLayout>
     </>

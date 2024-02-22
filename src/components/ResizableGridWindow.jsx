@@ -2,8 +2,28 @@ import React from "react";
 
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 
-const CustomGridItemComponent = React.forwardRef(
+const DragHandle = ({ title, isStatic }) => {
+  return (
+    <Box
+      className={!isStatic && "drag-handle"}
+      variant="caption"
+      sx={{
+        userSelect: "none",
+        cursor: isStatic ? "default" : "move",
+        pl: "12px",
+        py: "4px",
+        fontSize: ".75rem",
+        fontFamily: "'Roboto Mono', monospace",
+      }}
+    >
+      {title}
+    </Box>
+  );
+};
+
+const ResizableGridWindow = React.forwardRef(
   (
     {
       style,
@@ -18,7 +38,6 @@ const CustomGridItemComponent = React.forwardRef(
   ) => {
     return (
       <Paper
-        key="a"
         elevation={2}
         style={{ ...style }}
         className={className}
@@ -26,16 +45,27 @@ const CustomGridItemComponent = React.forwardRef(
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
         onTouchEnd={onTouchEnd}
+        sx={{ display: "flex", flexDirection: "column" }}
+        {...props}
       >
-        <Box className={!className.includes("static") && "drag-handle"} sx={{
-
-        }}>
-          Title
+        <DragHandle
+          title={props.title}
+          isStatic={className.includes("static")}
+        />
+        <Divider />
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflow: "scroll",
+            borderBottomLeftRadius: "inherit",
+            borderBottomRightRadius: "inherit",
+          }}
+        >
+          {children}
         </Box>
-        {children}
       </Paper>
     );
   }
 );
 
-export default CustomGridItemComponent;
+export default ResizableGridWindow;

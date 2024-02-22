@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import Box from "@mui/material/Box";
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
 import {
@@ -43,7 +42,7 @@ const MatchesTable = (props) => {
             {
               field: "id",
               headerName: "Index",
-              cellClassName: "MuiDataGrid-index-column"
+              cellClassName: "MuiDataGrid-index-column",
             },
             ...variables.map((name, idx) => ({
               field: `var-${idx}`,
@@ -60,10 +59,12 @@ const MatchesTable = (props) => {
       matches.map((match, idxMatch) => {
         const res = { id: idxMatch, matchData: match };
         match.forEach((span, idxSpan) => {
-          res[`var-${idxSpan}`] = documentEditor.current.getRange(
-            documentEditor.current.posFromIndex(span[0]),
-            documentEditor.current.posFromIndex(span[1])
-          ).replaceAll("\n", "↓");
+          res[`var-${idxSpan}`] = documentEditor.current
+            .getRange(
+              documentEditor.current.posFromIndex(span[0]),
+              documentEditor.current.posFromIndex(span[1])
+            )
+            .replaceAll("\n", "↓");
         });
         return res;
       })
@@ -72,30 +73,27 @@ const MatchesTable = (props) => {
   }, [matches]);
 
   return (
-    <Box sx={{ height: "100%", width: "100%" }}>
-      <DataGrid
-        onRowClick={handleRowClick}
-        sx={{
-          columnSeparator: "none",
-        }}
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 25,
-            },
+    <DataGrid
+      onRowClick={handleRowClick}
+      sx={{
+        columnSeparator: "none",
+      }}
+      rows={rows}
+      columns={columns}
+      initialState={{
+        pagination: {
+          paginationModel: {
+            pageSize: 50,
           },
-        }}
-        density="compact"
-        rowHeight={40}
-        pageSizeOptions={[50]}
-        slots={{
-          pagination: CustomPagination,
-        }}
-        hideFooterSelectedRowCount
-      />
-    </Box>
+        },
+      }}
+      density="compact"
+      rowHeight={40}
+      slots={{
+        pagination: CustomPagination,
+      }}
+      hideFooterSelectedRowCount
+    />
   );
 };
 
