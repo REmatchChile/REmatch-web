@@ -273,7 +273,7 @@ const Home = () => {
         </ResizableGridWindow>
         <ResizableGridWindow
           key="matchesWindow"
-          title={`Matches (${matches.length})`}
+          name={`Matches (${matches.length})`}
         >
           <Box sx={{ height: "100%" }}>
             <MatchesTable
