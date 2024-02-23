@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import CodeMirror from "codemirror";
-import "codemirror/addon/mode/simple";
-import "codemirror/theme/material-darker.css";
+// import CodeMirror from "codemirror";
+// import "codemirror/addon/mode/simple";
+// import "codemirror/theme/material-darker.css";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,36 +18,6 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-
-CodeMirror.defineSimpleMode("REQL", {
-  start: [
-    {
-      regex: /(![A-Za-z0-9]+\{|\})/,
-      token: "m0",
-    },
-    {
-      regex:
-        /(\\d)|(\\w)|(\\s)|(\\t)|(\\r)|(\\n)|(\\\()|(\\\))|(\\\[)|(\\\])|(\\\{)|(\\\})|(\\\.)|(\\-)|(\\_)/i,
-      token: "m2",
-    },
-    {
-      regex: /(\(|\)|\||\[(\^)?|\]|-)/,
-      token: "m3",
-    },
-    {
-      regex: /(\+|\*|\.|\+|\?)/,
-      token: "m1",
-    },
-    {
-      regex: /\{(\d+|\d+,\d+|\d+,|,\d+)\}/,
-      token: "m5",
-    },
-    {
-      regex: /(\$|\^)/,
-      token: "m6",
-    },
-  ],
-});
 
 /* MATERIAL UI DARK THEME */
 const darkTheme = createTheme({

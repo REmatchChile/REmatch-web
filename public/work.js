@@ -36,9 +36,9 @@ addEventListener("message", (e) => {
   }
 
   try {
-    const { pattern, document } = e.data;
+    const { REQLQuery, document } = e.data;
     const flags = new REmatchModuleInstance.Flags();
-    const rgx = REmatchModuleInstance.compile(pattern, flags);
+    const rgx = REmatchModuleInstance.compile(REQLQuery, flags);
     const match_iterator = rgx.finditer(document);
 
     // Get variables

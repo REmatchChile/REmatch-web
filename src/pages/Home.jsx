@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 /* MaterialUI */
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -11,10 +11,9 @@ import { enqueueSnackbar } from "notistack";
 import ExamplesDialog from "../components/ExamplesDialog";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
-
-import CodeMirror from "codemirror";
-import "codemirror/addon/display/placeholder";
-import "codemirror/theme/material-darker.css";
+import CodeMirror, { EditorState, EditorView } from "@uiw/react-codemirror";
+import { basicDark } from "@uiw/codemirror-theme-basic";
+import { REQLLanguage } from "../utils/REQLCodemirrorLanguage";
 
 /* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
@@ -53,8 +52,22 @@ const Home = () => {
   const [matches, setMatches] = useState([]);
   const [running, setRunning] = useState(false);
   const [openExamplesDialog, setOpenExamplesDialog] = useState(false);
+  const [REQLQuery, setREQLQuery] = useState(
+    "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)"
+  );
+  const [document, setDocument] = useState(
+    "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n"
+  );
   const patternEditor = useRef(null);
   const documentEditor = useRef(null);
+
+  const onPatternChange = useCallback((val, viewUpdate) => {
+    setREQLQuery(val);
+  }, []);
+
+  const onDocumentChange = useCallback((val, viewUpdate) => {
+    setDocument(val);
+  }, []);
 
   const addMarks = (spans) => {
     let start, end;
@@ -90,12 +103,12 @@ const Home = () => {
 
   const runWorker = () => {
     setRunning(true);
-    clearMarks();
+    // clearMarks();
     setMatches([]);
     setVariables([]);
     worker.postMessage({
-      pattern: patternEditor.current.getValue(),
-      document: documentEditor.current.getValue(),
+      REQLQuery: REQLQuery,
+      document: document,
     });
     worker.onmessage = (m) => {
       switch (m.data.type) {
@@ -122,66 +135,62 @@ const Home = () => {
   };
 
   const onExampleClick = (example) => {
-    clearMarks();
+    // clearMarks();
     setMatches([]);
     setVariables([]);
-
-    patternEditor.current.setValue(example.pattern);
-    documentEditor.current.setValue(example.document);
-
+    setREQLQuery(example.pattern);
+    setDocument(example.document);
     setOpenExamplesDialog(false);
   };
 
   useEffect(() => {
-    patternEditor.current = CodeMirror(
-      document.getElementById("patternEditor"),
-      {
-        value:
-          "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)",
-        mode: "REQL",
-        placeholder: "Type your pattern",
-        theme: "material-darker",
-        lineNumbers: false,
-        scrollbarStyle: null,
-        smartIndent: false,
-        indentWithTabs: true,
-        undoDepth: 100,
-        viewportMargin: 10,
-        extraKeys: {
-          Enter: runWorker,
-        },
-      }
-    );
-
-    patternEditor.current.on("beforeChange", (_, change) => {
-      if (!["undo", "redo"].includes(change.origin)) {
-        let line = change.text.join("").replace(/\n/g, "");
-        change.update(change.from, change.to, [line]);
-      }
-      return true;
-    });
-
-    documentEditor.current = CodeMirror(
-      document.getElementById("documentEditor"),
-      {
-        value:
-          "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n",
-        mode: { name: "text/html" },
-        placeholder: "Type your document",
-        theme: "material-darker",
-        lineNumbers: true,
-        scrollbarStyle: "native",
-        smartIndent: false,
-        indentWithTabs: true,
-        showInvisibles: true,
-        undoDepth: 100,
-        viewportMargin: 15,
-        lineWrapping: true,
-      }
-    );
-    documentEditor.current.on("change", () => {
-      clearMarks();
-    });
+    // patternEditor.current = CodeMirror(
+    //   document.getElementById("patternEditor"),
+    //   {
+    //     value:
+    //       "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)",
+    //     mode: "REQL",
+    //     placeholder: "Type your pattern",
+    //     theme: "material-darker",
+    //     lineNumbers: false,
+    //     scrollbarStyle: null,
+    //     smartIndent: false,
+    //     indentWithTabs: true,
+    //     undoDepth: 100,
+    //     viewportMargin: 10,
+    //     extraKeys: {
+    //       Enter: runWorker,
+    //     },
+    //   }
+    // );
+    // patternEditor.current.on("beforeChange", (_, change) => {
+    //   if (!["undo", "redo"].includes(change.origin)) {
+    //     let line = change.text.join("").replace(/\n/g, "");
+    //     change.update(change.from, change.to, [line]);
+    //   }
+    //   return true;
+    // });
+    // documentEditor.current = CodeMirror(
+    //   document.getElementById("documentEditor"),
+    //   {
+    //     value:
+    //       "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n",
+    //     mode: { name: "text/html" },
+    //     placeholder: "Type your document",
+    //     theme: "material-darker",
+    //     lineNumbers: true,
+    //     scrollbarStyle: "native",
+    //     smartIndent: false,
+    //     indentWithTabs: true,
+    //     showInvisibles: true,
+    //     undoDepth: 100,
+    //     viewportMargin: 15,
+    //     lineWrapping: true,
+    //   }
+    // );
+    // documentEditor.current.on("change", () => {
+    //   clearMarks();
+    // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -208,6 +217,7 @@ const Home = () => {
             <Box
               sx={{
                 display: "flex",
+                height: "auto",
               }}
             >
               <ResponsiveButtonPatternEditor
@@ -217,9 +227,33 @@ const Home = () => {
                 color="secondary"
               />
               <Box
-                id="patternEditor"
-                sx={{ height: "100%", flexGrow: 1, px: 1 }}
-              ></Box>
+                sx={{
+                  flex: "1 1 auto",
+                  overflowX: "scroll",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <CodeMirror
+                  style={{ flex: 1, height: "100%" }}
+                  height="100%"
+                  value={REQLQuery}
+                  onChange={onPatternChange}
+                  theme={basicDark}
+                  basicSetup={{
+                    highlightActiveLine: false,
+                    bracketMatching: false,
+                    lineNumbers: false,
+                    foldGutter: false,
+                  }}
+                  extensions={[
+                    REQLLanguage,
+                    EditorState.transactionFilter.of((tr) =>
+                      tr.newDoc.lines > 1 ? [] : tr
+                    ),
+                  ]}
+                />
+              </Box>
               <ResponsiveButtonPatternEditor
                 name={running ? "Stop" : "Run"}
                 onClick={running ? restartWorker : runWorker}
@@ -248,7 +282,19 @@ const Home = () => {
           >
             {/* DOCUMENT EDITOR */}
             <Window name="Document">
-              <Box id="documentEditor" sx={{ flex: 1 }}></Box>
+              <CodeMirror
+                style={{ height: "100%" }}
+                height="100%"
+                value={document}
+                onChange={onDocumentChange}
+                lang="text/html"
+                basicSetup={{
+                  bracketMatching: false,
+                  closeBrackets: false,
+                }}
+                theme={basicDark}
+                extensions={[EditorView.lineWrapping]}
+              />
             </Window>
           </Box>
           <Box
