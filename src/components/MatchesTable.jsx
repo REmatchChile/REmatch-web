@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
+import Tooltip from "@mui/material/Tooltip";
+import Box from "@mui/material/Box";
 import {
   DataGrid,
   gridPageCountSelector,
@@ -47,6 +49,8 @@ const MatchesTable = (props) => {
             ...variables.map((name, idx) => ({
               field: `var-${idx}`,
               headerName: `!${name}`,
+              flex: 1,
+              minWidth: 100,
             })),
           ]
         : []
@@ -58,12 +62,11 @@ const MatchesTable = (props) => {
       matches.map((match, idxMatch) => {
         const res = { id: idxMatch, matchData: match };
         match.forEach((span, idxSpan) => {
-          res[`var-${idxSpan}`] = documentEditor.current
-            .getRange(
-              documentEditor.current.posFromIndex(span[0]),
-              documentEditor.current.posFromIndex(span[1])
-            )
-            .replaceAll("\n", "↓");
+          res[`var-${idxSpan}`] = documentEditor.current.getRange(
+            documentEditor.current.posFromIndex(span[0]),
+            documentEditor.current.posFromIndex(span[1])
+          );
+          // .replaceAll("\n", "↓");
         });
         return res;
       })
