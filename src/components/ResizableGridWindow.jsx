@@ -55,7 +55,7 @@ const ResizableGridWindow = React.forwardRef(
         <Box
           sx={{
             flexGrow: 1,
-            overflow: "scroll",
+            overflow: "hidden",
             borderBottomLeftRadius: "inherit",
             borderBottomRightRadius: "inherit",
           }}

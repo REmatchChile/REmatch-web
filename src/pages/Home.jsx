@@ -9,7 +9,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { enqueueSnackbar } from "notistack";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import { getLS, insertLS } from "../utils/localStorage";
 import ExamplesDialog from "../components/ExamplesDialog";
 import MatchesTable from "../components/MatchesTable";
 import ResizableGridWindow from "../components/ResizableGridWindow";
@@ -24,41 +23,12 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 let worker = new Worker(WORKPATH, { type: "module" });
 
-const DEFAULT_LAYOUT = {
-  lg: [
-    { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
-    {
-      i: "documentWindow",
-      x: 0,
-      y: 1,
-      w: 6,
-      h: 11,
-      minW: 2,
-      minH: 4,
-    },
-    { i: "matchesWindow", x: 6, y: 1, w: 6, h: 11, minW: 3, minH: 4 },
-  ],
-  sm: [
-    { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
-    {
-      i: "documentWindow",
-      x: 0,
-      y: 1,
-      w: 6,
-      h: 5,
-      minW: 3,
-      minH: 4,
-    },
-    { i: "matchesWindow", x: 4, y: 1, w: 6, h: 6, minW: 3, minH: 4 },
-  ],
-};
-
 const ResponsiveButtonPatternEditor = ({ name, onClick, startIcon, color }) => {
   const theme = useTheme();
   const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <Button
-    disableElevation
+      disableElevation
       variant="contained"
       size="small"
       sx={{
@@ -86,7 +56,6 @@ const Home = () => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
   const [running, setRunning] = useState(false);
-  const [layouts, setLayouts] = useState(getLS("layouts") || DEFAULT_LAYOUT);
   const [openExamplesDialog, setOpenExamplesDialog] = useState(false);
   const patternEditor = useRef(null);
   const documentEditor = useRef(null);
@@ -167,11 +136,6 @@ const Home = () => {
     setOpenExamplesDialog(false);
   };
 
-  const onLayoutChange = (layout, layouts) => {
-    insertLS("layouts", layouts);
-    setLayouts(layouts);
-  };
-
   useEffect(() => {
     patternEditor.current = CodeMirror(
       document.getElementById("patternEditor"),
@@ -240,8 +204,46 @@ const Home = () => {
         draggableHandle=".drag-handle"
         compactType="vertical"
         resizeHandles={["se", "ne", "nw", "sw"]}
-        layouts={layouts}
-        onLayoutChange={(layout, layouts) => onLayoutChange(layout, layouts)}
+        layouts={{
+          lg: [
+            { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 6,
+              h: 11,
+              static: true,
+            },
+            {
+              i: "matchesWindow",
+              x: 6,
+              y: 1,
+              w: 6,
+              h: 11,
+              static: true,
+            },
+          ],
+          sm: [
+            { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
+            {
+              i: "documentWindow",
+              x: 0,
+              y: 1,
+              w: 6,
+              h: 5,
+              static: true,
+            },
+            {
+              i: "matchesWindow",
+              x: 0,
+              y: 6,
+              w: 6,
+              h: 5,
+              static: true,
+            },
+          ],
+        }}
       >
         <ResizableGridWindow key="patternWindow" name="REQL query">
           <Box
@@ -259,7 +261,7 @@ const Home = () => {
             />
             <Box
               id="patternEditor"
-              sx={{ height: "auto", flexGrow: 1, px: 1 }}
+              sx={{ height: "100%", flexGrow: 1, px: 1 }}
             ></Box>
             <ResponsiveButtonPatternEditor
               name={running ? "Stop" : "Run"}
