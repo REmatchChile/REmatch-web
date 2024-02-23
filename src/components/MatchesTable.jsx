@@ -47,7 +47,6 @@ const MatchesTable = (props) => {
             ...variables.map((name, idx) => ({
               field: `var-${idx}`,
               headerName: `!${name}`,
-              flex: 1,
             })),
           ]
         : []

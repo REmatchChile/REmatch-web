@@ -8,16 +8,13 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { enqueueSnackbar } from "notistack";
-import { Responsive, WidthProvider } from "react-grid-layout";
 import ExamplesDialog from "../components/ExamplesDialog";
 import MatchesTable from "../components/MatchesTable";
-import ResizableGridWindow from "../components/ResizableGridWindow";
+import Window from "../components/Window";
 
 import CodeMirror from "codemirror";
 import "codemirror/addon/display/placeholder";
 import "codemirror/theme/material-darker.css";
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 /* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
@@ -36,7 +33,6 @@ const ResponsiveButtonPatternEditor = ({ name, onClick, startIcon, color }) => {
         flexShrink: 0,
         borderRadius: 0,
         px: 2,
-        height: "100%",
         ".MuiButton-startIcon": {
           ml: isBreakpointBelowSm ? 0 : "-2px",
           mr: isBreakpointBelowSm ? 0 : "8px",
@@ -196,99 +192,86 @@ const Home = () => {
         setOpen={setOpenExamplesDialog}
         onExampleClick={onExampleClick}
       />
-      <ResponsiveGridLayout
-        className="layout"
-        rowHeight={64}
-        breakpoints={{ lg: 996, sm: 0 }}
-        cols={{ lg: 12, sm: 6 }}
-        draggableHandle=".drag-handle"
-        compactType="vertical"
-        resizeHandles={["se", "ne", "nw", "sw"]}
-        layouts={{
-          lg: [
-            { i: "patternWindow", x: 0, y: 0, w: 12, h: 1, static: true },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 6,
-              h: 11,
-              static: true,
-            },
-            {
-              i: "matchesWindow",
-              x: 6,
-              y: 1,
-              w: 6,
-              h: 11,
-              static: true,
-            },
-          ],
-          sm: [
-            { i: "patternWindow", x: 0, y: 0, w: 6, h: 1, static: true },
-            {
-              i: "documentWindow",
-              x: 0,
-              y: 1,
-              w: 6,
-              h: 5,
-              static: true,
-            },
-            {
-              i: "matchesWindow",
-              x: 0,
-              y: 6,
-              w: 6,
-              h: 5,
-              static: true,
-            },
-          ],
+      <Box
+        sx={{
+          p: 1,
+          gap: 1,
+          flex: "1 1 auto",
+          display: "flex",
+          overflow: "hidden",
+          flexDirection: "column",
         }}
       >
-        <ResizableGridWindow key="patternWindow" name="REQL query">
+        {/* PATTERN EDITOR */}
+        <Box sx={{ flex: "0 0 0" }}>
+          <Window name="Document">
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <ResponsiveButtonPatternEditor
+                name="Examples"
+                onClick={setOpenExamplesDialog}
+                startIcon={<TipsAndUpdatesIcon />}
+                color="secondary"
+              />
+              <Box
+                id="patternEditor"
+                sx={{ height: "100%", flexGrow: 1, px: 1 }}
+              ></Box>
+              <ResponsiveButtonPatternEditor
+                name={running ? "Stop" : "Run"}
+                onClick={running ? restartWorker : runWorker}
+                startIcon={running ? <Stop /> : <PlayArrow />}
+                color="primary"
+              />
+            </Box>
+          </Window>
+        </Box>
+        <Box
+          sx={{
+            flex: "1 1 auto",
+            gap: 1,
+            display: "flex",
+            flexDirection: { md: "row", xs: "column" },
+            overflow: "hidden",
+          }}
+        >
           <Box
             sx={{
+              flex: "1 0 0",
+              overflow: "auto",
               display: "flex",
-              height: "100%",
-              alignItems: "center",
+              flexDirection: "column",
             }}
           >
-            <ResponsiveButtonPatternEditor
-              name="Examples"
-              onClick={setOpenExamplesDialog}
-              startIcon={<TipsAndUpdatesIcon />}
-              color="secondary"
-            />
-            <Box
-              id="patternEditor"
-              sx={{ height: "100%", flexGrow: 1, px: 1 }}
-            ></Box>
-            <ResponsiveButtonPatternEditor
-              name={running ? "Stop" : "Run"}
-              onClick={running ? restartWorker : runWorker}
-              startIcon={running ? <Stop /> : <PlayArrow />}
-              color="primary"
-            />
+            {/* DOCUMENT EDITOR */}
+            <Window name="Document">
+              <Box id="documentEditor" sx={{ flex: 1 }}></Box>
+            </Window>
           </Box>
-        </ResizableGridWindow>
-        <ResizableGridWindow key="documentWindow" name="Document">
-          <Box id="documentEditor" sx={{ height: "100%", pb: "16px" }}></Box>
-        </ResizableGridWindow>
-        <ResizableGridWindow
-          key="matchesWindow"
-          name={`Matches (${matches.length})`}
-        >
-          <Box sx={{ height: "100%" }}>
-            <MatchesTable
-              matches={matches}
-              variables={variables}
-              documentEditor={documentEditor}
-              addMarks={addMarks}
-              clearMarks={clearMarks}
-            />
+          <Box
+            sx={{
+              flex: "1 0 0",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "auto",
+            }}
+          >
+            {/* MATCHES TABLE */}
+            <Window name={`Matches (${matches.length})`}>
+              <MatchesTable
+                matches={matches}
+                variables={variables}
+                documentEditor={documentEditor}
+                addMarks={addMarks}
+                clearMarks={clearMarks}
+              />
+            </Window>
           </Box>
-        </ResizableGridWindow>
-      </ResponsiveGridLayout>
+        </Box>
+      </Box>
     </>
   );
 };
