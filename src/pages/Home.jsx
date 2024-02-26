@@ -179,6 +179,7 @@ const Home = () => {
                     lineNumbers: false,
                     foldGutter: false,
                     searchKeymap: false,
+                    highlightSelectionMatches: false,
                   }}
                   extensions={[
                     REQLExtension,
@@ -237,11 +238,11 @@ const Home = () => {
                   bracketMatching: false,
                   closeBrackets: false,
                   searchKeymap: false,
+                  highlightSelectionMatches: false,
                 }}
                 theme={basicDark}
                 extensions={[
                   EditorView.lineWrapping,
-                  highlightWhitespace(),
                   MarkExtension,
                 ]}
               />

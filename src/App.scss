@@ -54,6 +54,7 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 // Add padding if match has a child match
 .cm-match {
   display: inline-block;
+  color: black !important;
   &:has(.cm-match) {
     padding: 2px 0 2px 0;
   }
@@ -62,7 +63,6 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
     background-color: nth($colors, $i + 1);
-    color: black !important;
   }
 }
 
