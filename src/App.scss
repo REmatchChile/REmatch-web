@@ -140,7 +140,7 @@ a {
     border-left: 1px dotted $dark;
     border-right: 1px dotted $dark;
     padding: 0 4px;
-    white-space: nowrap;
+    white-space: pre-wrap;
   }
 
   .MuiDataGrid-columnHeaders {

@@ -59,7 +59,9 @@ const MatchesTable = (props) => {
       matches.map((match, idxMatch) => {
         const res = { id: idxMatch, matchData: match };
         match.forEach((span, idxSpan) => {
-          res[`var-${idxSpan}`] = document.substring(span[0], span[1]);
+          res[`var-${idxSpan}`] = document
+            .substring(span[0], span[1])
+            .replace(/\n/g, " ");
         });
         return res;
       })

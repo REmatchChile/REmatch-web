@@ -162,13 +162,13 @@ const Home = () => {
               <Box
                 sx={{
                   flex: "1 1 auto",
-                  overflowX: "auto",
+                  overflow: "hidden",
                   display: "flex",
                   alignItems: "center",
                 }}
               >
                 <CodeMirror
-                  style={{ flex: 1, height: "100%" }}
+                  style={{ flex: 1, height: "100%", overflow: "auto" }}
                   height="100%"
                   value={REQLQuery}
                   onChange={onPatternChange}
@@ -219,7 +219,7 @@ const Home = () => {
           <Box
             sx={{
               flex: "1 0 0",
-              overflow: "auto",
+              overflow: "hidden",
               display: "flex",
               flexDirection: "column",
             }}
@@ -228,7 +228,7 @@ const Home = () => {
             <Window name="Document">
               <CodeMirror
                 ref={documentEditorRef}
-                style={{ height: "100%" }}
+                style={{ height: "100%", overflow: "auto" }}
                 height="100%"
                 value={document}
                 onChange={onDocumentChange}
