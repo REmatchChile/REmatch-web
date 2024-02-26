@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 /* MaterialUI */
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -7,22 +7,24 @@ import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { enqueueSnackbar } from "notistack";
-import ExamplesDialog from "../components/ExamplesDialog";
-import MatchesTable from "../components/MatchesTable";
-import Window from "../components/Window";
+import { basicDark } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorState,
   EditorView,
   highlightWhitespace,
+  keymap,
+  Prec,
 } from "@uiw/react-codemirror";
-import { basicDark } from "@uiw/codemirror-theme-basic";
-import { REQLExtension } from "../codemirror-extensions/REQLExtension";
+import { enqueueSnackbar } from "notistack";
 import {
   MarkExtension,
   addMarks,
   removeMarks,
 } from "../codemirror-extensions/MarkExtension";
+import { REQLExtension } from "../codemirror-extensions/REQLExtension";
+import ExamplesDialog from "../components/ExamplesDialog";
+import MatchesTable from "../components/MatchesTable";
+import Window from "../components/Window";
 
 /* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
@@ -160,7 +162,7 @@ const Home = () => {
               <Box
                 sx={{
                   flex: "1 1 auto",
-                  overflowX: "scroll",
+                  overflowX: "auto",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -184,6 +186,15 @@ const Home = () => {
                       tr.newDoc.lines > 1 ? [] : tr
                     ),
                     highlightWhitespace(),
+                    // Override Enter for running the REQL query
+                    Prec.highest(
+                      keymap.of([
+                        {
+                          key: "Enter",
+                          run: () => runWorker(),
+                        },
+                      ])
+                    ),
                   ]}
                 />
               </Box>
