@@ -241,10 +241,7 @@ const Home = () => {
                   highlightSelectionMatches: false,
                 }}
                 theme={basicDark}
-                extensions={[
-                  EditorView.lineWrapping,
-                  MarkExtension,
-                ]}
+                extensions={[EditorView.lineWrapping, MarkExtension]}
               />
             </Window>
           </Box>

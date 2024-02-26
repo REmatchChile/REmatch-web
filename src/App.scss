@@ -62,7 +62,7 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
-    background-color: nth($colors, $i + 1);
+    background: nth($colors, $i + 1);
   }
 }
 
@@ -70,67 +70,17 @@ a {
   text-decoration: none;
 }
 
-.mainPaper {
-  .headContainer {
-    padding: 0 1rem;
-
-    .matchesRow {
-      display: flex;
-      align-items: center;
-
-      .matchesIdx {
-        color: $darker;
-        width: 3rem;
-      }
-
-      .matchesItem {
-        padding: 0.5rem;
-        flex: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-    }
-  }
-
-  .matchesContainer {
-    padding: 0 1rem;
-    height: 250px;
-    overflow-y: auto;
-
-    .matchesRow {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-
-        .matchesIdx {
-          color: $darkest;
-        }
-      }
-
-      .matchesIdx {
-        color: $darker;
-        width: 3rem;
-      }
-
-      .matchesItem {
-        padding: 0 0.5rem;
-        flex: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-    }
-  }
-}
-
 .MuiDataGrid-root {
   border: none !important;
   font-family: "Roboto Mono", monospace !important;
+
   .MuiDataGrid-cell {
+    &:focus-within {
+      outline: none !important;
+    }
+  }
+
+  .MuiDataGrid-columnHeader {
     &:focus-within {
       outline: none !important;
     }
@@ -141,14 +91,6 @@ a {
     border-right: 1px dotted $dark;
     padding: 0 4px;
     white-space: pre-wrap;
-  }
-
-  .MuiDataGrid-columnHeaders {
-    border: none !important;
-  }
-
-  .MuiDataGrid-footerContainer {
-    border: none !important;
   }
 
   .MuiDataGrid-row:hover {

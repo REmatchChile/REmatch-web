@@ -42,12 +42,14 @@ const MatchesTable = (props) => {
               field: "id",
               headerName: "Index",
               cellClassName: "MuiDataGrid-index-column",
+              sortable: false,
             },
             ...variables.map((name, idx) => ({
               field: `var-${idx}`,
               headerName: `!${name}`,
               flex: 1,
               minWidth: 100,
+              sortable: false,
             })),
           ]
         : []
@@ -87,6 +89,7 @@ const MatchesTable = (props) => {
         pagination: CustomPagination,
       }}
       hideFooterSelectedRowCount
+      disableColumnMenu
     />
   );
 };
