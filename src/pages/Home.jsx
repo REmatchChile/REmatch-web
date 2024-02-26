@@ -175,7 +175,7 @@ const Home = () => {
                   theme={basicDark}
                   basicSetup={{
                     highlightActiveLine: false,
-                    bracketMatching: false,
+                    bracketMatching: true,
                     lineNumbers: false,
                     foldGutter: false,
                     searchKeymap: false,
