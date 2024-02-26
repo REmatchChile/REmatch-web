@@ -30,8 +30,7 @@ $darker: #545454;
 $darkest: #212121;
 
 /* MainInterface */
-$colors: #03dac6, #fce938, hsl(354, 100%, 72%), hsl(244, 100%, 81%), #20ba56,
-  #f5a0ff, #a6ff22, #7f34f0;
+$colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 
 .reql-variable {
   color: nth($colors, 1);
@@ -43,44 +42,32 @@ $colors: #03dac6, #fce938, hsl(354, 100%, 72%), hsl(244, 100%, 81%), #20ba56,
   color: nth($colors, 3);
 }
 .reql-braces {
-  color: nth($colors, 4);
+  color: nth($colors, 7);
 }
-.reql-numericQuantifier {
+.reql-numeric-quantifier {
   color: nth($colors, 6);
 }
 .reql-anchor {
-  color: nth($colors, 7);
+  color: nth($colors, 4);
+}
+
+// Add padding if match has a child match
+.cm-match {
+  display: inline-block;
+  &:has(.cm-match) {
+    padding: 2px 0 2px 0;
+  }
 }
 
 @for $i from 0 to length($colors) {
-  .m#{$i} {
+  .cm-match-#{$i} {
     background-color: nth($colors, $i + 1);
     color: black !important;
-    border-top: 4px solid nth($colors, $i + 1);
-    border-bottom: 4px solid nth($colors, $i + 1);
-
-    @for $j from $i + 1 to length($colors) {
-      &.m#{$j} {
-        border-top: 4px solid nth($colors, $i + 1);
-        border-bottom: 4px solid nth($colors, $i + 1);
-
-        @for $k from $j + 1 to length($colors) {
-          &.m#{$k} {
-            border-top: 4px solid nth($colors, $i + 1);
-            border-bottom: 4px solid nth($colors, $j + 1);
-          }
-        }
-      }
-    }
   }
 }
 
 a {
   text-decoration: none;
-}
-
-.cm-cursor {
-  color: red;
 }
 
 .mainPaper {

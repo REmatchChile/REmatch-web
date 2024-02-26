@@ -78,6 +78,6 @@ const REQLSyntaxHighlighting = syntaxHighlighting(
   ])
 );
 
-export const REQLLanguage = new LanguageSupport(REQLStreamLanguage, [
+export const REQLExtension = new LanguageSupport(REQLStreamLanguage, [
   REQLSyntaxHighlighting,
 ]);

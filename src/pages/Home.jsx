@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 
 /* MaterialUI */
 import PlayArrow from "@mui/icons-material/PlayArrow";
@@ -11,9 +11,18 @@ import { enqueueSnackbar } from "notistack";
 import ExamplesDialog from "../components/ExamplesDialog";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
-import CodeMirror, { EditorState, EditorView } from "@uiw/react-codemirror";
+import CodeMirror, {
+  EditorState,
+  EditorView,
+  highlightWhitespace,
+} from "@uiw/react-codemirror";
 import { basicDark } from "@uiw/codemirror-theme-basic";
-import { REQLLanguage } from "../utils/REQLCodemirrorLanguage";
+import { REQLExtension } from "../codemirror-extensions/REQLExtension";
+import {
+  MarkExtension,
+  addMarks,
+  removeMarks,
+} from "../codemirror-extensions/MarkExtension";
 
 /* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
@@ -58,8 +67,7 @@ const Home = () => {
   const [document, setDocument] = useState(
     "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n"
   );
-  const patternEditor = useRef(null);
-  const documentEditor = useRef(null);
+  const documentEditorRef = useRef();
 
   const onPatternChange = useCallback((val, viewUpdate) => {
     setREQLQuery(val);
@@ -69,32 +77,6 @@ const Home = () => {
     setDocument(val);
   }, []);
 
-  const addMarks = (spans) => {
-    let start, end;
-    spans.sort((a, b) => a[0] - b[0]);
-    spans.forEach((span, idx) => {
-      start = documentEditor.current.posFromIndex(span[0]);
-      end = documentEditor.current.posFromIndex(span[1]);
-
-      documentEditor.current.markText(start, end, {
-        className: `m${idx}`,
-      });
-    });
-    documentEditor.current.scrollIntoView(
-      {
-        from: start,
-        to: end,
-      },
-      0
-    );
-  };
-
-  const clearMarks = () => {
-    documentEditor.current.getAllMarks().forEach((mark) => {
-      mark.clear();
-    });
-  };
-
   const restartWorker = () => {
     worker.terminate();
     worker = new Worker(WORKPATH, { type: "module" });
@@ -103,7 +85,7 @@ const Home = () => {
 
   const runWorker = () => {
     setRunning(true);
-    // clearMarks();
+    removeMarks(documentEditorRef.current.view);
     setMatches([]);
     setVariables([]);
     worker.postMessage({
@@ -135,64 +117,13 @@ const Home = () => {
   };
 
   const onExampleClick = (example) => {
-    // clearMarks();
+    removeMarks(documentEditorRef.current.view);
     setMatches([]);
     setVariables([]);
     setREQLQuery(example.pattern);
     setDocument(example.document);
     setOpenExamplesDialog(false);
   };
-
-  useEffect(() => {
-    // patternEditor.current = CodeMirror(
-    //   document.getElementById("patternEditor"),
-    //   {
-    //     value:
-    //       "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)",
-    //     mode: "REQL",
-    //     placeholder: "Type your pattern",
-    //     theme: "material-darker",
-    //     lineNumbers: false,
-    //     scrollbarStyle: null,
-    //     smartIndent: false,
-    //     indentWithTabs: true,
-    //     undoDepth: 100,
-    //     viewportMargin: 10,
-    //     extraKeys: {
-    //       Enter: runWorker,
-    //     },
-    //   }
-    // );
-    // patternEditor.current.on("beforeChange", (_, change) => {
-    //   if (!["undo", "redo"].includes(change.origin)) {
-    //     let line = change.text.join("").replace(/\n/g, "");
-    //     change.update(change.from, change.to, [line]);
-    //   }
-    //   return true;
-    // });
-    // documentEditor.current = CodeMirror(
-    //   document.getElementById("documentEditor"),
-    //   {
-    //     value:
-    //       "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n",
-    //     mode: { name: "text/html" },
-    //     placeholder: "Type your document",
-    //     theme: "material-darker",
-    //     lineNumbers: true,
-    //     scrollbarStyle: "native",
-    //     smartIndent: false,
-    //     indentWithTabs: true,
-    //     showInvisibles: true,
-    //     undoDepth: 100,
-    //     viewportMargin: 15,
-    //     lineWrapping: true,
-    //   }
-    // );
-    // documentEditor.current.on("change", () => {
-    //   clearMarks();
-    // });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -222,7 +153,7 @@ const Home = () => {
             >
               <ResponsiveButtonPatternEditor
                 name="Examples"
-                onClick={setOpenExamplesDialog}
+                onClick={() => setOpenExamplesDialog(true)}
                 startIcon={<TipsAndUpdatesIcon />}
                 color="secondary"
               />
@@ -245,12 +176,14 @@ const Home = () => {
                     bracketMatching: false,
                     lineNumbers: false,
                     foldGutter: false,
+                    searchKeymap: false,
                   }}
                   extensions={[
-                    REQLLanguage,
+                    REQLExtension,
                     EditorState.transactionFilter.of((tr) =>
                       tr.newDoc.lines > 1 ? [] : tr
                     ),
+                    highlightWhitespace(),
                   ]}
                 />
               </Box>
@@ -283,6 +216,7 @@ const Home = () => {
             {/* DOCUMENT EDITOR */}
             <Window name="Document">
               <CodeMirror
+                ref={documentEditorRef}
                 style={{ height: "100%" }}
                 height="100%"
                 value={document}
@@ -291,9 +225,14 @@ const Home = () => {
                 basicSetup={{
                   bracketMatching: false,
                   closeBrackets: false,
+                  searchKeymap: false,
                 }}
                 theme={basicDark}
-                extensions={[EditorView.lineWrapping]}
+                extensions={[
+                  EditorView.lineWrapping,
+                  highlightWhitespace(),
+                  MarkExtension,
+                ]}
               />
             </Window>
           </Box>
@@ -310,9 +249,10 @@ const Home = () => {
               <MatchesTable
                 matches={matches}
                 variables={variables}
-                documentEditor={documentEditor}
-                addMarks={addMarks}
-                clearMarks={clearMarks}
+                document={document}
+                addMarks={(spans) =>
+                  addMarks(documentEditorRef.current.view, spans)
+                }
               />
             </Window>
           </Box>
