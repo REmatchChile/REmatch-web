@@ -146,7 +146,7 @@ const Home = () => {
       >
         {/* PATTERN EDITOR */}
         <Box sx={{ flex: "0 0 0" }}>
-          <Window name="Document">
+          <Window name="REQL Query">
             <Box
               sx={{
                 display: "flex",
