@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import Pagination from "@mui/material/Pagination";
 import PaginationItem from "@mui/material/PaginationItem";
-import Tooltip from "@mui/material/Tooltip";
-import Box from "@mui/material/Box";
 import {
   DataGrid,
   gridPageCountSelector,
@@ -28,12 +26,11 @@ const CustomPagination = () => {
 };
 
 const MatchesTable = (props) => {
-  const { matches, variables, documentEditor, addMarks, clearMarks } = props;
+  const { matches, variables, document, addMarks } = props;
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
   const handleRowClick = (params) => {
-    clearMarks();
     addMarks(params.row.matchData);
   };
 
@@ -45,12 +42,14 @@ const MatchesTable = (props) => {
               field: "id",
               headerName: "Index",
               cellClassName: "MuiDataGrid-index-column",
+              sortable: false,
             },
             ...variables.map((name, idx) => ({
               field: `var-${idx}`,
               headerName: `!${name}`,
               flex: 1,
               minWidth: 100,
+              sortable: false,
             })),
           ]
         : []
@@ -62,11 +61,9 @@ const MatchesTable = (props) => {
       matches.map((match, idxMatch) => {
         const res = { id: idxMatch, matchData: match };
         match.forEach((span, idxSpan) => {
-          res[`var-${idxSpan}`] = documentEditor.current.getRange(
-            documentEditor.current.posFromIndex(span[0]),
-            documentEditor.current.posFromIndex(span[1])
-          );
-          // .replaceAll("\n", "↓");
+          res[`var-${idxSpan}`] = document
+            .substring(span[0], span[1])
+            .replace(/\n/g, "\\n");
         });
         return res;
       })
@@ -92,6 +89,7 @@ const MatchesTable = (props) => {
         pagination: CustomPagination,
       }}
       hideFooterSelectedRowCount
+      disableColumnMenu
     />
   );
 };
