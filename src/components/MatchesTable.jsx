@@ -49,6 +49,7 @@ const MatchesTable = (props) => {
               headerName: `!${name}`,
               flex: 1,
               minWidth: 100,
+              sortable: false,
             })),
           ]
         : []
@@ -88,6 +89,7 @@ const MatchesTable = (props) => {
         pagination: CustomPagination,
       }}
       hideFooterSelectedRowCount
+      disableColumnMenu
     />
   );
 };
