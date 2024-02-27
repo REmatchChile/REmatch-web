@@ -134,16 +134,7 @@ const Home = () => {
         setOpen={setOpenExamplesDialog}
         onExampleClick={onExampleClick}
       />
-      <Box
-        sx={{
-          p: 1,
-          gap: 1,
-          flex: "1 1 auto",
-          display: "flex",
-          overflow: "hidden",
-          flexDirection: "column",
-        }}
-      >
+
         {/* PATTERN EDITOR */}
         <Box sx={{ flex: "0 0 0" }}>
           <Window name="REQL Query">
@@ -266,7 +257,6 @@ const Home = () => {
             </Window>
           </Box>
         </Box>
-      </Box>
     </>
   );
 };

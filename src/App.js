@@ -1,11 +1,12 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
+import Box from "@mui/material/Box";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Documentation from "./pages/Documentation";
+import NotFound from "./pages/NotFound";
 import "fontsource-roboto";
 import "./App.scss";
 import "@fontsource/roboto/300.css";
@@ -13,7 +14,6 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-/* MATERIAL UI DARK THEME */
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -28,8 +28,23 @@ const darkTheme = createTheme({
     },
   },
 });
+const DRAWER_WIDTH = {
+  open: 256,
+  closed: 56,
+};
 
 const App = () => {
+  const [drawerWidth, setDrawerWidth] = useState(DRAWER_WIDTH.closed);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const handleDrawerOpen = () => {
+    setOpenDrawer(true);
+    setDrawerWidth(DRAWER_WIDTH.open);
+  };
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+    setDrawerWidth(DRAWER_WIDTH.closed);
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -42,17 +57,31 @@ const App = () => {
         autoHideDuration={4000}
         hideIconVariant
       />
-      <Router>
-        <Navbar />
-        <Switch>
-          <Route path="/documentation">
-            <Documentation />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </Router>
+      <BrowserRouter>
+        <Navbar
+          handleDrawerClose={handleDrawerClose}
+          openDrawer={openDrawer}
+          drawerWidth={drawerWidth}
+          handleDrawerOpen={handleDrawerOpen}
+        />
+        <Box
+          sx={{
+            p: 1,
+            gap: 1,
+            flex: "1 1 auto",
+            display: "flex",
+            overflow: "hidden",
+            flexDirection: "column",
+            ml: { sm: `${drawerWidth}px`, xs: 0 },
+            transition: "margin .2s ease-in-out",
+          }}
+        >
+          <Routes>
+            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </Box>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };

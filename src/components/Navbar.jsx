@@ -1,38 +1,60 @@
-import React from "react";
+import React, { useCallback } from "react";
 
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CodeIcon from "@mui/icons-material/Code";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import MenuIcon from "@mui/icons-material/Menu";
+import PeopleIcon from "@mui/icons-material/People";
+import SchoolIcon from "@mui/icons-material/School";
+import {
+  Divider,
+  ListItemIcon,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
-import { Link } from "react-router-dom";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+import { useNavigate } from "react-router-dom";
 import Logo from "../assets/logo-dark.png";
 
-const AppLogo = ({ height }) => (
-  <Link to="/">
-    <Box
-      component="img"
-      src={Logo}
-      alt="REmatch"
-      sx={{
-        height,
-        "&:hover": {
-          filter: "drop-shadow(0 0 4px #03DAC6)",
-        },
-      }}
-    />
-  </Link>
+const AppLogo = ({ width, onClick }) => (
+  <Box
+    onClick={onClick}
+    component="img"
+    src={Logo}
+    alt="REmatch"
+    sx={{
+      width,
+      cursor: "pointer",
+      "&:hover": {
+        filter: "drop-shadow(#03DAC6 0 0 4px)",
+      },
+    }}
+  />
 );
+
+const MenuButton = ({ onClick }) => {
+  return (
+    <Tooltip title="Menu" sx={{ display: { sm: "none", xs: "flex" } }}>
+      <IconButton size="large" edge="start" onClick={onClick}>
+        <MenuIcon />
+      </IconButton>
+    </Tooltip>
+  );
+};
 
 const GithubButton = () => (
   <Tooltip title="GitHub">
     <IconButton
-      size="medium"
+      size="large"
       edge="end"
       href="https://github.com/REmatchChile"
       target="_blank"
@@ -43,84 +65,134 @@ const GithubButton = () => (
   </Tooltip>
 );
 
-const MenuButton = () => {
-  const [anchorElMenu, setAnchorElMenu] = React.useState(null);
-
-  const handleOpenMenu = (event) => {
-    setAnchorElMenu(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorElMenu(null);
-  };
-
+const DrawerListItem = ({
+  open,
+  handleDrawerClose,
+  icon,
+  primary,
+  onClick,
+}) => {
   return (
-    <>
-      <IconButton size="medium" edge="start" onClick={handleOpenMenu}>
-        <MenuIcon />
-      </IconButton>
-      <Menu
-        anchorEl={anchorElMenu}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        open={Boolean(anchorElMenu)}
-        onClose={handleCloseMenu}
-        keepMounted
+    <ListItem disablePadding sx={{ display: "block" }}>
+      <ListItemButton
+        onClick={() => onClick()}
         sx={{
-          display: { md: "none", xs: "block" },
+          justifyContent: open ? "initial" : "center",
+          height: 48,
         }}
       >
-        <MenuItem component={Link} to="/documentation">
-          Documentation
-        </MenuItem>
-      </Menu>
-    </>
+        <ListItemIcon
+          sx={{ minWidth: 0, mr: open ? 3 : 0, justifyContent: "center" }}
+        >
+          {icon}
+        </ListItemIcon>
+        <ListItemText primary={primary} sx={{ opacity: open ? 1 : 0, whiteSpace: "nowrap" }} />
+      </ListItemButton>
+    </ListItem>
   );
 };
 
-export default function NavbarComponent() {
-  return (
-    <AppBar position="static">
-      {/* Desktop */}
-      <Toolbar
-        variant="regular"
-        sx={{
-          display: { md: "flex", xs: "none" },
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        <AppLogo height={32} />
-        <Box sx={{ flexGrow: 1, ml: 2, display: "flex", gap: 1 }}>
-          <Link to="/documentation">
-            <Button variant="text" sx={{ color: "white" }}>
-              Documentation
-            </Button>
-          </Link>
-        </Box>
-        <GithubButton />
-      </Toolbar>
+export default function NavbarComponent({
+  handleDrawerClose,
+  openDrawer,
+  drawerWidth,
+  handleDrawerOpen,
+}) {
+  const theme = useTheme();
+  const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
-      {/* Mobile */}
-      <Toolbar
-        variant="dense"
+  const handleNavigate = useCallback(
+    (path) => {
+      handleDrawerClose();
+      navigate(path);
+    },
+    [handleDrawerClose, navigate]
+  );
+
+  return (
+    <>
+      <AppBar
+        position="static"
         sx={{
-          display: { md: "none", xs: "flex" },
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
+          ml: { sm: `${drawerWidth}px`, xs: 0 },
+          width: { sm: `calc(100% -  ${drawerWidth}px)`, xs: "100%" },
+          transition: "all .2s ease-in-out",
         }}
       >
-        <MenuButton />
-        <AppLogo height={24} />
-        <GithubButton />
-      </Toolbar>
-    </AppBar>
+        <Toolbar
+          variant="regular"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <MenuButton
+            onClick={() =>
+              openDrawer ? handleDrawerClose() : handleDrawerOpen()
+            }
+          />
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              justifyContent: { sm: "flex-start", xs: "center" },
+            }}
+          >
+            <AppLogo width="200px" onClick={() => navigate("/")} />
+          </Box>
+          <GithubButton />
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant={isBreakpointBelowSm ? "temporary" : "permanent"}
+        anchor="left"
+        open={openDrawer}
+        sx={{
+          width: { sm: `${drawerWidth}px`, xs: "80%" },
+          flexShrink: 0,
+          boxSizing: "border-box",
+          "& .MuiDrawer-paper": {
+            width: { sm: `${drawerWidth}px`, xs: "80%" },
+            transition: { sm: "all .2s ease-in-out", xs: "inherit" },
+          },
+        }}
+      >
+        <List disablePadding sx={{ overflow: "hidden" }}>
+          <DrawerListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            icon={openDrawer ? <ArrowBackIcon /> : <MenuIcon />}
+            primary={openDrawer ? "Close" : "Menu"}
+            onClick={() =>
+              openDrawer ? handleDrawerClose() : handleDrawerOpen()
+            }
+          />
+          <Divider />
+          <DrawerListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            icon={<SchoolIcon />}
+            primary="Tutorial"
+            onClick={() => handleNavigate("/tutorial")}
+          />
+          <DrawerListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            icon={<CodeIcon />}
+            primary="Documentation"
+            onClick={() => handleNavigate("/documentation")}
+          />
+          <DrawerListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            icon={<PeopleIcon/>}
+            primary="About us"
+            onClick={() => handleNavigate("/about-us")}
+          />
+        </List>
+      </Drawer>
+    </>
   );
 }

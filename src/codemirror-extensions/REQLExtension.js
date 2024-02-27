@@ -2,7 +2,6 @@ import { simpleMode } from "@codemirror/legacy-modes/mode/simple-mode";
 import {
   StreamLanguage,
   syntaxHighlighting,
-  defaultHighlightStyle,
   HighlightStyle,
   LanguageSupport,
 } from "@codemirror/language";
