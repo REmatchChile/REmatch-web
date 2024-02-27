@@ -1,14 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
-// import CodeMirror from "codemirror";
-// import "codemirror/addon/mode/simple";
-// import "codemirror/theme/material-darker.css";
-
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
-
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Documentation from "./pages/Documentation";
