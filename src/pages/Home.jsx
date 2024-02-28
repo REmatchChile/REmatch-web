@@ -28,31 +28,6 @@ import Window from "../components/Window";
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 let worker = new Worker(WORKPATH, { type: "module" });
 
-// const ResponsiveButtonPatternEditor = ({ name, onClick, startIcon, color }) => {
-//   return (
-//     <Button
-//       disableElevation
-//       variant="contained"
-//       size="small"
-//       sx={{
-//         minWidth: "48px",
-//         flexShrink: 0,
-//         borderRadius: 0,
-//         px: 2,
-//         ".MuiButton-startIcon": {
-//           ml: isBreakpointBelowSm ? 0 : "-2px",
-//           mr: isBreakpointBelowSm ? 0 : "8px",
-//         },
-//       }}
-//       color={color}
-//       startIcon={startIcon}
-//       onClick={onClick}
-//     >
-//       {!isBreakpointBelowSm && name}
-//     </Button>
-//   );
-// };
-
 /* MAIN INTERFACE */
 const Home = () => {
   const [variables, setVariables] = useState([]);
@@ -61,10 +36,10 @@ const Home = () => {
   const [REQLQuery, setREQLQuery] = useState(
     "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)"
   );
-  const [document, setDocument] = useState(
+  const [doc, setDoc] = useState(
     "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n"
   );
-  const documentEditorRef = useRef();
+  const docEditorRef = useRef();
   const theme = useTheme();
   const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -72,8 +47,8 @@ const Home = () => {
     setREQLQuery(val);
   }, []);
 
-  const onDocumentChange = useCallback((val, viewUpdate) => {
-    setDocument(val);
+  const onDocChange = useCallback((val, viewUpdate) => {
+    setDoc(val);
   }, []);
 
   const restartWorker = () => {
@@ -84,12 +59,12 @@ const Home = () => {
 
   const runWorker = () => {
     setRunning(true);
-    removeMarks(documentEditorRef.current.view);
+    removeMarks(docEditorRef.current.view);
     setMatches([]);
     setVariables([]);
     worker.postMessage({
       REQLQuery: REQLQuery,
-      document: document,
+      doc: doc,
     });
     worker.onmessage = (m) => {
       switch (m.data.type) {
@@ -116,7 +91,16 @@ const Home = () => {
   };
 
   return (
-    <>
+    <Box
+      component="main"
+      sx={{
+        flex: "1 1 auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 1,
+        p: 1,
+      }}
+    >
       {/* PATTERN EDITOR */}
       <Box sx={{ flex: "0 0 0" }}>
         <Window name="REQL Query">
@@ -209,11 +193,11 @@ const Home = () => {
           {/* DOCUMENT EDITOR */}
           <Window name="Document">
             <CodeMirror
-              ref={documentEditorRef}
+              ref={docEditorRef}
               style={{ height: "100%", overflow: "auto" }}
               height="100%"
-              value={document}
-              onChange={onDocumentChange}
+              value={doc}
+              onChange={onDocChange}
               lang="text/html"
               basicSetup={{
                 bracketMatching: false,
@@ -222,7 +206,11 @@ const Home = () => {
                 highlightSelectionMatches: false,
               }}
               theme={basicDark}
-              extensions={[EditorView.lineWrapping, MarkExtension]}
+              extensions={[
+                EditorView.lineWrapping,
+                MarkExtension,
+                highlightWhitespace(),
+              ]}
             />
           </Window>
         </Box>
@@ -239,15 +227,13 @@ const Home = () => {
             <MatchesTable
               matches={matches}
               variables={variables}
-              document={document}
-              addMarks={(spans) =>
-                addMarks(documentEditorRef.current.view, spans)
-              }
+              doc={doc}
+              addMarks={(spans) => addMarks(docEditorRef.current.view, spans)}
             />
           </Window>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 };
 

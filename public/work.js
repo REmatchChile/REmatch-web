@@ -36,10 +36,10 @@ addEventListener("message", (e) => {
   }
 
   try {
-    const { REQLQuery, document } = e.data;
+    const { REQLQuery, doc } = e.data;
     const flags = new REmatchModuleInstance.Flags();
     const rgx = REmatchModuleInstance.compile(REQLQuery, flags);
-    const match_iterator = rgx.finditer(document);
+    const match_iterator = rgx.finditer(doc);
 
     // Get variables
     const variables_vector = match_iterator.variables();
@@ -56,7 +56,7 @@ addEventListener("message", (e) => {
       variables.forEach((variable) => {
         const start = match.start(variable);
         const end = match.end(variable);
-        currentMatch.push([utf8IndexToStringIndex(document, start), utf8IndexToStringIndex(document, end)]);
+        currentMatch.push([utf8IndexToStringIndex(doc, start), utf8IndexToStringIndex(doc, end)]);
       });
       matchesBuffer.push(currentMatch);
 

@@ -1,17 +1,20 @@
-import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { SnackbarProvider } from "notistack";
-import Box from "@mui/material/Box";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import "fontsource-roboto";
-import "./App.scss";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import "fontsource-roboto";
+import { SnackbarProvider } from "notistack";
+import React, { useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import "./App.scss";
+import Navbar from "./components/Navbar";
+import AboutUs from "./pages/AboutUs";
+import WhatIsREmatch from "./pages/WhatIsREmatch";
+import Home from "./pages/Home";
+import Tutorial from "./pages/Tutorial";
 
 const darkTheme = createTheme({
   palette: {
@@ -65,8 +68,6 @@ const App = () => {
         />
         <Box
           sx={{
-            p: 1,
-            gap: 1,
             flex: "1 1 auto",
             display: "flex",
             overflow: "hidden",
@@ -77,10 +78,10 @@ const App = () => {
         >
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route path="/tutorial" element={<div>Tutorial</div>} />
-            <Route path="/examples" element={<div>Examples</div>} />
-            <Route path="/documentation" element={<div>Documentation</div>} />
-            <Route path="/about-us" element={<div>About us</div>} />
+            <Route path="/what-is-rematch" element={<WhatIsREmatch />} />
+            <Route path="/tutorial" element={<Tutorial />} />
+            <Route path="/examples" element={<div>TODO: Examples</div>} />
+            <Route path="/about-us" element={<AboutUs />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>

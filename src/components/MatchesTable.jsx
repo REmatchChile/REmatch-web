@@ -26,7 +26,7 @@ const CustomPagination = () => {
 };
 
 const MatchesTable = (props) => {
-  const { matches, variables, document, addMarks } = props;
+  const { matches, variables, doc, addMarks } = props;
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -59,7 +59,7 @@ const MatchesTable = (props) => {
       matches.map((match, idxMatch) => {
         const res = { id: idxMatch, matchData: match };
         match.forEach((span, idxSpan) => {
-          res[`var-${idxSpan}`] = document
+          res[`var-${idxSpan}`] = doc
             .substring(span[0], span[1])
             .replace(/\n/g, "\\n");
         });

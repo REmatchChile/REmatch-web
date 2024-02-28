@@ -2,11 +2,11 @@ import React, { useCallback } from "react";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DataObjectIcon from "@mui/icons-material/DataObject";
-import DescriptionIcon from "@mui/icons-material/Description";
 import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import InfoIcon from "@mui/icons-material/Info";
+import HelpIcon from "@mui/icons-material/Help";
 import MenuIcon from "@mui/icons-material/Menu";
+import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
 import { Divider, ListItemIcon, useMediaQuery, useTheme } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
@@ -220,12 +220,13 @@ export default function NavbarComponent({
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            IconComponent={DeveloperBoardIcon}
-            primary="Examples"
-            path="/examples"
+            IconComponent={HelpIcon}
+            primary="What is REmatch?"
+            path="/what-is-rematch"
             handleNavigate={handleNavigate}
             location={location}
           />
+
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
@@ -238,16 +239,16 @@ export default function NavbarComponent({
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            IconComponent={DescriptionIcon}
-            primary="Documentation"
-            path="/documentation"
+            IconComponent={DeveloperBoardIcon}
+            primary="Examples"
+            path="/examples"
             handleNavigate={handleNavigate}
             location={location}
           />
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            IconComponent={InfoIcon}
+            IconComponent={PeopleIcon}
             primary="About us"
             path="/about-us"
             handleNavigate={handleNavigate}
