@@ -33,7 +33,7 @@ const Home = () => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
   const [running, setRunning] = useState(false);
-  const [REQLQuery, setREQLQuery] = useState(
+  const [query, setQuery] = useState(
     "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)"
   );
   const [doc, setDoc] = useState(
@@ -44,7 +44,7 @@ const Home = () => {
   const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   const onPatternChange = useCallback((val, viewUpdate) => {
-    setREQLQuery(val);
+    setQuery(val);
   }, []);
 
   const onDocChange = useCallback((val, viewUpdate) => {
@@ -63,7 +63,7 @@ const Home = () => {
     setMatches([]);
     setVariables([]);
     worker.postMessage({
-      REQLQuery: REQLQuery,
+      query: query,
       doc: doc,
     });
     worker.onmessage = (m) => {
@@ -99,6 +99,7 @@ const Home = () => {
         flexDirection: "column",
         gap: 1,
         p: 1,
+        overflow: "hidden",
       }}
     >
       {/* PATTERN EDITOR */}
@@ -121,7 +122,7 @@ const Home = () => {
               <CodeMirror
                 style={{ flex: 1, height: "100%", overflow: "auto" }}
                 height="100%"
-                value={REQLQuery}
+                value={query}
                 onChange={onPatternChange}
                 theme={basicDark}
                 basicSetup={{
