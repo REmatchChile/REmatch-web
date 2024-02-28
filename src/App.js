@@ -78,6 +78,7 @@ const App = () => {
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route path="/tutorial" element={<div>Tutorial</div>} />
+            <Route path="/examples" element={<div>Examples</div>} />
             <Route path="/documentation" element={<div>Documentation</div>} />
             <Route path="/about-us" element={<div>About us</div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
