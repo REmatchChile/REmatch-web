@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
 import Box from "@mui/material/Box";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import NotFound from "./pages/NotFound";
 import "fontsource-roboto";
 import "./App.scss";
 import "@fontsource/roboto/300.css";
@@ -77,8 +76,11 @@ const App = () => {
           }}
         >
           <Routes>
-            <Route path="*" element={<NotFound />} />
-            <Route path="/" element={<Home />} />
+            <Route exact path="/" element={<Home />} />
+            <Route path="/tutorial" element={<div>Tutorial</div>} />
+            <Route path="/documentation" element={<div>Documentation</div>} />
+            <Route path="/about-us" element={<div>About us</div>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Box>
       </BrowserRouter>

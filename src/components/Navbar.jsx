@@ -6,12 +6,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
-import {
-  Divider,
-  ListItemIcon,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Divider, ListItemIcon, useMediaQuery, useTheme } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -21,8 +16,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
+import DataObjectIcon from "@mui/icons-material/DataObject";
 import Tooltip from "@mui/material/Tooltip";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../assets/logo-dark.png";
 
 const AppLogo = ({ width, onClick }) => (
@@ -65,17 +61,11 @@ const GithubButton = () => (
   </Tooltip>
 );
 
-const DrawerListItem = ({
-  open,
-  handleDrawerClose,
-  icon,
-  primary,
-  onClick,
-}) => {
+const DrawerMenuListItem = ({ open, handleDrawerOpen, handleDrawerClose }) => {
   return (
     <ListItem disablePadding sx={{ display: "block" }}>
       <ListItemButton
-        onClick={() => onClick()}
+        onClick={() => (open ? handleDrawerClose() : handleDrawerOpen())}
         sx={{
           justifyContent: open ? "initial" : "center",
           height: 48,
@@ -84,9 +74,59 @@ const DrawerListItem = ({
         <ListItemIcon
           sx={{ minWidth: 0, mr: open ? 3 : 0, justifyContent: "center" }}
         >
-          {icon}
+          {open ? (
+            <ArrowBackIcon color="inherit" />
+          ) : (
+            <MenuIcon color="inherit" />
+          )}
         </ListItemIcon>
-        <ListItemText primary={primary} sx={{ opacity: open ? 1 : 0, whiteSpace: "nowrap" }} />
+        <ListItemText
+          primary="Close"
+          sx={{ opacity: open ? 1 : 0, whiteSpace: "nowrap" }}
+        />
+      </ListItemButton>
+    </ListItem>
+  );
+};
+
+const DrawerNavigationListItem = ({
+  open,
+  IconComponent,
+  primary,
+  location,
+  path,
+  handleNavigate,
+}) => {
+  const active = location.pathname === path;
+  return (
+    <ListItem disablePadding sx={{ display: "block" }}>
+      <ListItemButton
+        onClick={() => handleNavigate(path)}
+        sx={{
+          justifyContent: open ? "initial" : "center",
+          height: 48,
+        }}
+      >
+        <ListItemIcon
+          sx={{ minWidth: 0, mr: open ? 3 : 0, justifyContent: "center" }}
+        >
+          <IconComponent
+            sx={{
+              color: active
+                ? "primary.main"
+                : open
+                ? "text.primary"
+                : "text.disabled",
+            }}
+          />
+        </ListItemIcon>
+        <ListItemText
+          primaryTypographyProps={{
+            color: active ? "primary" : "text.primary",
+          }}
+          primary={primary}
+          sx={{ opacity: open ? 1 : 0, whiteSpace: "nowrap" }}
+        />
       </ListItemButton>
     </ListItem>
   );
@@ -101,6 +141,7 @@ export default function NavbarComponent({
   const theme = useTheme();
   const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNavigate = useCallback(
     (path) => {
@@ -159,37 +200,48 @@ export default function NavbarComponent({
           },
         }}
       >
-        <List disablePadding sx={{ overflow: "hidden" }}>
-          <DrawerListItem
+        <List disablePadding sx={{ overflowX: "hidden" }}>
+          <DrawerMenuListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            icon={openDrawer ? <ArrowBackIcon /> : <MenuIcon />}
-            primary={openDrawer ? "Close" : "Menu"}
-            onClick={() =>
-              openDrawer ? handleDrawerClose() : handleDrawerOpen()
-            }
+            handleDrawerOpen={handleDrawerOpen}
           />
           <Divider />
-          <DrawerListItem
+          <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            icon={<SchoolIcon />}
+            IconComponent={DataObjectIcon}
+            primary="REQL Editor"
+            path="/"
+            handleNavigate={handleNavigate}
+            location={location}
+          />
+          <DrawerNavigationListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            IconComponent={SchoolIcon}
             primary="Tutorial"
-            onClick={() => handleNavigate("/tutorial")}
+            path="/tutorial"
+            handleNavigate={handleNavigate}
+            location={location}
           />
-          <DrawerListItem
+          <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            icon={<CodeIcon />}
+            IconComponent={CodeIcon}
             primary="Documentation"
-            onClick={() => handleNavigate("/documentation")}
+            path="/documentation"
+            handleNavigate={handleNavigate}
+            location={location}
           />
-          <DrawerListItem
+          <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            icon={<PeopleIcon/>}
+            IconComponent={PeopleIcon}
             primary="About us"
-            onClick={() => handleNavigate("/about-us")}
+            path="/about-us"
+            handleNavigate={handleNavigate}
+            location={location}
           />
         </List>
       </Drawer>
