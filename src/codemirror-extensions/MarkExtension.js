@@ -50,6 +50,7 @@ export const addMarks = (view, spans) => {
         cls: `cm-match cm-match-${idx}`,
       })
     ),
+    EditorView.scrollIntoView(spans[0][0], { y: "center" }),
   ];
   view.dispatch({ effects });
   return true;
