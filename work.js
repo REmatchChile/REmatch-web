@@ -1,7 +1,7 @@
 import REmatch from "./emscripten_binding.js";
 
 // Minimum number of matches to send in a single message
-const MIN_MESSAGE_SIZE = 5000;
+const MIN_MESSAGE_SIZE = 25000;
 
 // Initialize WASM
 let REmatchModuleInstance = null;
