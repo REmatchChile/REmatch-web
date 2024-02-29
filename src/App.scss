@@ -26,7 +26,7 @@ a {
 }
 
 $dark: #909090;
-$darker: #545454;
+$darker: #606060;
 $darkest: #212121;
 
 /* MainInterface */
@@ -71,16 +71,23 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 }
 
 .match-table-cell-group {
-  white-space: pre-wrap;
-  &::before {
-    content: "";
-    border-left: 1px dotted $dark;
-    margin-right: 4px;
+  white-space: wrap;
+}
+
+.match-table-char {
+  &.match-table-newline {
+    &::before {
+      position: absolute;
+      content: "↵";
+      color: $dark;
+    }
   }
-  &::after {
-    content: "";
-    border-right: 1px dotted $dark;
-    margin-left: 4px;
+  &.match-table-space {
+    &::before {
+      position: absolute;
+      content: "•";
+      color: $darker;
+    }
   }
 }
 
@@ -96,36 +103,4 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 
 a {
   text-decoration: none;
-}
-
-.MuiDataGrid-root {
-  border: none !important;
-  font-family: "Roboto Mono", monospace !important;
-
-  .MuiDataGrid-cell {
-    &:focus-within {
-      outline: none !important;
-    }
-  }
-
-  .MuiDataGrid-columnHeader {
-    &:focus-within {
-      outline: none !important;
-    }
-  }
-
-  :not(.MuiDataGrid-index-column) > .MuiDataGrid-cellContent {
-    border-left: 1px dotted $dark;
-    border-right: 1px dotted $dark;
-    padding: 0 4px;
-    white-space: pre;
-  }
-
-  .MuiDataGrid-row:hover {
-    cursor: pointer;
-  }
-
-  .MuiDataGrid-index-column {
-    color: $dark !important;
-  }
 }

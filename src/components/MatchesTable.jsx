@@ -6,10 +6,8 @@ import {
   ListItem,
   ListItemButton,
   TableCell,
-  ListItemText,
   Divider,
   Pagination,
-  PaginationItem,
   TableRow,
   TableBody,
   Table,
@@ -18,10 +16,28 @@ import {
 } from "@mui/material";
 
 const ROWS_PER_PAGE = 25;
-const MAX_GROUP_CHARS = 128;
+const MAX_GROUP_CHARS = 96;
+
+const renderGroupStr = (groupStr) => {
+  return groupStr.split("").map((ch, idx, array) => {
+    if (ch === "\n") {
+      return (
+        <span className="match-table-char match-table-newline" key={idx}>
+          {ch}
+        </span>
+      );
+    } else if (ch === " ") {
+      return (
+        <span className="match-table-char match-table-space" key={idx}>
+          {ch}
+        </span>
+      );
+    }
+    return ch;
+  });
+};
 
 const MatchesTable = ({ matches, variables, doc, addMarks }) => {
-  // const [rows, setRows] = useState([]);
   const [page, setPage] = useState(1);
 
   const rows = useMemo(() => {
@@ -38,7 +54,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
         } else {
           group = doc.substring(span[0], maxEnd) + "…";
         }
-        return group.replaceAll("\n", "\\n");
+        return group;
       }),
     }));
   }, [page, matches, variables]);
@@ -107,7 +123,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                               align="left"
                               className="match-table-cell-group"
                             >
-                              {row.groups[varIdx]}
+                              {renderGroupStr(row.groups[varIdx])}
                             </TableCell>
                           </TableRow>
                         ))}
