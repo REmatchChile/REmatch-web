@@ -19,25 +19,23 @@ const ROWS_PER_PAGE = 25;
 const MAX_GROUP_CHARS = 96;
 
 const renderGroupStr = (groupStr) => {
-  const res = [];
-  [...groupStr].map((ch, idx) => {
+  return [...groupStr].map((ch, idx) => {
     if (ch === "\n") {
-      res.push(
+      return (
         <span key={idx} className="match-table-char match-table-newline">
           {" "}
         </span>
       );
     } else if (ch === " ") {
-      res.push(
+      return (
         <span key={idx} className="match-table-char match-table-space">
           {" "}
         </span>
       );
     } else {
-      res.push(ch);
+      return ch;
     }
   });
-  return res;
 };
 
 const MatchesTable = ({ matches, variables, doc, addMarks }) => {
