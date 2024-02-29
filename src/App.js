@@ -2,8 +2,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
+import { Box, CssBaseline } from "@mui/material";
 import {
   ThemeProvider,
   createTheme,
@@ -16,9 +15,10 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.scss";
 import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
-import WhatIsREmatch from "./pages/WhatIsREmatch";
+import Examples from "./pages/Examples";
 import Home from "./pages/Home";
 import Tutorial from "./pages/Tutorial";
+import WhatIsREmatch from "./pages/WhatIsREmatch";
 
 const darkTheme = responsiveFontSizes(
   createTheme({
@@ -113,7 +113,7 @@ const App = () => {
             <Route exact path="/" element={<Home />} />
             <Route path="/what-is-rematch" element={<WhatIsREmatch />} />
             <Route path="/tutorial" element={<Tutorial />} />
-            <Route path="/examples" element={<div>TODO: Examples</div>} />
+            <Route path="/examples" element={<Examples />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -1,8 +1,6 @@
 import React from "react";
 
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
+import { Paper, Box, Divider } from "@mui/material";
 
 const Window = ({ name, children }) => {
   return (
