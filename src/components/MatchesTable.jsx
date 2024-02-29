@@ -20,15 +20,23 @@ const MAX_GROUP_CHARS = 96;
 
 const renderGroupStr = (groupStr) => {
   const res = [];
-  for (const ch of groupStr) {
+  [...groupStr].map((ch, idx) => {
     if (ch === "\n") {
-      res.push(<span className="match-table-char match-table-newline"> </span>);
+      res.push(
+        <span key={idx} className="match-table-char match-table-newline">
+          {" "}
+        </span>
+      );
     } else if (ch === " ") {
-      res.push(<span className="match-table-char match-table-space"> </span>);
+      res.push(
+        <span key={idx} className="match-table-char match-table-space">
+          {" "}
+        </span>
+      );
     } else {
       res.push(ch);
     }
-  }
+  });
   return res;
 };
 
