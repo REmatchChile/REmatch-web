@@ -4,7 +4,11 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {
+  ThemeProvider,
+  createTheme,
+  responsiveFontSizes,
+} from "@mui/material/styles";
 import "fontsource-roboto";
 import { SnackbarProvider } from "notistack";
 import React, { useState } from "react";
@@ -16,20 +20,49 @@ import WhatIsREmatch from "./pages/WhatIsREmatch";
 import Home from "./pages/Home";
 import Tutorial from "./pages/Tutorial";
 
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "#03DAC6",
+const darkTheme = responsiveFontSizes(
+  createTheme({
+    typography: {
+      h1: {
+        fontWeight: 500,
+        fontSize: "2rem",
+      },
+      h2: {
+        fontWeight: 500,
+        fontSize: "1.5rem",
+      },
+      h3: {
+        fontWeight: 500,
+        fontSize: "1.17rem",
+      },
+      h4: {
+        fontWeight: 500,
+        fontSize: "1rem",
+      },
+      h5: {
+        fontWeight: 500,
+        fontSize: ".83rem",
+      },
+      h6: {
+        fontWeight: 500,
+        fontSize: ".67rem",
+      },
     },
-    secondary: {
-      main: "#FCE938",
+    palette: {
+      mode: "dark",
+      primary: {
+        main: "#03DAC6",
+      },
+      secondary: {
+        main: "#FCE938",
+      },
+      disabled: {
+        main: "#d3d3d3",
+      },
     },
-    disabled: {
-      main: "#d3d3d3",
-    },
-  },
-});
+  })
+);
+
 const DRAWER_WIDTH = {
   open: 256,
   closed: 56,

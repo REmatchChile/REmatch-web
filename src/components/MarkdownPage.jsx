@@ -63,10 +63,10 @@ const components = {
   h1: ({ children }) => (
     <Typography
       component="h1"
-      variant="h3"
+      variant="h1"
       color="primary"
       gutterBottom
-      sx={{ mt: 2, fontSize: 48 }}
+      sx={{ mt: 3 }}
     >
       {children}
     </Typography>
@@ -74,10 +74,10 @@ const components = {
   h2: ({ children }) => (
     <Typography
       component="h2"
-      variant="h3"
+      variant="h2"
       color="primary"
       gutterBottom
-      sx={{ mt: 2, fontSize: 36 }}
+      sx={{ mt: 3 }}
     >
       {children}
     </Typography>
@@ -88,7 +88,7 @@ const components = {
       variant="h3"
       color="primary"
       gutterBottom
-      sx={{ mt: 2, fontSize: 32 }}
+      sx={{ mt: 3 }}
     >
       {children}
     </Typography>
@@ -99,7 +99,7 @@ const components = {
       variant="h4"
       color="primary"
       gutterBottom
-      sx={{ mt: 2, fontSize: 28 }}
+      sx={{ mt: 3 }}
     >
       {children}
     </Typography>
@@ -107,10 +107,10 @@ const components = {
   h5: ({ children }) => (
     <Typography
       component="h5"
-      variant="h5"
+      variant="h4"
       color="primary"
       gutterBottom
-      sx={{ mt: 2, fontSize: 24 }}
+      sx={{ mt: 3 }}
     >
       {children}
     </Typography>
@@ -121,14 +121,14 @@ const components = {
       variant="h6"
       color="primary"
       gutterBottom
-      sx={{ mt: 2, fontSize: 20 }}
+      sx={{ mt: 3 }}
     >
       {children}
     </Typography>
   ),
   // Table
   table: ({ children, ...props }) => (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
+    <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Table size="small">{children}</Table>
     </TableContainer>
   ),
@@ -188,17 +188,37 @@ const components = {
       {children}
     </Typography>
   ),
+  // Blockquotes
+  blockquote: ({ children }) => (
+    <Box
+      component="blockquote"
+      sx={{
+        my: 2,
+        p: 1,
+        borderLeft: "2px solid",
+        borderColor: "primary.main",
+        fontStyle: "italic",
+        "& p": {
+          m: 0,
+        },
+      }}
+    >
+      {children}
+    </Box>
+  ),
   // Pre (used in code block)
   pre: ({ children }) => (
     <Box
       component="pre"
       sx={{
-        backgroundColor: "#212121",
-        p: 1,
-        my: 3,
+        display: "flex",
+        overflowX: "auto",
         borderRadius: 1,
-        fontFamily: "'Roboto Mono', monospace",
-        background: "background.paper",
+        my: 2,
+        "& code": {
+          flex: "1 1 auto",
+          p: 2,
+        },
       }}
     >
       {children}
