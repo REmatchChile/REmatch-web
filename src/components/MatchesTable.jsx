@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 
 import {
-  DataGrid,
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
-import {
   Box,
   List,
   ListItem,
@@ -21,8 +14,7 @@ import {
   TableBody,
   Table,
   TableContainer,
-  Paper,
-  ListItemIcon,
+  Typography,
 } from "@mui/material";
 
 const ROWS_PER_PAGE = 25;
@@ -69,63 +61,78 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
       }}
     >
       <List sx={{ flex: "1 1 auto", overflow: "auto", p: 0 }}>
-        {rows.map((row, rowIdx) => (
-          <React.Fragment key={rowIdx}>
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => handleRowClick(row.spans)}
-                sx={{ p: 1, gap: 1 }}
-              >
-                <TableContainer sx={{ overflow: "hidden", px: 1 }}>
-                  <Table
-                    size="small"
-                    sx={{
-                      "& .MuiTableRow-root:nth-of-type(even)": {
-                        background: "rgba(0,0,0,.3)",
-                      },
-                      "& .MuiTableCell-root ": {
-                        borderBottom: "none",
-                        fontFamily: "'Roboto Mono', monospace",
-                      },
-                    }}
-                  >
-                    <TableBody className="match-table">
-                      <TableRow>
-                        <TableCell
-                          colSpan={3}
-                          sx={{ color: "text.secondary", p: .5 }}
-                        >{`Match ${row.index}`}</TableCell>
-                      </TableRow>
-                      {variables.map((variable, varIdx) => (
-                        <TableRow key={varIdx}>
+        {rows.length ? (
+          rows.map((row, rowIdx) => (
+            <React.Fragment key={rowIdx}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => handleRowClick(row.spans)}
+                  sx={{ p: 1, gap: 1 }}
+                >
+                  <TableContainer sx={{ overflow: "hidden", px: 1 }}>
+                    <Table
+                      size="small"
+                      sx={{
+                        "& .MuiTableRow-root:nth-of-type(even)": {
+                          background: "rgba(0,0,0,.3)",
+                        },
+                        "& .MuiTableCell-root ": {
+                          borderBottom: "none",
+                          fontFamily: "'Roboto Mono', monospace",
+                        },
+                      }}
+                    >
+                      <TableBody className="match-table">
+                        <TableRow>
                           <TableCell
-                            width={1}
-                            align="left"
-                            className={`match-table-cell-variable match-table-cell-variable-${varIdx}`}
-                          >
-                            {variable}
-                          </TableCell>
-                          <TableCell
-                            width={1}
-                            align="left"
-                            className="match-table-cell-span"
-                          >{`${row.spans[varIdx][0]}-${row.spans[varIdx][1]}`}</TableCell>
-                          <TableCell
-                            align="left"
-                            className="match-table-cell-group"
-                          >
-                            {row.groups[varIdx]}
-                          </TableCell>
+                            colSpan={3}
+                            sx={{ color: "text.secondary", p: 0.5 }}
+                          >{`Match ${row.index}`}</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </ListItemButton>
-            </ListItem>
-            <Divider variant="middle" />
-          </React.Fragment>
-        ))}
+                        {variables.map((variable, varIdx) => (
+                          <TableRow key={varIdx}>
+                            <TableCell
+                              width={1}
+                              align="left"
+                              className={`match-table-cell-variable match-table-cell-variable-${varIdx}`}
+                            >
+                              {variable}
+                            </TableCell>
+                            <TableCell
+                              width={1}
+                              align="left"
+                              className="match-table-cell-span"
+                            >{`${row.spans[varIdx][0]}-${row.spans[varIdx][1]}`}</TableCell>
+                            <TableCell
+                              align="left"
+                              className="match-table-cell-group"
+                            >
+                              {row.groups[varIdx]}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </ListItemButton>
+              </ListItem>
+              <Divider variant="middle" />
+            </React.Fragment>
+          ))
+        ) : (
+          <Box
+            sx={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography variant="body1" component="p" color="text.secondary">
+              No matches found
+            </Typography>
+          </Box>
+        )}
       </List>
       <Divider />
       <Box
