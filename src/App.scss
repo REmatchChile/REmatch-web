@@ -26,7 +26,7 @@ a {
 }
 
 $dark: #909090;
-$darker: #606060;
+$darker: #545454;
 $darkest: #212121;
 
 /* MainInterface */
@@ -71,7 +71,9 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 }
 
 .match-table-cell-group {
-  white-space: wrap;
+  white-space: break-spaces;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .match-table-char {
@@ -86,7 +88,7 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
     &::before {
       position: absolute;
       content: "•";
-      color: $darker;
+      color: $dark;
     }
   }
 }
@@ -103,4 +105,36 @@ $colors: #03dac6, #fce938, #ff5c6c, #13f863, #f18aff, #ffb351, #bc8fff, #a57559;
 
 a {
   text-decoration: none;
+}
+
+.MuiDataGrid-root {
+  border: none !important;
+  font-family: "Roboto Mono", monospace !important;
+
+  .MuiDataGrid-cell {
+    &:focus-within {
+      outline: none !important;
+    }
+  }
+
+  .MuiDataGrid-columnHeader {
+    &:focus-within {
+      outline: none !important;
+    }
+  }
+
+  :not(.MuiDataGrid-index-column) > .MuiDataGrid-cellContent {
+    border-left: 1px dotted $dark;
+    border-right: 1px dotted $dark;
+    padding: 0 4px;
+    white-space: pre;
+  }
+
+  .MuiDataGrid-row:hover {
+    cursor: pointer;
+  }
+
+  .MuiDataGrid-index-column {
+    color: $dark !important;
+  }
 }
