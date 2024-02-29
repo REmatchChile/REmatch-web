@@ -58,7 +58,8 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
         return group;
       }),
     }));
-  }, [page, matches, variables]);
+    // eslint-disable-next-line
+  }, [page, matches]);
 
   const handleRowClick = (spans) => {
     addMarks(spans);
