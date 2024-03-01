@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 import {
   Box,
@@ -12,7 +12,6 @@ import {
   TableBody,
   Table,
   TableContainer,
-  Typography,
 } from "@mui/material";
 
 const ROWS_PER_PAGE = 25;
@@ -40,8 +39,10 @@ const renderGroupStr = (groupStr) => {
 
 const MatchesTable = ({ matches, variables, doc, addMarks }) => {
   const [page, setPage] = useState(1);
+  const [selectedMatchIndex, setSelectedMatchIndex] = useState(0);
 
   const rows = useMemo(() => {
+    // TODO: Optimize re-rendering
     const pageStart = (page - 1) * ROWS_PER_PAGE;
     const pageEnd = page * ROWS_PER_PAGE;
     return matches.slice(pageStart, pageEnd).map((match, idxMatch) => ({
@@ -61,13 +62,27 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     // eslint-disable-next-line
   }, [page, matches]);
 
-  const handleRowClick = (spans) => {
-    addMarks(spans);
-  };
+  const handleRowClick = useCallback(
+    (row) => {
+      setSelectedMatchIndex(row.index);
+      addMarks(row.spans);
+    },
+    [addMarks]
+  );
 
   useEffect(() => {
+    // Variables change on new queries, reset the component state
     setPage(1);
+    setSelectedMatchIndex(0);
   }, [variables]);
+
+  useEffect(() => {
+    // Trigger the addMarks effect when the selected match value changes
+    const selectedMatch = matches[selectedMatchIndex];
+    if (selectedMatch && selectedMatch.length) {
+      addMarks(selectedMatch);
+    }
+  }, [matches[selectedMatchIndex]]);
 
   return (
     <Box
@@ -78,16 +93,30 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
         overflow: "hidden",
       }}
     >
-      <List sx={{ flex: "1 1 auto", overflow: "auto", p: 0 }}>
+      <List sx={{ flex: "1 1 auto", overflowY: "auto", p: 0 }}>
         {rows.length ? (
           rows.map((row, rowIdx) => (
             <React.Fragment key={rowIdx}>
-              <ListItem disablePadding>
+              <ListItem
+                disablePadding
+                sx={{
+                  backgroundColor:
+                    row.index === selectedMatchIndex ? "#03DAC630" : null,
+                }}
+              >
                 <ListItemButton
-                  onClick={() => handleRowClick(row.spans)}
-                  sx={{ p: 1, gap: 1 }}
+                  onClick={() => handleRowClick(row)}
+                  sx={{
+                    p: 1,
+                    gap: 1,
+                  }}
                 >
-                  <TableContainer sx={{ overflow: "hidden", px: 1 }}>
+                  <TableContainer
+                    sx={{
+                      overflow: "hidden",
+                      px: 1,
+                    }}
+                  >
                     <Table
                       size="small"
                       sx={{
@@ -134,7 +163,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                   </TableContainer>
                 </ListItemButton>
               </ListItem>
-              <Divider variant="middle" />
+              <Divider />
             </React.Fragment>
           ))
         ) : (
@@ -145,11 +174,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
               alignItems: "center",
               justifyContent: "center",
             }}
-          >
-            <Typography variant="body1" component="p" color="text.secondary">
-              No matches found
-            </Typography>
-          </Box>
+          ></Box>
         )}
       </List>
       <Divider />
