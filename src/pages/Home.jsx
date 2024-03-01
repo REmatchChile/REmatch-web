@@ -1,17 +1,13 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import StopIcon from "@mui/icons-material/Stop";
-import { useMediaQuery, useTheme } from "@mui/material";
-import {Box, Button} from "@mui/material";
+import { useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import { basicDark } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorState,
   EditorView,
   highlightWhitespace,
-  keymap,
-  Prec,
 } from "@uiw/react-codemirror";
 import { enqueueSnackbar } from "notistack";
 import {
@@ -23,26 +19,24 @@ import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 
-/* Worker */
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-let worker = new Worker(WORKPATH, { type: "module" });
+const ONCHANGE_EXECUTION_DELAY_MS = 200;
 
 /* MAIN INTERFACE */
 const Home = () => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
-  const [running, setRunning] = useState(false);
   const [query, setQuery] = useState(
     "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)"
   );
   const [doc, setDoc] = useState(
     "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n"
   );
+  const [workerIsAlive, setWorkerIsAlive] = useState(false);
+  const [worker, setWorker] = useState(null);
   const docEditorRef = useRef();
-  const theme = useTheme();
-  const isBreakpointBelowSm = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const onPatternChange = useCallback((val, viewUpdate) => {
+  const onQueryChange = useCallback((val, viewUpdate) => {
     setQuery(val);
   }, []);
 
@@ -50,44 +44,71 @@ const Home = () => {
     setDoc(val);
   }, []);
 
-  const restartWorker = () => {
-    worker.terminate();
-    worker = new Worker(WORKPATH, { type: "module" });
-    setRunning(false);
+  const executeQuery = () => {
+    setVariables([]);
+    setMatches([]);
+    removeMarks(docEditorRef.current.view);
+    if (workerIsAlive) {
+      worker.postMessage({ type: "QUERY_INIT", query: query, doc: doc });
+    }
   };
 
-  const runWorker = () => {
-    setRunning(true);
-    removeMarks(docEditorRef.current.view);
-    setMatches([]);
-    setVariables([]);
-    worker.postMessage({
-      query: query,
-      doc: doc,
-    });
-    worker.onmessage = (m) => {
-      switch (m.data.type) {
-        case "VARIABLES":
-          setVariables(m.data.payload);
-          break;
-        case "MATCHES":
-          setMatches((prevMatches) => [...prevMatches, ...m.data.payload]);
-          break;
-        case "FINISHED":
-          setRunning(false);
-          break;
-        case "ERROR":
-          setRunning(false);
-          console.error(m.data.payload);
-          enqueueSnackbar(m.data.payload, { variant: "error" });
-          restartWorker();
-          break;
-        default:
-          console.error("UNHANDLED WORKER MESSAGE:", m);
-          break;
-      }
+  useEffect(() => {
+    // Execute query after
+    const timeoutId = setTimeout(() => {
+      executeQuery();
+    }, ONCHANGE_EXECUTION_DELAY_MS);
+    return () => clearTimeout(timeoutId);
+  }, [query, doc, workerIsAlive]);
+
+  useEffect(() => {
+    // Set up worker
+    const newWorker = new Worker(WORKPATH, { type: "module" });
+    setWorker(newWorker);
+    return () => {
+      // Terminate worker when component unmounts
+      newWorker.terminate();
     };
-  };
+  }, []);
+
+  useEffect(() => {
+    if (worker) {
+      worker.onmessage = (event) => {
+        switch (event.data.type) {
+          case "ALIVE": {
+            // Worker is alive and ready for execution
+            setWorkerIsAlive(true);
+            break;
+          }
+          case "QUERY_VARIABLES": {
+            // The regex has been compiled, ask for the first chunk of matches
+            setVariables(event.data.variables);
+            worker.postMessage({ type: "QUERY_NEXT" });
+            break;
+          }
+          case "QUERY_NEXT": {
+            // Handle chunk of matches
+            setMatches((prevMatches) => [
+              ...prevMatches,
+              ...event.data.matches,
+            ]);
+            if (event.data.hasNext) worker.postMessage({ type: "QUERY_NEXT" });
+            break;
+          }
+          case "ERROR": {
+            // An error occurred in the worker
+            console.error(event.data.error);
+            // TODO: enqueueSnackbar(event.data.error, { variant: "error" });
+            break;
+          }
+          default: {
+            console.error("UNHANDLED WORKER MESSAGE RECEIVED", event.data);
+            break;
+          }
+        }
+      };
+    }
+  }, [worker]);
 
   return (
     <Box
@@ -122,7 +143,7 @@ const Home = () => {
                 style={{ flex: 1, height: "100%", overflow: "auto" }}
                 height="100%"
                 value={query}
-                onChange={onPatternChange}
+                onChange={onQueryChange}
                 theme={basicDark}
                 basicSetup={{
                   highlightActiveLine: false,
@@ -138,38 +159,9 @@ const Home = () => {
                     tr.newDoc.lines > 1 ? [] : tr
                   ),
                   highlightWhitespace(),
-                  // Override Enter for running the REQL query
-                  Prec.highest(
-                    keymap.of([
-                      {
-                        key: "Enter",
-                        run: () => runWorker(),
-                      },
-                    ])
-                  ),
                 ]}
               />
             </Box>
-            <Button
-              disableElevation
-              variant="contained"
-              size="small"
-              sx={{
-                minWidth: "48px",
-                flexShrink: 0,
-                borderRadius: 0,
-                px: 2,
-                ".MuiButton-startIcon": {
-                  ml: isBreakpointBelowSm ? 0 : "-2px",
-                  mr: isBreakpointBelowSm ? 0 : "8px",
-                },
-              }}
-              color="primary"
-              startIcon={running ? <StopIcon /> : <PlayArrowIcon />}
-              onClick={() => (running ? restartWorker() : runWorker())}
-            >
-              {!isBreakpointBelowSm && (running ? "Stop" : "Run")}
-            </Button>
           </Box>
         </Window>
       </Box>

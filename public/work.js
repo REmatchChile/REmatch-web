@@ -1,14 +1,16 @@
 import REmatch from "./emscripten_binding.js";
 
-// Minimum number of matches to send in a single message
-const MIN_MESSAGE_SIZE = 25000;
+// Number of iterations before posting a matches message
+const MIN_MATCHES_PER_POST = 15000;
 
 // Initialize WASM
 let REmatchModuleInstance = null;
 (async () => {
   REmatchModuleInstance = await REmatch();
+  self.postMessage({ type: "ALIVE" });
 })();
 
+// Convert UTF-8 index to javascript's UTF-16 string index
 const utf8IndexToStringIndex = (str, utf8Index) => {
   let utf8Counter = 0;
   let stringIndex = 0;
@@ -29,73 +31,98 @@ const utf8IndexToStringIndex = (str, utf8Index) => {
   return stringIndex;
 };
 
-addEventListener("message", (e) => {
-  if (REmatchModuleInstance === null) {
-    postMessage({ type: "ERROR", payload: "WASM module not loaded yet" });
-    return;
+const getErrorText = (error) => {
+  if (error instanceof WebAssembly.Exception) {
+    const [type, message] = REmatchModuleInstance.getExceptionMessage(error);
+    return `${type}: ${message}`;
   }
+  return error.toString();
+};
 
-  try {
-    const { query, doc } = e.data;
-    const flags = new REmatchModuleInstance.Flags();
-    const rgx = REmatchModuleInstance.compile(query, flags);
-    const match_iterator = rgx.finditer(doc);
+let query;
+let doc;
+let variables;
+let flags;
+let regex;
+let match_iterator;
 
-    // Get variables
-    const variables_vector = match_iterator.variables();
-    const variables = [];
-    for (let i = 0; i < variables_vector.size(); ++i)
-      variables.push(variables_vector.get(i));
-    postMessage({ type: "VARIABLES", payload: variables });
-
-    // Get matches
-    let matchesBuffer = [];
-    let match = match_iterator.next();
-    while (match != null) {
-      const currentMatch = [];
-      variables.forEach((variable) => {
-        const start = match.start(variable);
-        const end = match.end(variable);
-        currentMatch.push([
-          utf8IndexToStringIndex(doc, start),
-          utf8IndexToStringIndex(doc, end),
-        ]);
-      });
-      matchesBuffer.push(currentMatch);
-
-      if (matchesBuffer.length === MIN_MESSAGE_SIZE) {
-        postMessage({
-          type: "MATCHES",
-          payload: matchesBuffer,
-        });
-        matchesBuffer = [];
-      }
-
-      match = match_iterator.next();
-    }
-
-    // Send remaining matches if any
-    if (matchesBuffer.length > 0) {
-      postMessage({
-        type: "MATCHES",
-        payload: matchesBuffer,
-      });
-    }
-
-    // Notify that we're done
-    postMessage({
-      type: "FINISHED",
-    });
-
-    // Free WASM objects memory manually
+const initVars = (newQuery, newDoc) => {
+  // Free WASM objects memory manually
+  if (flags) {
     flags.delete();
-    rgx.delete();
-    match_iterator.delete();
-  } catch (err) {
-    const [type, message] = REmatchModuleInstance.getExceptionMessage(err);
-    postMessage({
-      type: "ERROR",
-      payload: `${type.slice(9)}: ${message}`,
-    });
+    flags = null;
   }
-});
+  if (regex) {
+    regex.delete();
+    regex = null;
+  }
+  if (match_iterator) {
+    match_iterator.delete();
+    match_iterator = null;
+  }
+  query = newQuery;
+  doc = newDoc;
+  variables = [];
+};
+
+self.onmessage = (event) => {
+  switch (event.data.type) {
+    case "QUERY_INIT": {
+      // Initialize query
+      initVars(event.data.query, event.data.doc);
+      try {
+        flags = new REmatchModuleInstance.Flags();
+        regex = REmatchModuleInstance.compile(query, flags);
+        match_iterator = regex.finditer(doc);
+        // Get variables
+        const variables_vector = match_iterator.variables();
+        for (let i = 0; i < variables_vector.size(); ++i)
+          variables.push(variables_vector.get(i));
+        self.postMessage({ type: "QUERY_VARIABLES", variables });
+      } catch (err) {
+        self.postMessage({
+          type: "ERROR",
+          error: getErrorText(err),
+        });
+      }
+      break;
+    }
+    case "QUERY_NEXT": {
+      // Send a chunk of matches, notifying the main thread if there are more matches to send
+      try {
+        let match = match_iterator.next();
+        const matches = [];
+        while (match != null) {
+          matches.push(
+            variables.map((variable) => [
+              utf8IndexToStringIndex(doc, match.start(variable)),
+              utf8IndexToStringIndex(doc, match.end(variable)),
+            ])
+          );
+          // Post matches chunk and stop execution until further requests
+          if (matches.length >= MIN_MATCHES_PER_POST) {
+            self.postMessage({
+              type: "QUERY_NEXT",
+              matches,
+              hasNext: true,
+            });
+            return;
+          }
+          match = match_iterator.next();
+        }
+        // Last chunk of matches, it may be empty but it is necessary to notify the main thread
+        self.postMessage({ type: "QUERY_NEXT", matches, hasNext: false });
+      } catch (err) {
+        self.postMessage({
+          type: "ERROR",
+          error: getErrorText(err),
+        });
+      }
+      break;
+    }
+    default: {
+      console.error("UNHANDLED WORKER MESSAGE SENT", event.data);
+      break;
+    }
+  }
+};

@@ -89,7 +89,7 @@ const App = () => {
           whiteSpace: "pre-wrap",
           fontFamily: "'Roboto Mono', monospace",
         }}
-        autoHideDuration={4000}
+        autoHideDuration={3000}
         hideIconVariant
       />
       <BrowserRouter>
