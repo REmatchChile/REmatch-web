@@ -82,6 +82,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     if (selectedMatch && selectedMatch.length) {
       addMarks(selectedMatch);
     }
+    // eslint-disable-next-line
   }, [matches[selectedMatchIndex]]);
 
   return (

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
-import { useTheme } from "@mui/material";
 import { Box } from "@mui/material";
 import { basicDark } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
@@ -9,7 +8,6 @@ import CodeMirror, {
   EditorView,
   highlightWhitespace,
 } from "@uiw/react-codemirror";
-import { enqueueSnackbar } from "notistack";
 import {
   MarkExtension,
   addMarks,
@@ -59,6 +57,7 @@ const Home = () => {
       executeQuery();
     }, ONCHANGE_EXECUTION_DELAY_MS);
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line
   }, [query, doc, workerIsAlive]);
 
   useEffect(() => {
