@@ -17,7 +17,8 @@ const Window = ({ name, children, headerText, headerStatus }) => {
         <Box
           sx={{
             userSelect: "none",
-            px: 1.5,
+            pl: 1.5,
+            pr: .5,
             py: .5,
             fontSize: ".75rem",
             fontFamily: "monospace",
