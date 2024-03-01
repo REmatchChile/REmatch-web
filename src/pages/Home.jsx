@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
-import { Box } from "@mui/material";
+import { Box, Typography, Chip, Tooltip } from "@mui/material";
 import { basicDark } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorState,
@@ -18,7 +18,53 @@ import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-const ONCHANGE_EXECUTION_DELAY_MS = 200;
+const ONCHANGE_EXECUTION_DELAY_MS = 500;
+
+const ExecutionStatus = ({ errorMessage, numMatches }) => {
+  const chipColor = errorMessage.length ? "error" : "default";
+  const chipLabel = errorMessage.length
+    ? "Error"
+    : `${numMatches} Matches found`;
+  return (
+    <Tooltip
+      title={errorMessage}
+      arrow
+      placement="bottom"
+      enterDelay={0}
+      leaveDelay={0}
+      componentsProps={{
+        tooltip: {
+          sx: {
+            backgroundColor: "error.dark",
+            color: "error.contrastText",
+            whiteSpace: "pre-wrap",
+            maxWidth: "none",
+            fontSize: "1rem",
+            fontFamily: "monospace",
+            p: 1.5,
+          },
+        },
+        arrow: {
+          sx: {
+            color: "error.dark",
+          },
+        },
+      }}
+    >
+      <Chip
+        variant="contained"
+        color={chipColor}
+        label={chipLabel}
+        sx={{
+          borderRadius: 1,
+          typography: "body-xs",
+          textTransform: "uppercase",
+          fontWeight: "bold",
+        }}
+      />
+    </Tooltip>
+  );
+};
 
 /* MAIN INTERFACE */
 const Home = () => {
@@ -32,6 +78,7 @@ const Home = () => {
   );
   const [workerIsAlive, setWorkerIsAlive] = useState(false);
   const [worker, setWorker] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
   const docEditorRef = useRef();
 
   const onQueryChange = useCallback((val, viewUpdate) => {
@@ -43,6 +90,7 @@ const Home = () => {
   }, []);
 
   const executeQuery = () => {
+    setErrorMessage("");
     setVariables([]);
     setMatches([]);
     removeMarks(docEditorRef.current.view);
@@ -97,7 +145,7 @@ const Home = () => {
           case "ERROR": {
             // An error occurred in the worker
             console.error(event.data.error);
-            // TODO: enqueueSnackbar(event.data.error, { variant: "error" });
+            setErrorMessage(event.data.error);
             break;
           }
           default: {
@@ -116,54 +164,10 @@ const Home = () => {
         flex: "1 1 auto",
         display: "flex",
         flexDirection: "column",
-        gap: 1,
         p: 1,
         overflow: "hidden",
       }}
     >
-      {/* PATTERN EDITOR */}
-      <Box sx={{ flex: "0 0 0" }}>
-        <Window name="REQL Query">
-          <Box
-            sx={{
-              display: "flex",
-              height: "auto",
-            }}
-          >
-            <Box
-              sx={{
-                flex: "1 1 auto",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <CodeMirror
-                style={{ flex: 1, height: "100%", overflow: "auto" }}
-                height="100%"
-                value={query}
-                onChange={onQueryChange}
-                theme={basicDark}
-                basicSetup={{
-                  highlightActiveLine: false,
-                  bracketMatching: true,
-                  lineNumbers: false,
-                  foldGutter: false,
-                  searchKeymap: false,
-                  highlightSelectionMatches: false,
-                }}
-                extensions={[
-                  REQLExtension,
-                  EditorState.transactionFilter.of((tr) =>
-                    tr.newDoc.lines > 1 ? [] : tr
-                  ),
-                  highlightWhitespace(),
-                ]}
-              />
-            </Box>
-          </Box>
-        </Window>
-      </Box>
       <Box
         sx={{
           flex: "1 1 auto",
@@ -179,10 +183,73 @@ const Home = () => {
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
+            gap: 1,
           }}
         >
+          {/* PATTERN EDITOR */}
+          <Box sx={{ flex: "0 0 0" }}>
+            <Window
+              headerText={
+                <Typography variant="subtitle2" component="div">
+                  REQL Query
+                </Typography>
+              }
+              headerStatus={
+                <ExecutionStatus
+                  errorMessage={errorMessage}
+                  numMatches={matches.length}
+                />
+              }
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  height: "auto",
+                }}
+              >
+                <Box
+                  sx={{
+                    flex: "1 1 auto",
+                    overflow: "hidden",
+                    display: "flex",
+                    alignItems: "center",
+                    maxHeight: "6rem",
+                    p: .5,
+                    background: "#2E3235",
+                  }}
+                >
+                  <CodeMirror
+                    style={{ flex: 1, height: "100%", overflow: "auto" }}
+                    height="100%"
+                    value={query}
+                    onChange={onQueryChange}
+                    theme={basicDark}
+                    basicSetup={{
+                      highlightActiveLine: false,
+                      bracketMatching: true,
+                      lineNumbers: false,
+                      foldGutter: false,
+                      searchKeymap: false,
+                      highlightSelectionMatches: false,
+                    }}
+                    extensions={[
+                      REQLExtension,
+                      highlightWhitespace(),
+                      EditorView.lineWrapping,
+                    ]}
+                  />
+                </Box>
+              </Box>
+            </Window>
+          </Box>
           {/* DOCUMENT EDITOR */}
-          <Window name="Document">
+          <Window
+            headerText={
+              <Typography variant="subtitle2" component="div">
+                Document
+              </Typography>
+            }
+          >
             <CodeMirror
               ref={docEditorRef}
               style={{ height: "100%", overflow: "auto" }}
@@ -214,7 +281,13 @@ const Home = () => {
           }}
         >
           {/* MATCHES TABLE */}
-          <Window name={`Matches (${matches.length})`}>
+          <Window
+            headerText={
+              <Typography variant="subtitle2" component="div">
+                Matches
+              </Typography>
+            }
+          >
             <MatchesTable
               matches={matches}
               variables={variables}

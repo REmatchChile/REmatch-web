@@ -2,7 +2,7 @@ import React from "react";
 
 import { Paper, Box, Divider } from "@mui/material";
 
-const Window = ({ name, children }) => {
+const Window = ({ name, children, headerText, headerStatus }) => {
   return (
     <Paper
       elevation={4}
@@ -17,13 +17,18 @@ const Window = ({ name, children }) => {
         <Box
           sx={{
             userSelect: "none",
-            pl: "12px",
-            py: "4px",
+            px: 1.5,
+            py: .5,
             fontSize: ".75rem",
-            fontFamily: "'Roboto Mono', monospace",
+            fontFamily: "monospace",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            height: "2.5rem",
           }}
         >
-          {name}
+          {headerText}
+          {headerStatus}
         </Box>
         <Divider />
       </Box>

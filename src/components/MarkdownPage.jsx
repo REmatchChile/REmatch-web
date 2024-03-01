@@ -184,7 +184,7 @@ const components = {
         py: 0.25,
         px: 0.5,
         borderRadius: 1,
-        fontFamily: "'Roboto Mono', monospace",
+        fontFamily: "monospace",
       }}
     >
       {children}

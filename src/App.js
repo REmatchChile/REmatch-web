@@ -87,7 +87,7 @@ const App = () => {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         style={{
           whiteSpace: "pre-wrap",
-          fontFamily: "'Roboto Mono', monospace",
+          fontFamily: "monospace",
         }}
         autoHideDuration={3000}
         hideIconVariant

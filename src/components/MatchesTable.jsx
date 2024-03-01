@@ -126,7 +126,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                         },
                         "& .MuiTableCell-root ": {
                           borderBottom: "none",
-                          fontFamily: "'Roboto Mono', monospace",
+                          fontFamily: "monospace",
                         },
                       }}
                     >
