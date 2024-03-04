@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Typography, Chip, Tooltip } from "@mui/material";
 import { basicDark } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
-  EditorState,
   EditorView,
   highlightWhitespace,
 } from "@uiw/react-codemirror";
@@ -18,12 +17,14 @@ import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-const ONCHANGE_EXECUTION_DELAY_MS = 500;
+const ONCHANGE_EXECUTION_DELAY_MS = 200;
 
-const ExecutionStatus = ({ errorMessage, numMatches }) => {
+const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
   const chipColor = errorMessage.length ? "error" : "default";
   const chipLabel = errorMessage.length
     ? "Error"
+    : processing
+    ? "Processing..."
     : `${numMatches} Matches found`;
   return (
     <Tooltip
@@ -70,15 +71,12 @@ const ExecutionStatus = ({ errorMessage, numMatches }) => {
 const Home = () => {
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
-  const [query, setQuery] = useState(
-    "(^|\\n)!firstName{[A-Z][a-z]+} !lastName{([A-Z][a-z ]+)+}($|\\n)"
-  );
-  const [doc, setDoc] = useState(
-    "Nicolas Van Sint Jan\nVicente Calisto\nMarjorie Bascunan\nOscar Carcamo\nCristian Riveros\nDomagoj Vrgoc\nIgnacio Pereira\nKyle Bossonney\nGustavo Toro\n"
-  );
+  const [query, setQuery] = useState("");
+  const [doc, setDoc] = useState("");
   const [workerIsAlive, setWorkerIsAlive] = useState(false);
   const [worker, setWorker] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [processing, setProcessing] = useState(false);
   const docEditorRef = useRef();
 
   const onQueryChange = useCallback((val, viewUpdate) => {
@@ -89,22 +87,20 @@ const Home = () => {
     setDoc(val);
   }, []);
 
-  const executeQuery = () => {
-    setErrorMessage("");
-    setVariables([]);
-    setMatches([]);
-    removeMarks(docEditorRef.current.view);
-    if (workerIsAlive) {
-      worker.postMessage({ type: "QUERY_INIT", query: query, doc: doc });
-    }
-  };
-
   useEffect(() => {
-    // Execute query after
-    const timeoutId = setTimeout(() => {
-      executeQuery();
-    }, ONCHANGE_EXECUTION_DELAY_MS);
-    return () => clearTimeout(timeoutId);
+    if (docEditorRef.current.view) removeMarks(docEditorRef.current.view);
+    setErrorMessage("");
+    setProcessing(false);
+    setMatches([]);
+    setVariables([]);
+    // Execute query after delay
+    if (workerIsAlive && query.length) {
+      setProcessing(true);
+      const timeoutId = setTimeout(() => {
+        worker.postMessage({ type: "QUERY_INIT", query: query, doc: doc });
+      }, ONCHANGE_EXECUTION_DELAY_MS);
+      return () => clearTimeout(timeoutId);
+    }
     // eslint-disable-next-line
   }, [query, doc, workerIsAlive]);
 
@@ -140,12 +136,14 @@ const Home = () => {
               ...event.data.matches,
             ]);
             if (event.data.hasNext) worker.postMessage({ type: "QUERY_NEXT" });
+            else setProcessing(false);
             break;
           }
           case "ERROR": {
             // An error occurred in the worker
             console.error(event.data.error);
             setErrorMessage(event.data.error);
+            setProcessing(false);
             break;
           }
           default: {
@@ -198,6 +196,7 @@ const Home = () => {
                 <ExecutionStatus
                   errorMessage={errorMessage}
                   numMatches={matches.length}
+                  processing={processing}
                 />
               }
             >
@@ -214,7 +213,7 @@ const Home = () => {
                     display: "flex",
                     alignItems: "center",
                     maxHeight: "6rem",
-                    p: .5,
+                    p: 0.5,
                     background: "#2E3235",
                   }}
                 >
@@ -224,6 +223,7 @@ const Home = () => {
                     value={query}
                     onChange={onQueryChange}
                     theme={basicDark}
+                    placeholder="Insert your REQL Query here"
                     basicSetup={{
                       highlightActiveLine: false,
                       bracketMatching: true,
@@ -257,6 +257,7 @@ const Home = () => {
               value={doc}
               onChange={onDocChange}
               lang="text/html"
+              placeholder="Insert your document here"
               basicSetup={{
                 bracketMatching: false,
                 closeBrackets: false,
