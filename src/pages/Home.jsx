@@ -17,7 +17,7 @@ import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
-const ONCHANGE_EXECUTION_DELAY_MS = 200;
+const ONCHANGE_EXECUTION_DELAY_MS = 500;
 
 const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
   const chipColor = errorMessage.length ? "error" : "default";
@@ -88,14 +88,13 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (docEditorRef.current.view) removeMarks(docEditorRef.current.view);
-    setErrorMessage("");
-    setProcessing(false);
-    setMatches([]);
-    setVariables([]);
     // Execute query after delay
     if (workerIsAlive && query.length) {
       setProcessing(true);
+      if (docEditorRef.current.view) removeMarks(docEditorRef.current.view);
+      setErrorMessage("");
+      setMatches([]);
+      setVariables([]);
       const timeoutId = setTimeout(() => {
         worker.postMessage({ type: "QUERY_INIT", query: query, doc: doc });
       }, ONCHANGE_EXECUTION_DELAY_MS);
