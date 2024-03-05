@@ -102,7 +102,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                 disablePadding
                 sx={{
                   backgroundColor:
-                    row.index === selectedMatchIndex ? "#03DAC630" : null,
+                    row.index === selectedMatchIndex ? "action.selected" : null,
                 }}
               >
                 <ListItemButton
@@ -122,7 +122,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                       size="small"
                       sx={{
                         "& .MuiTableRow-root:nth-of-type(even)": {
-                          background: "rgba(0,0,0,.3)",
+                          backgroundColor: "action.hover",
                         },
                         "& .MuiTableCell-root ": {
                           borderBottom: "none",

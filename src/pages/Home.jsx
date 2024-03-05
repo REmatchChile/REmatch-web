@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
 import { Box, Typography, Chip, Tooltip } from "@mui/material";
-import { basicDark } from "@uiw/codemirror-theme-basic";
+import { basicDark, basicLight } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorView,
   highlightWhitespace,
@@ -15,6 +15,7 @@ import {
 import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
+import { useTheme } from "@emotion/react";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const ONCHANGE_EXECUTION_DELAY_MS = 500;
@@ -78,6 +79,7 @@ const Home = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processing, setProcessing] = useState(false);
   const docEditorRef = useRef();
+  const theme = useTheme();
 
   const onQueryChange = useCallback((val, viewUpdate) => {
     setQuery(val);
@@ -161,14 +163,13 @@ const Home = () => {
         flex: "1 1 auto",
         display: "flex",
         flexDirection: "column",
-        p: 1,
         overflow: "hidden",
+        p: 0.5,
       }}
     >
       <Box
         sx={{
           flex: "1 1 auto",
-          gap: 1,
           display: "flex",
           flexDirection: { md: "row", xs: "column" },
           overflow: "hidden",
@@ -180,7 +181,6 @@ const Home = () => {
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
-            gap: 1,
           }}
         >
           {/* PATTERN EDITOR */}
@@ -212,16 +212,17 @@ const Home = () => {
                     display: "flex",
                     alignItems: "center",
                     maxHeight: "6rem",
-                    p: 0.5,
-                    background: "#2E3235",
                   }}
                 >
                   <CodeMirror
+                    className="cm-reql-query-editor"
                     style={{ flex: 1, height: "100%", overflow: "auto" }}
                     height="100%"
                     value={query}
                     onChange={onQueryChange}
-                    theme={basicDark}
+                    theme={
+                      theme.palette.mode === "light" ? basicLight : basicDark
+                    }
                     placeholder="Insert your REQL Query here"
                     basicSetup={{
                       highlightActiveLine: false,
@@ -255,6 +256,7 @@ const Home = () => {
               height="100%"
               value={doc}
               onChange={onDocChange}
+              theme={theme.palette.mode === "light" ? basicLight : basicDark}
               lang="text/html"
               placeholder="Insert your document here"
               basicSetup={{
@@ -263,7 +265,6 @@ const Home = () => {
                 searchKeymap: false,
                 highlightSelectionMatches: false,
               }}
-              theme={basicDark}
               extensions={[
                 EditorView.lineWrapping,
                 MarkExtension,

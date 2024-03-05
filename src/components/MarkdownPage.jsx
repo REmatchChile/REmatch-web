@@ -63,68 +63,32 @@ const components = {
     </Typography>
   ),
   h1: ({ children }) => (
-    <Typography
-      component="h1"
-      variant="h1"
-      color="primary"
-      gutterBottom
-      sx={{ mt: 3 }}
-    >
+    <Typography component="h1" variant="h1" gutterBottom sx={{ mt: 3 }}>
       {children}
     </Typography>
   ),
   h2: ({ children }) => (
-    <Typography
-      component="h2"
-      variant="h2"
-      color="primary"
-      gutterBottom
-      sx={{ mt: 3 }}
-    >
+    <Typography component="h2" variant="h2" gutterBottom sx={{ mt: 3 }}>
       {children}
     </Typography>
   ),
   h3: ({ children }) => (
-    <Typography
-      component="h3"
-      variant="h3"
-      color="primary"
-      gutterBottom
-      sx={{ mt: 3 }}
-    >
+    <Typography component="h3" variant="h3" gutterBottom sx={{ mt: 3 }}>
       {children}
     </Typography>
   ),
   h4: ({ children }) => (
-    <Typography
-      component="h4"
-      variant="h4"
-      color="primary"
-      gutterBottom
-      sx={{ mt: 3 }}
-    >
+    <Typography component="h4" variant="h4" gutterBottom sx={{ mt: 3 }}>
       {children}
     </Typography>
   ),
   h5: ({ children }) => (
-    <Typography
-      component="h5"
-      variant="h4"
-      color="primary"
-      gutterBottom
-      sx={{ mt: 3 }}
-    >
+    <Typography component="h5" variant="h4" gutterBottom sx={{ mt: 3 }}>
       {children}
     </Typography>
   ),
   h6: ({ children }) => (
-    <Typography
-      component="h6"
-      variant="h6"
-      color="primary"
-      gutterBottom
-      sx={{ mt: 3 }}
-    >
+    <Typography component="h6" variant="h6" gutterBottom sx={{ mt: 3 }}>
       {children}
     </Typography>
   ),
@@ -180,7 +144,8 @@ const components = {
     <Typography
       component="code"
       sx={{
-        backgroundColor: "#212121",
+        backgroundColor: "grey.800",
+        color: "white",
         py: 0.25,
         px: 0.5,
         borderRadius: 1,

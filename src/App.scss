@@ -30,29 +30,32 @@ $darker: #545454;
 $darkest: #212121;
 
 /* MainInterface */
-$colors:
-#03dac6, #fce938, #EC4E20, #0aff2f,
-#c71585, #ffa500, #ffa1ff, #b47d3a,
-#417563, #1e90ff, #00fa9a, #aa2091,
-#F7F7FF, #637e93, #F7AF9D, #424C55;
+$colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
+  #417563, #1e90ff, #00fa9a, #aa2091, #f7f7ff, #637e93, #f7af9d, #424c55;
 
 .reql-variable {
-  color: nth($colors, 1);
+  color: darken(nth($colors, 1), 10%);
+  font-weight: bold;
 }
 .reql-operator {
-  color: nth($colors, 2);
+  font-weight: bold;
+  color: darken(nth($colors, 6), 10%);
 }
 .reql-escape {
+  font-weight: bold;
   color: nth($colors, 3);
 }
 .reql-braces {
-  color: nth($colors, 7);
+  font-weight: bold;
+  color: darken(nth($colors, 7), 10%);
 }
 .reql-numeric-quantifier {
-  color: nth($colors, 6);
+  font-weight: bold;
+  color: nth($colors, 5);
 }
 .reql-anchor {
-  color: nth($colors, 4);
+  font-weight: bold;
+  color: darken(nth($colors, 4), 25%);
 }
 
 // Add padding if match has a child match
@@ -70,7 +73,6 @@ $colors:
 }
 
 .match-table-cell-span {
-  color: $dark !important;
   white-space: nowrap;
 }
 
@@ -140,5 +142,11 @@ a {
 
   .MuiDataGrid-index-column {
     color: $dark !important;
+  }
+}
+
+.cm-reql-query-editor {
+  .cm-editor {
+    padding: 4px;
   }
 }

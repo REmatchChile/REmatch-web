@@ -2,7 +2,7 @@ import React from "react";
 
 import { Paper, Box, Divider } from "@mui/material";
 
-const Window = ({ name, children, headerText, headerStatus }) => {
+const Window = ({ sx, children, headerText, headerStatus }) => {
   return (
     <Paper
       elevation={4}
@@ -11,6 +11,7 @@ const Window = ({ name, children, headerText, headerStatus }) => {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        m: 0.5,
       }}
     >
       <Box sx={{ flex: "0 0 0" }}>
@@ -18,8 +19,8 @@ const Window = ({ name, children, headerText, headerStatus }) => {
           sx={{
             userSelect: "none",
             pl: 1.5,
-            pr: .5,
-            py: .5,
+            pr: 0.5,
+            py: 0.5,
             fontSize: ".75rem",
             fontFamily: "monospace",
             display: "flex",

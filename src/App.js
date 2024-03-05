@@ -2,66 +2,19 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import { Box, CssBaseline } from "@mui/material";
-import {
-  ThemeProvider,
-  createTheme,
-  responsiveFontSizes,
-} from "@mui/material/styles";
+import { Box } from "@mui/material";
 import "fontsource-roboto";
 import { SnackbarProvider } from "notistack";
 import React, { useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.scss";
+import MUIWrapper from "./components/MUIWrapper";
 import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
 import Examples from "./pages/Examples";
 import Home from "./pages/Home";
 import Tutorial from "./pages/Tutorial";
 import WhatIsREmatch from "./pages/WhatIsREmatch";
-
-const darkTheme = responsiveFontSizes(
-  createTheme({
-    typography: {
-      h1: {
-        fontWeight: 500,
-        fontSize: "2rem",
-      },
-      h2: {
-        fontWeight: 500,
-        fontSize: "1.5rem",
-      },
-      h3: {
-        fontWeight: 500,
-        fontSize: "1.17rem",
-      },
-      h4: {
-        fontWeight: 500,
-        fontSize: "1rem",
-      },
-      h5: {
-        fontWeight: 500,
-        fontSize: ".83rem",
-      },
-      h6: {
-        fontWeight: 500,
-        fontSize: ".67rem",
-      },
-    },
-    palette: {
-      mode: "dark",
-      primary: {
-        main: "#03DAC6",
-      },
-      secondary: {
-        main: "#FCE938",
-      },
-      disabled: {
-        main: "#d3d3d3",
-      },
-    },
-  })
-);
 
 const DRAWER_WIDTH = {
   open: 256,
@@ -81,8 +34,7 @@ const App = () => {
   };
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+    <MUIWrapper>
       <SnackbarProvider
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         style={{
@@ -119,7 +71,7 @@ const App = () => {
           </Routes>
         </Box>
       </BrowserRouter>
-    </ThemeProvider>
+    </MUIWrapper>
   );
 };
 

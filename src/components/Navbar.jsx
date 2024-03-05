@@ -1,16 +1,19 @@
 import React, { useCallback } from "react";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import HelpIcon from "@mui/icons-material/Help";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
 import {
   AppBar,
   Box,
+  CssBaseline,
   Divider,
   Drawer,
   IconButton,
@@ -19,6 +22,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  ThemeProvider,
   Toolbar,
   Tooltip,
   useMediaQuery,
@@ -26,6 +30,8 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/logo-dark.png";
+import { MUIWrapperContext } from "./MUIWrapper";
+import { darkTheme } from "../mui/themes";
 
 const AppLogo = ({ width, onClick }) => (
   <Box
@@ -34,7 +40,7 @@ const AppLogo = ({ width, onClick }) => (
     src={Logo}
     alt="REmatch"
     sx={{
-      width,
+      width: {sm: 200, xs: 160},
       cursor: "pointer",
       "&:hover": {
         filter: "drop-shadow(#03DAC6 0 0 4px)",
@@ -46,7 +52,7 @@ const AppLogo = ({ width, onClick }) => (
 const MenuButton = ({ onClick }) => {
   return (
     <Tooltip title="Menu" sx={{ display: { sm: "none", xs: "flex" } }}>
-      <IconButton size="large" edge="start" onClick={onClick}>
+      <IconButton size="medium" onClick={onClick} edge="start">
         <MenuIcon />
       </IconButton>
     </Tooltip>
@@ -56,8 +62,7 @@ const MenuButton = ({ onClick }) => {
 const GithubButton = () => (
   <Tooltip title="GitHub">
     <IconButton
-      size="large"
-      edge="end"
+      size="medium"
       href="https://github.com/REmatchChile"
       target="_blank"
       rel="noreferrer"
@@ -66,6 +71,17 @@ const GithubButton = () => (
     </IconButton>
   </Tooltip>
 );
+
+const ToggleColorModeButton = () => {
+  const muiUtils = React.useContext(MUIWrapperContext);
+  return (
+    <Tooltip title={muiUtils.getMode() === "light" ? "Go Dark" : "Go Light"}>
+      <IconButton size="medium" onClick={muiUtils.toggleColorMode} edge="end">
+        {muiUtils.getMode() === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+      </IconButton>
+    </Tooltip>
+  );
+};
 
 const DrawerMenuListItem = ({ open, handleDrawerOpen, handleDrawerClose }) => {
   return (
@@ -118,11 +134,7 @@ const DrawerNavigationListItem = ({
         >
           <IconComponent
             sx={{
-              color: active
-                ? "primary.main"
-                : open
-                ? "text.primary"
-                : "text.disabled",
+              color: active ? "primary.main" : "text.primary",
             }}
           />
         </ListItemIcon>
@@ -158,7 +170,7 @@ export default function NavbarComponent({
   );
 
   return (
-    <>
+    <ThemeProvider theme={darkTheme}>
       <AppBar
         position="static"
         sx={{
@@ -184,12 +196,13 @@ export default function NavbarComponent({
             sx={{
               flexGrow: 1,
               display: "flex",
-              justifyContent: { sm: "flex-start", xs: "center" },
+              pl: { sm: 0, xs: 1 },
             }}
           >
-            <AppLogo width="200px" onClick={() => navigate("/")} />
+            <AppLogo onClick={() => navigate("/")} />
           </Box>
           <GithubButton />
+          <ToggleColorModeButton />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -261,6 +274,6 @@ export default function NavbarComponent({
           />
         </List>
       </Drawer>
-    </>
+    </ThemeProvider>
   );
 }
