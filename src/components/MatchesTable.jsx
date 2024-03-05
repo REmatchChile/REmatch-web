@@ -51,10 +51,11 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
       groups: match.map((span) => {
         const maxEnd = span[0] + MAX_GROUP_CHARS;
         let group;
+        // Array slice for handling 2-byte characters
         if (span[1] <= maxEnd) {
-          group = doc.substring(span[0], span[1]);
+          group = Array.from(doc).slice(span[0], span[1]).join("");
         } else {
-          group = doc.substring(span[0], maxEnd) + "…";
+          group = Array.from(doc).slice(span[0], maxEnd).join("") + "…";
         }
         return group;
       }),

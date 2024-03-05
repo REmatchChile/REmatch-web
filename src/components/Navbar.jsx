@@ -13,7 +13,6 @@ import SchoolIcon from "@mui/icons-material/School";
 import {
   AppBar,
   Box,
-  CssBaseline,
   Divider,
   Drawer,
   IconButton,
