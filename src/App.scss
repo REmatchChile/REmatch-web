@@ -63,7 +63,7 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
   display: inline-block;
   color: black !important;
   &:has(.cm-match) {
-    padding: 4px 0 4px 0;
+    padding: 4px 0;
   }
 }
 
@@ -101,7 +101,7 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
 
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
-    background: nth($colors, $i + 1);
+    background-color: nth($colors, $i + 1);
   }
 
   .match-table-cell-variable-#{$i} {
