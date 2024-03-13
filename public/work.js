@@ -60,10 +60,10 @@ self.onmessage = (event) => {
         const matches = [];
         while (match != null) {
           matches.push(
-            variables.map((variable) => [
-              match.start(variable),
-              match.end(variable),
-            ])
+            variables.map((variable) =>
+              // Need to convert from BigInt to Number in order to work with the application
+              match.span(variable).map((x) => Number(x))
+            )
           );
           // Post matches chunk and stop execution until further requests
           if (matches.length >= MIN_MATCHES_PER_POST) {
