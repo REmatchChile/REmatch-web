@@ -19,23 +19,21 @@ const ROWS_PER_PAGE = 25;
 const MAX_GROUP_CHARS = 96;
 
 const renderGroupStr = (groupStr) => {
-  return [...groupStr].map((ch, idx) => {
-    if (ch === "\n") {
-      return (
-        <span key={idx} className="match-table-char match-table-newline">
-          {" "}
-        </span>
-      );
-    } else if (ch === " ") {
-      return (
-        <span key={idx} className="match-table-char match-table-space">
-          {" "}
-        </span>
-      );
-    } else {
-      return ch;
-    }
-  });
+  return groupStr.split("\n").map((lineStr, lineIdx) => (
+    <React.Fragment key={lineIdx}>
+      {lineIdx > 0 && (
+        <span className="match-table-char match-table-newline"> </span>
+      )}
+      {lineStr.split(" ").map((wordStr, wordIdx) => (
+        <React.Fragment key={wordIdx}>
+          {wordIdx > 0 && (
+            <span className="match-table-char match-table-space"> </span>
+          )}
+          {wordStr}
+        </React.Fragment>
+      ))}
+    </React.Fragment>
+  ));
 };
 
 const MatchesTable = ({ matches, variables, doc, addMarks }) => {
