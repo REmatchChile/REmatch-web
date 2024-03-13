@@ -10,7 +10,6 @@ import CodeMirror, {
 import {
   MarkExtension,
   addMarks,
-  removeMarks,
 } from "../codemirror-extensions/MarkExtension";
 import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
@@ -80,6 +79,7 @@ const Home = () => {
   const [processing, setProcessing] = useState(false);
   const docEditorRef = useRef();
   const theme = useTheme();
+  const queryId = useRef(0);
 
   const onQueryChange = useCallback((val, viewUpdate) => {
     setQuery(val);
@@ -90,7 +90,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (docEditorRef.current.view) removeMarks(docEditorRef.current.view);
+    queryId.current = Date.now();
     setErrorMessage("");
     setMatches([]);
     setVariables([]);
@@ -98,7 +98,12 @@ const Home = () => {
     if (workerIsAlive && query.length) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
-        worker.postMessage({ type: "QUERY_INIT", query: query, doc: doc });
+        worker.postMessage({
+          type: "QUERY_INIT",
+          query: query,
+          doc: doc,
+          queryId: queryId.current,
+        });
       }, ONCHANGE_EXECUTION_DELAY_MS);
       return () => clearTimeout(timeoutId);
     }
@@ -131,6 +136,8 @@ const Home = () => {
             break;
           }
           case "QUERY_NEXT": {
+            // Prevent processing of previous queries to avoid overlapping matches
+            if (event.data.queryId !== queryId.current) return;
             // Handle chunk of matches
             setMatches((prevMatches) => [
               ...prevMatches,

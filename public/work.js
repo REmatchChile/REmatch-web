@@ -10,27 +10,6 @@ let REmatchModuleInstance = null;
   self.postMessage({ type: "ALIVE" });
 })();
 
-// Convert UTF-8 index to javascript's UTF-16 string index
-const utf8IndexToStringIndex = (str, utf8Index) => {
-  let utf8Counter = 0;
-  let stringIndex = 0;
-  while (utf8Counter < utf8Index) {
-    const code = str.codePointAt(stringIndex);
-    if (code >= 0x10000) {
-      utf8Counter += 4;
-      ++stringIndex;
-    } else if (code >= 0x0800) {
-      utf8Counter += 3;
-    } else if (code >= 0x0080) {
-      utf8Counter += 2;
-    } else {
-      ++utf8Counter;
-    }
-    ++stringIndex;
-  }
-  return stringIndex;
-};
-
 const getErrorText = (error) => {
   if (error instanceof WebAssembly.Exception) {
     const [type, message] = REmatchModuleInstance.getExceptionMessage(error);
@@ -39,46 +18,33 @@ const getErrorText = (error) => {
   return error.toString();
 };
 
-let query;
-let doc;
+let queryId;
 let variables;
-let flags;
 let regex;
 let match_iterator;
-
-const initVars = (newQuery, newDoc) => {
-  // Free WASM objects memory manually
-  if (flags) {
-    flags.delete();
-    flags = null;
-  }
-  if (regex) {
-    regex.delete();
-    regex = null;
-  }
-  if (match_iterator) {
-    match_iterator.delete();
-    match_iterator = null;
-  }
-  query = newQuery;
-  doc = newDoc;
-  variables = [];
-};
 
 self.onmessage = (event) => {
   switch (event.data.type) {
     case "QUERY_INIT": {
+      queryId = event.data.queryId;
       // Initialize query
-      initVars(event.data.query, event.data.doc);
+      variables = [];
+      if (regex) {
+        regex.delete();
+        regex = null;
+      }
+      if (match_iterator) {
+        match_iterator.delete();
+        match_iterator = null;
+      }
       try {
-        flags = new REmatchModuleInstance.Flags();
-        regex = REmatchModuleInstance.compile(query, flags);
-        match_iterator = regex.finditer(doc);
+        regex = new REmatchModuleInstance.Regex(event.data.query);
+        match_iterator = regex.finditer(event.data.doc);
         // Get variables
         const variables_vector = match_iterator.variables();
         for (let i = 0; i < variables_vector.size(); ++i)
           variables.push(variables_vector.get(i));
-        self.postMessage({ type: "QUERY_VARIABLES", variables });
+        self.postMessage({ type: "QUERY_VARIABLES", variables, queryId });
       } catch (err) {
         self.postMessage({
           type: "ERROR",
@@ -95,8 +61,8 @@ self.onmessage = (event) => {
         while (match != null) {
           matches.push(
             variables.map((variable) => [
-              utf8IndexToStringIndex(doc, match.start(variable)),
-              utf8IndexToStringIndex(doc, match.end(variable)),
+              match.start(variable),
+              match.end(variable),
             ])
           );
           // Post matches chunk and stop execution until further requests
@@ -105,17 +71,24 @@ self.onmessage = (event) => {
               type: "QUERY_NEXT",
               matches,
               hasNext: true,
+              queryId,
             });
             return;
           }
           match = match_iterator.next();
         }
         // Last chunk of matches, it may be empty but it is necessary to notify the main thread
-        self.postMessage({ type: "QUERY_NEXT", matches, hasNext: false });
+        self.postMessage({
+          type: "QUERY_NEXT",
+          matches,
+          hasNext: false,
+          queryId,
+        });
       } catch (err) {
         self.postMessage({
           type: "ERROR",
           error: getErrorText(err),
+          queryId,
         });
       }
       break;

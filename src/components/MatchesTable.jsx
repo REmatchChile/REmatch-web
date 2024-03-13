@@ -13,6 +13,7 @@ import {
   Table,
   TableContainer,
 } from "@mui/material";
+import { utf8Substring } from "../utils/utf8Substring";
 
 const ROWS_PER_PAGE = 25;
 const MAX_GROUP_CHARS = 96;
@@ -48,16 +49,14 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     return matches.slice(pageStart, pageEnd).map((match, idxMatch) => ({
       index: pageStart + idxMatch,
       spans: match,
-      groups: match.map((span) => {
-        const maxEnd = span[0] + MAX_GROUP_CHARS;
-        let group;
-        // Array slice for handling 2-byte characters
-        if (span[1] <= maxEnd) {
-          group = Array.from(doc).slice(span[0], span[1]).join("");
+      groups: match.map(([from, to]) => {
+        const group = utf8Substring(doc, from, to);
+        if (group.length <= MAX_GROUP_CHARS) {
+          return group;
         } else {
-          group = Array.from(doc).slice(span[0], maxEnd).join("") + "…";
+          // Array slice to prevent splitting 2-byte UTF-16 characters
+          return Array.from(group).slice(0, MAX_GROUP_CHARS).join("") + "…";
         }
-        return group;
       }),
     }));
     // eslint-disable-next-line
