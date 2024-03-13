@@ -25,7 +25,7 @@ export const MarkExtension = StateField.define({
               utf8IndexToJavascriptIndex(docString, from),
               utf8IndexToJavascriptIndex(docString, to)
             )
-          )
+          ), true
         );
       }
     }
