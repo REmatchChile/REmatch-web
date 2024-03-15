@@ -10,6 +10,7 @@ import CodeMirror, {
 import {
   MarkExtension,
   addMarks,
+  clearMarks
 } from "../codemirror-extensions/MarkExtension";
 import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
@@ -82,12 +83,16 @@ const Home = () => {
   const queryId = useRef(0);
 
   const onQueryChange = useCallback((val, viewUpdate) => {
+    if (docEditorRef.current)
+      clearMarks(docEditorRef.current.view);
     setQuery(val);
-  }, []);
+  }, [docEditorRef]);
 
   const onDocChange = useCallback((val, viewUpdate) => {
+    if (docEditorRef.current)
+      clearMarks(docEditorRef.current.view);
     setDoc(val);
-  }, []);
+  }, [docEditorRef]);
 
   useEffect(() => {
     queryId.current = Date.now();
@@ -103,6 +108,7 @@ const Home = () => {
           query: query,
           doc: doc,
           queryId: queryId.current,
+          isMultiMatch: true,
         });
       }, ONCHANGE_EXECUTION_DELAY_MS);
       return () => clearTimeout(timeoutId);

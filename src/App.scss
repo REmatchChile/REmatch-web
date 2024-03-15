@@ -30,8 +30,8 @@ $darker: #545454;
 $darkest: #212121;
 
 /* MainInterface */
-$colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
-  #417563, #1e90ff, #00fa9a, #aa2091, #a7a7ab, #637e93, #f7af9d, #424c55;
+$colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
+  #275d4a, #1088ff, #00fa9a, #aa2091, #8c8c8c, #6b97b9, #a96452, #424c55;
 
 .reql-variable {
   color: darken(nth($colors, 1), 10%);
@@ -58,12 +58,15 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
   color: darken(nth($colors, 4), 25%);
 }
 
-// Add padding if match has a child match
+// Add margin if match has a parent match
 .cm-match {
   display: inline-block;
-  color: black !important;
-  &:has(.cm-match) {
-    padding: 4px 0;
+  // color: black !important;
+  margin-left: 1px;
+  margin-right: 1px;
+  .cm-match {
+    margin-top: 2px;
+    margin-bottom: 2px;
   }
 }
 
@@ -73,7 +76,7 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
 }
 
 .match-table-cell-span {
-  white-space: nowrap;
+  white-space: pre-wrap;
 }
 
 .match-table-cell-group {
@@ -101,7 +104,9 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
 
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
-    background-color: nth($colors, $i + 1);
+    border-radius: 4px;
+    background-color: darken(nth($colors, $i + 1), 35%);
+    border: 1px solid nth($colors, $i + 1);
   }
 
   .match-table-cell-variable-#{$i} {

@@ -148,7 +148,11 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                               width={1}
                               align="left"
                               className="match-table-cell-span"
-                            >{`${row.spans[varIdx][0]}-${row.spans[varIdx][1]}`}</TableCell>
+                            >
+                              {row.spans[varIdx]
+                                .map(([from, to]) => `${from}-${to}`)
+                                .join(" ")}
+                            </TableCell>
                             <TableCell
                               align="left"
                               className="match-table-cell-group"

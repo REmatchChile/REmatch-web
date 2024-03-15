@@ -19,6 +19,7 @@ const getErrorText = (error) => {
 };
 
 let queryId;
+let isMultiMatch;
 let variables;
 let regex;
 let match_iterator;
@@ -27,6 +28,7 @@ self.onmessage = (event) => {
   switch (event.data.type) {
     case "QUERY_INIT": {
       queryId = event.data.queryId;
+      isMultiMatch = event.data.isMultiMatch;
       // Initialize query
       variables = [];
       if (regex) {
@@ -38,12 +40,16 @@ self.onmessage = (event) => {
         match_iterator = null;
       }
       try {
-        regex = new REmatchModuleInstance.Regex(event.data.query);
+        if (isMultiMatch) {
+          regex = new REmatchModuleInstance.MultiRegex(event.data.query);
+        } else {
+          regex = new REmatchModuleInstance.Regex(event.data.query);
+        }
         match_iterator = regex.finditer(event.data.doc);
         // Get variables
-        const variables_vector = match_iterator.variables();
-        for (let i = 0; i < variables_vector.size(); ++i)
-          variables.push(variables_vector.get(i));
+        const variablesVector = match_iterator.variables();
+        for (let i = 0; i < variablesVector.size(); ++i)
+          variables.push(variablesVector.get(i));
         self.postMessage({ type: "QUERY_VARIABLES", variables, queryId });
       } catch (err) {
         self.postMessage({
@@ -59,12 +65,22 @@ self.onmessage = (event) => {
         let match = match_iterator.next();
         const matches = [];
         while (match != null) {
-          matches.push(
-            variables.map((variable) =>
-              // Need to convert from BigInt to Number in order to work with the application
-              match.span(variable).map((x) => Number(x))
-            )
-          );
+          const matchData = variables.map((variable) => {
+            if (isMultiMatch) {
+              const spansVector = match.spans(variable);
+              const spans = [];
+              for (let i = 0; i < spansVector.size(); ++i) {
+                const [from, to] = spansVector.get(i);
+                // Need to convert from BigInt to Number in order to work with the application}
+                spans.push([Number(from), Number(to)]);
+              }
+              return spans;
+            } else {
+              const [from, to] = match.span(variable);
+              return [[Number(from), Number(to)]];
+            }
+          });
+          matches.push(matchData);
           // Post matches chunk and stop execution until further requests
           if (matches.length >= MIN_MATCHES_PER_POST) {
             self.postMessage({
