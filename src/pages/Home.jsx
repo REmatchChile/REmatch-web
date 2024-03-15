@@ -282,7 +282,6 @@ const Home = () => {
               extensions={[
                 EditorView.lineWrapping,
                 MarkExtension,
-                highlightWhitespace(),
               ]}
             />
           </Window>

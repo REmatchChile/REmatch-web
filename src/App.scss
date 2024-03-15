@@ -61,7 +61,6 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
 // Add margin if match has a parent match
 .cm-match {
   display: inline-block;
-  // color: black !important;
   margin-left: 1px;
   margin-right: 1px;
   .cm-match {
@@ -71,18 +70,22 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
 }
 
 .match-table-cell-variable {
+  font-weight: bolder !important;
   text-underline-offset: 4px;
   text-decoration: underline 4px;
 }
 
-.match-table-cell-span {
-  white-space: pre-wrap;
-}
-
 .match-table-cell-group {
   white-space: break-spaces;
-  word-break: break-word;
-  overflow-wrap: break-word;
+  word-break: break-all;
+  word-wrap: break-word;
+  .span {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+  .group {
+    display: inline;
+  }
 }
 
 .match-table-char {
