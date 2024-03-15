@@ -107,8 +107,9 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
 
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
+    color: black;
     border-radius: 4px;
-    background-color: darken(nth($colors, $i + 1), 35%);
+    background-color: rgba(nth($colors, $i + 1), 50%);
     border: 1px solid nth($colors, $i + 1);
   }
 
