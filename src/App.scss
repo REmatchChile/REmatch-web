@@ -58,17 +58,6 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
   color: darken(nth($colors, 4), 25%);
 }
 
-// Add margin if match has a parent match
-.cm-match {
-  display: inline-block;
-  margin-left: 1px;
-  margin-right: 1px;
-  .cm-match {
-    margin-top: 2px;
-    margin-bottom: 2px;
-  }
-}
-
 .match-table-cell-variable {
   font-weight: bolder !important;
   text-underline-offset: 4px;
@@ -105,12 +94,20 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
   }
 }
 
+.cm-match {
+  display: inline-block;
+  border-radius: 4px;
+  margin: 0 1px;
+  .cm-match {
+    margin: 1px;
+  }
+}
+
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
     color: black;
-    border-radius: 4px;
-    background-color: rgba(nth($colors, $i + 1), 50%);
-    border: 1px solid nth($colors, $i + 1);
+    background-color: rgba(nth($colors, $i + 1), 66%);
+    border: 2px solid nth($colors, $i + 1);
   }
 
   .match-table-cell-variable-#{$i} {

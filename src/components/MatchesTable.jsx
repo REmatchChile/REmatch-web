@@ -59,7 +59,6 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
   const handleRowClick = useCallback(
     (row) => {
       setSelectedMatchIndex(row.index);
-      addMarks(row.spans);
     },
     [addMarks]
   );
@@ -74,7 +73,10 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     // Trigger the addMarks effect when the selected match value changes
     const selectedMatch = matches[selectedMatchIndex];
     if (selectedMatch && selectedMatch.length) {
-      addMarks(selectedMatch);
+      if (variables.length) {
+        // Prevent error when trying to highlight no variables
+        addMarks(selectedMatch);
+      }
     }
     // eslint-disable-next-line
   }, [matches[selectedMatchIndex]]);
@@ -146,7 +148,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                             >
                               {row.spans[varIdx].map(([from, to], spanIdx) => {
                                 return (
-                                  <Box>
+                                  <Box key={spanIdx}>
                                     <Box className="span">{`(${from}-${to})`}</Box>
                                     <Box className="group">
                                       {renderGroupStr(from, to)}

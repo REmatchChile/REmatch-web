@@ -10,7 +10,7 @@ import CodeMirror, {
 import {
   MarkExtension,
   addMarks,
-  clearMarks
+  clearMarks,
 } from "../codemirror-extensions/MarkExtension";
 import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
@@ -21,12 +21,14 @@ const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const ONCHANGE_EXECUTION_DELAY_MS = 500;
 
 const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
+  const formatter = new Intl.NumberFormat("en-US");
+  const foundNumberStr = formatter.format(numMatches);
   const chipColor = errorMessage.length ? "error" : "default";
   const chipLabel = errorMessage.length
     ? "Error"
     : processing
-    ? "Processing..."
-    : `${numMatches} Matches found`;
+    ? `Processing (Found ${foundNumberStr})`
+    : `Finished (Found ${foundNumberStr})`;
   return (
     <Tooltip
       title={errorMessage}
@@ -82,25 +84,32 @@ const Home = () => {
   const theme = useTheme();
   const queryId = useRef(0);
 
-  const onQueryChange = useCallback((val, viewUpdate) => {
-    if (docEditorRef.current)
-      clearMarks(docEditorRef.current.view);
-    setQuery(val);
-  }, [docEditorRef]);
+  const onQueryChange = useCallback(
+    (val, viewUpdate) => {
+      setQuery(val);
+    },
+    [docEditorRef]
+  );
 
-  const onDocChange = useCallback((val, viewUpdate) => {
-    if (docEditorRef.current)
-      clearMarks(docEditorRef.current.view);
-    setDoc(val);
-  }, [docEditorRef]);
+  const onDocChange = useCallback(
+    (val, viewUpdate) => {
+      setDoc(val);
+    },
+    [docEditorRef]
+  );
+
+  useEffect(() => {
+    if (docEditorRef.current.view) clearMarks(docEditorRef.current.view);
+  }, [docEditorRef, query, doc]);
 
   useEffect(() => {
     queryId.current = Date.now();
     setErrorMessage("");
     setMatches([]);
     setVariables([]);
+    setProcessing(false);
     // Execute query after delay
-    if (workerIsAlive && query.length) {
+    if (workerIsAlive && query.length > 0) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
         worker.postMessage({
@@ -279,10 +288,7 @@ const Home = () => {
                 searchKeymap: false,
                 highlightSelectionMatches: false,
               }}
-              extensions={[
-                EditorView.lineWrapping,
-                MarkExtension,
-              ]}
+              extensions={[EditorView.lineWrapping, MarkExtension]}
             />
           </Window>
         </Box>

@@ -1,7 +1,7 @@
 import REmatch from "./emscripten_binding.js";
 
 // Number of iterations before posting a matches message
-const MIN_MATCHES_PER_POST = 15000;
+const MIN_MATCHES_PER_POST = 8192;
 
 // Initialize WASM
 let REmatchModuleInstance = null;
