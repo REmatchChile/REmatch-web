@@ -34,6 +34,7 @@ export const MarkExtension = StateField.define({
 });
 
 export const addMarks = (view, spans) => {
+  if (spans.length === 0) return;
   // Clear all the marks before adding new ones
   view.dispatch({ effects: setSpans.of([]) });
   view.dispatch({
@@ -46,4 +47,4 @@ export const addMarks = (view, spans) => {
 
 export const clearMarks = (view) => {
   view.dispatch({ effects: setSpans.of([]) });
-}
+};

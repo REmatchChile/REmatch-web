@@ -56,12 +56,9 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     // eslint-disable-next-line
   }, [page, matches]);
 
-  const handleRowClick = useCallback(
-    (row) => {
-      setSelectedMatchIndex(row.index);
-    },
-    [addMarks]
-  );
+  const handleRowClick = useCallback((row) => {
+    setSelectedMatchIndex(row.index);
+  }, []);
 
   useEffect(() => {
     // Variables change on new queries, reset the component state
@@ -73,9 +70,11 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     // Trigger the addMarks effect when the selected match value changes
     const selectedMatch = matches[selectedMatchIndex];
     if (selectedMatch && selectedMatch.length) {
-      if (variables.length) {
-        // Prevent error when trying to highlight no variables
-        addMarks(selectedMatch);
+      // Prevent error when trying to highlight no variables
+      if (variables.length > 0) {
+        // Prevent error when trying to highlight empty matches
+        const validSpans = selectedMatch.filter((span) => span.length > 0);
+        addMarks(validSpans);
       }
     }
     // eslint-disable-next-line
