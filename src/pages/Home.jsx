@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
-import { Box, Typography, Chip, Tooltip } from "@mui/material";
+import { Box, Typography, Chip, Tooltip, ToggleButton } from "@mui/material";
 import { basicDark, basicLight } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorView,
@@ -79,6 +79,7 @@ const Home = () => {
   const [doc, setDoc] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [isMultiRegex, setIsMultiRegex] = useState(false);
   const worker = useRef(null);
   const workerIsAlive = useRef(false);
   const docEditorRef = useRef();
@@ -112,13 +113,13 @@ const Home = () => {
           query: query,
           doc: doc,
           queryId: queryId.current,
-          isMultiMatch: true,
+          isMultiRegex: isMultiRegex,
         });
       }, ONCHANGE_EXECUTION_DELAY_MS);
       return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line
-  }, [query, doc]);
+  }, [query, doc, isMultiRegex]);
 
   const restartWorker = () => {
     worker.current = new Worker(WORKPATH, { type: "module" });
@@ -270,6 +271,34 @@ const Home = () => {
                       EditorView.lineWrapping,
                     ]}
                   />
+                </Box>
+                <Box width="4rem">
+                  <Tooltip
+                    title={
+                      isMultiRegex ? "Disable MultiRegex" : "Enable MultiRegex"
+                    }
+                  >
+                    <ToggleButton
+                      value="check"
+                      color="primary"
+                      selected={isMultiRegex}
+                      onChange={() =>
+                        setIsMultiRegex((prevState) => !prevState)
+                      }
+                      sx={{
+                        fontFamily: "monospace",
+                        fontSize: "0.75rem",
+                        fontWeight: "bolder",
+                        height: "100%",
+                        width: "100%",
+                        textDecoration: isMultiRegex
+                          ? "none"
+                          : "line-through !important",
+                      }}
+                    >
+                      {"Multi"}
+                    </ToggleButton>
+                  </Tooltip>
                 </Box>
               </Box>
             </Window>
