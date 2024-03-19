@@ -88,11 +88,11 @@ const Home = () => {
 
   const onQueryChange = useCallback((val, viewUpdate) => {
     setQuery(val);
-  });
+  }, []);
 
   const onDocChange = useCallback((val, viewUpdate) => {
     setDoc(val);
-  });
+  }, []);
 
   useEffect(() => {
     if (docEditorRef.current.view) clearMarks(docEditorRef.current.view);
@@ -187,6 +187,7 @@ const Home = () => {
         worker.current.terminate();
       }
     };
+    // eslint-disable-next-line
   }, []);
 
   return (
