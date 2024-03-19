@@ -16,6 +16,7 @@ import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 import { useTheme } from "@emotion/react";
+import { enqueueSnackbar } from "notistack";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const ONCHANGE_EXECUTION_DELAY_MS = 500;
@@ -76,27 +77,21 @@ const Home = () => {
   const [matches, setMatches] = useState([]);
   const [query, setQuery] = useState("");
   const [doc, setDoc] = useState("");
-  const [workerIsAlive, setWorkerIsAlive] = useState(false);
-  const [worker, setWorker] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [processing, setProcessing] = useState(false);
+  const worker = useRef(null);
+  const workerIsAlive = useRef(false);
   const docEditorRef = useRef();
   const theme = useTheme();
   const queryId = useRef(0);
 
-  const onQueryChange = useCallback(
-    (val, viewUpdate) => {
-      setQuery(val);
-    },
-    [docEditorRef]
-  );
+  const onQueryChange = useCallback((val, viewUpdate) => {
+    setQuery(val);
+  });
 
-  const onDocChange = useCallback(
-    (val, viewUpdate) => {
-      setDoc(val);
-    },
-    [docEditorRef]
-  );
+  const onDocChange = useCallback((val, viewUpdate) => {
+    setDoc(val);
+  });
 
   useEffect(() => {
     if (docEditorRef.current.view) clearMarks(docEditorRef.current.view);
@@ -109,10 +104,10 @@ const Home = () => {
     setVariables([]);
     setProcessing(false);
     // Execute query after delay
-    if (workerIsAlive && query.length > 0) {
+    if (workerIsAlive.current && query.length > 0) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
-        worker.postMessage({
+        worker.current.postMessage({
           type: "QUERY_INIT",
           query: query,
           doc: doc,
@@ -123,60 +118,75 @@ const Home = () => {
       return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line
-  }, [query, doc, workerIsAlive]);
+  }, [query, doc]);
+
+  const restartWorker = () => {
+    worker.current = new Worker(WORKPATH, { type: "module" });
+    worker.current.onmessage = (event) => {
+      switch (event.data.type) {
+        case "ALIVE": {
+          // Worker is alive and ready for execution
+          workerIsAlive.current = true;
+          break;
+        }
+        case "QUERY_VARIABLES": {
+          // The regex has been compiled, ask for the first chunk of matches
+          if (event.data.queryId !== queryId.current) return;
+          setVariables(event.data.variables);
+          worker.current.postMessage({ type: "QUERY_NEXT" });
+          break;
+        }
+        case "QUERY_NEXT": {
+          // Prevent processing of previous queries to avoid overlapping matches
+          if (event.data.queryId !== queryId.current) return;
+          // Handle chunk of matches
+          setMatches((prevMatches) => [...prevMatches, ...event.data.matches]);
+          if (event.data.hasNext)
+            worker.current.postMessage({ type: "QUERY_NEXT" });
+          else setProcessing(false);
+          break;
+        }
+        case "ERROR": {
+          // An error occurred in the worker
+          queryId.current = null;
+          console.error(event.data.error);
+          setErrorMessage(event.data.error);
+          setProcessing(false);
+          break;
+        }
+        case "ABORT": {
+          // REmatch's module had a critical error
+          queryId.current = null;
+          workerIsAlive.current = false;
+          worker.current.terminate();
+          setProcessing(false);
+          console.error("Emscripten called abort(). Restarting worker...");
+          enqueueSnackbar(
+            "Error: Abnormal termination. Possible memory limit reached in our Emscripten bindings. You can still explore the existing matches or try again later. Restarting web worker...",
+            {
+              variant: "error",
+            }
+          );
+          restartWorker();
+          break;
+        }
+        default: {
+          console.error("UNHANDLED WORKER MESSAGE RECEIVED", event.data);
+          break;
+        }
+      }
+    };
+  };
 
   useEffect(() => {
-    // Set up worker
-    const newWorker = new Worker(WORKPATH, { type: "module" });
-    setWorker(newWorker);
+    restartWorker();
     return () => {
       // Terminate worker when component unmounts
-      newWorker.terminate();
+      if (worker.current) {
+        worker.current.terminate();
+      }
     };
   }, []);
-
-  useEffect(() => {
-    if (worker) {
-      worker.onmessage = (event) => {
-        switch (event.data.type) {
-          case "ALIVE": {
-            // Worker is alive and ready for execution
-            setWorkerIsAlive(true);
-            break;
-          }
-          case "QUERY_VARIABLES": {
-            // The regex has been compiled, ask for the first chunk of matches
-            setVariables(event.data.variables);
-            worker.postMessage({ type: "QUERY_NEXT" });
-            break;
-          }
-          case "QUERY_NEXT": {
-            // Prevent processing of previous queries to avoid overlapping matches
-            if (event.data.queryId !== queryId.current) return;
-            // Handle chunk of matches
-            setMatches((prevMatches) => [
-              ...prevMatches,
-              ...event.data.matches,
-            ]);
-            if (event.data.hasNext) worker.postMessage({ type: "QUERY_NEXT" });
-            else setProcessing(false);
-            break;
-          }
-          case "ERROR": {
-            // An error occurred in the worker
-            console.error(event.data.error);
-            setErrorMessage(event.data.error);
-            setProcessing(false);
-            break;
-          }
-          default: {
-            console.error("UNHANDLED WORKER MESSAGE RECEIVED", event.data);
-            break;
-          }
-        }
-      };
-    }
-  }, [worker]);
 
   return (
     <Box

@@ -41,7 +41,7 @@ const App = () => {
           whiteSpace: "pre-wrap",
           fontFamily: "monospace",
         }}
-        autoHideDuration={3000}
+        autoHideDuration={5000}
         hideIconVariant
       />
       <BrowserRouter>

@@ -7,6 +7,10 @@ const MIN_MATCHES_PER_POST = 8192;
 let REmatchModuleInstance = null;
 (async () => {
   REmatchModuleInstance = await REmatch();
+  REmatchModuleInstance.onAbort = () => {
+    // Abort event is triggered on critical errors, for example when the worker runs out of memory
+    self.postMessage({ type: "ABORT" });
+  };
   self.postMessage({ type: "ALIVE" });
 })();
 
@@ -25,21 +29,22 @@ let regex;
 let match_iterator;
 
 self.onmessage = (event) => {
-  switch (event.data.type) {
-    case "QUERY_INIT": {
-      queryId = event.data.queryId;
-      isMultiMatch = event.data.isMultiMatch;
-      // Initialize query
-      variables = [];
-      if (regex) {
-        regex.delete();
-        regex = null;
-      }
-      if (match_iterator) {
-        match_iterator.delete();
-        match_iterator = null;
-      }
-      try {
+  try {
+    switch (event.data.type) {
+      case "QUERY_INIT": {
+        queryId = event.data.queryId;
+        isMultiMatch = event.data.isMultiMatch;
+        // Initialize query
+        variables = [];
+        if (regex) {
+          regex.delete();
+          regex = null;
+        }
+        if (match_iterator) {
+          match_iterator.delete();
+          match_iterator = null;
+        }
+
         if (isMultiMatch) {
           regex = new REmatchModuleInstance.MultiRegex(event.data.query);
         } else {
@@ -50,18 +55,12 @@ self.onmessage = (event) => {
         const variablesVector = match_iterator.variables();
         for (let i = 0; i < variablesVector.size(); ++i)
           variables.push(variablesVector.get(i));
+        variablesVector.delete();
         self.postMessage({ type: "QUERY_VARIABLES", variables, queryId });
-      } catch (err) {
-        self.postMessage({
-          type: "ERROR",
-          error: getErrorText(err),
-        });
+        break;
       }
-      break;
-    }
-    case "QUERY_NEXT": {
-      // Send a chunk of matches, notifying the main thread if there are more matches to send
-      try {
+      case "QUERY_NEXT": {
+        // Send a chunk of matches, notifying the main thread if there are more matches to send
         let match = match_iterator.next();
         const matches = [];
         while (match != null) {
@@ -100,18 +99,17 @@ self.onmessage = (event) => {
           hasNext: false,
           queryId,
         });
-      } catch (err) {
-        self.postMessage({
-          type: "ERROR",
-          error: getErrorText(err),
-          queryId,
-        });
+        break;
       }
-      break;
+      default: {
+        console.error("UNHANDLED WORKER MESSAGE SENT", event.data);
+        break;
+      }
     }
-    default: {
-      console.error("UNHANDLED WORKER MESSAGE SENT", event.data);
-      break;
-    }
+  } catch (err) {
+    self.postMessage({
+      type: "ERROR",
+      error: getErrorText(err),
+    });
   }
 };
