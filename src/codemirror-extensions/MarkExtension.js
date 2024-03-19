@@ -40,7 +40,7 @@ export const addMarks = (view, spans) => {
   view.dispatch({
     effects: [
       setSpans.of(spans),
-      EditorView.scrollIntoView(spans[0][0], { y: "center" }),
+      EditorView.scrollIntoView(spans[0][0][0], { y: "center" }),
     ],
   });
 };

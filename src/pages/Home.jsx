@@ -17,6 +17,7 @@ import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 import { useTheme } from "@emotion/react";
 import { enqueueSnackbar } from "notistack";
+import { useSearchParams } from "react-router-dom";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const ONCHANGE_EXECUTION_DELAY_MS = 500;
@@ -73,25 +74,31 @@ const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
 
 /* MAIN INTERFACE */
 const Home = () => {
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("query") || "");
+  const [doc, setDoc] = useState(searchParams.get("doc") || "");
+  const [isMultiRegex, setIsMultiRegex] = useState(
+    searchParams.get("isMultiRegex") === "true"
+  );
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
-  const [query, setQuery] = useState("");
-  const [doc, setDoc] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [processing, setProcessing] = useState(false);
-  const [isMultiRegex, setIsMultiRegex] = useState(false);
+  const [workerIsAlive, setWorkerIsAlive] = useState(false);
+  const [aborted, setAborted] = useState(false);
   const worker = useRef(null);
-  const workerIsAlive = useRef(false);
   const docEditorRef = useRef();
-  const theme = useTheme();
   const queryId = useRef(0);
+  const theme = useTheme();
 
   const onQueryChange = useCallback((val, viewUpdate) => {
     setQuery(val);
+    setAborted(false);
   }, []);
 
   const onDocChange = useCallback((val, viewUpdate) => {
     setDoc(val);
+    setAborted(false);
   }, []);
 
   useEffect(() => {
@@ -99,13 +106,14 @@ const Home = () => {
   }, [docEditorRef, query, doc]);
 
   useEffect(() => {
+    if (aborted) return;
     queryId.current = Date.now();
     setErrorMessage("");
     setMatches([]);
     setVariables([]);
     setProcessing(false);
     // Execute query after delay
-    if (workerIsAlive.current && query.length > 0) {
+    if (query.length > 0 && workerIsAlive) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
         worker.current.postMessage({
@@ -119,7 +127,7 @@ const Home = () => {
       return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line
-  }, [query, doc, isMultiRegex]);
+  }, [query, doc, isMultiRegex, workerIsAlive, aborted]);
 
   const restartWorker = () => {
     worker.current = new Worker(WORKPATH, { type: "module" });
@@ -127,7 +135,7 @@ const Home = () => {
       switch (event.data.type) {
         case "ALIVE": {
           // Worker is alive and ready for execution
-          workerIsAlive.current = true;
+          setWorkerIsAlive(true);
           break;
         }
         case "QUERY_VARIABLES": {
@@ -157,10 +165,11 @@ const Home = () => {
         }
         case "ABORT": {
           // REmatch's module had a critical error
-          queryId.current = null;
-          workerIsAlive.current = false;
-          worker.current.terminate();
+          setAborted(true);
+          setWorkerIsAlive(false);
           setProcessing(false);
+          queryId.current = null;
+          worker.current.terminate();
           console.error("Emscripten called abort(). Restarting worker...");
           enqueueSnackbar(
             "Error: Abnormal termination. Possible memory limit reached in our Emscripten bindings. You can still explore the existing matches or try again later. Restarting web worker...",
