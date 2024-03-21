@@ -89,7 +89,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
         overflow: "hidden",
       }}
     >
-      <List sx={{ flex: "1 1 auto", overflowY: "auto", p: 0 }}>
+      <List sx={{ flex: "1 1 auto", overflowY: "auto" }} disablePadding>
         {rows.length ? (
           rows.map((row, rowIdx) => (
             <React.Fragment key={rowIdx}>

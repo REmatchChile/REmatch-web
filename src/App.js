@@ -13,7 +13,6 @@ import Navbar from "./components/Navbar";
 import AboutUs from "./pages/AboutUs";
 import Examples from "./pages/Examples";
 import Home from "./pages/Home";
-import Tutorial from "./pages/Tutorial";
 import WhatIsREmatch from "./pages/WhatIsREmatch";
 
 const DRAWER_WIDTH = {
@@ -64,7 +63,6 @@ const App = () => {
           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route path="/what-is-rematch" element={<WhatIsREmatch />} />
-            <Route path="/tutorial" element={<Tutorial />} />
             <Route path="/examples" element={<Examples />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="*" element={<Navigate to="/" replace />} />

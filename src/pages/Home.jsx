@@ -207,7 +207,7 @@ const Home = () => {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        p: 0.5,
+        p: 1,
       }}
     >
       <Box
@@ -304,6 +304,10 @@ const Home = () => {
                         textDecoration: isMultiRegex
                           ? "none"
                           : "line-through !important",
+                        borderRadius: 0,
+                        borderTop: "none",
+                        borderRight: "none",
+                        borderBottom: "none",
                       }}
                     >
                       {"Multi"}
