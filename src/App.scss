@@ -30,8 +30,8 @@ $darker: #545454;
 $darkest: #212121;
 
 /* MainInterface */
-$colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
-  #417563, #1e90ff, #00fa9a, #aa2091, #a7a7ab, #637e93, #f7af9d, #424c55;
+$colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #764e1e,
+  #275d4a, #1088ff, #00fa9a, #aa2091, #8c8c8c, #6b97b9, #a96452, #424c55;
 
 .reql-variable {
   color: darken(nth($colors, 1), 10%);
@@ -58,28 +58,23 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
   color: darken(nth($colors, 4), 25%);
 }
 
-// Add padding if match has a child match
-.cm-match {
-  display: inline-block;
-  color: black !important;
-  &:has(.cm-match) {
-    padding: 4px 0;
-  }
-}
-
 .match-table-cell-variable {
+  font-weight: bolder !important;
   text-underline-offset: 4px;
   text-decoration: underline 4px;
 }
 
-.match-table-cell-span {
-  white-space: nowrap;
-}
-
 .match-table-cell-group {
   white-space: break-spaces;
-  word-break: break-word;
-  overflow-wrap: break-word;
+  word-break: break-all;
+  word-wrap: break-word;
+  .span {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+  .group {
+    display: inline;
+  }
 }
 
 .match-table-char {
@@ -99,9 +94,20 @@ $colors: #03dac6, #fce938, #ec4e20, #0aff2f, #c71585, #ffa500, #ffa1ff, #b47d3a,
   }
 }
 
+.cm-match {
+  display: inline-block;
+  border-radius: 4px;
+  margin: 0 1px;
+  .cm-match {
+    margin: 4px 1px;
+  }
+}
+
 @for $i from 0 to length($colors) {
   .cm-match-#{$i} {
-    background-color: nth($colors, $i + 1);
+    color: black;
+    background-color: rgba(nth($colors, $i + 1), 66%);
+    border: 2px solid nth($colors, $i + 1);
   }
 
   .match-table-cell-variable-#{$i} {

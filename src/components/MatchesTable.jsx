@@ -18,27 +18,32 @@ import { utf8Substring } from "../utils/utf8Substring";
 const ROWS_PER_PAGE = 25;
 const MAX_GROUP_CHARS = 96;
 
-const renderGroupStr = (groupStr) => {
-  return groupStr.split("\n").map((lineStr, lineIdx) => (
-    <React.Fragment key={lineIdx}>
-      {lineIdx > 0 && (
-        <span className="match-table-char match-table-newline"> </span>
-      )}
-      {lineStr.split(" ").map((wordStr, wordIdx) => (
-        <React.Fragment key={wordIdx}>
-          {wordIdx > 0 && (
-            <span className="match-table-char match-table-space"> </span>
-          )}
-          {wordStr}
-        </React.Fragment>
-      ))}
-    </React.Fragment>
-  ));
-};
-
 const MatchesTable = ({ matches, variables, doc, addMarks }) => {
   const [page, setPage] = useState(1);
   const [selectedMatchIndex, setSelectedMatchIndex] = useState(0);
+
+  const renderGroupStr = (from, to) => {
+    let group = utf8Substring(doc, from, to);
+    if (group.length > MAX_GROUP_CHARS) {
+      // Array slice to prevent splitting 2-byte UTF-16 characters
+      group = Array.from(group).slice(0, MAX_GROUP_CHARS).join("") + "…";
+    }
+    return group.split("\n").map((lineStr, lineIdx) => (
+      <React.Fragment key={lineIdx}>
+        {lineIdx > 0 && (
+          <span className="match-table-char match-table-newline"> </span>
+        )}
+        {lineStr.split(" ").map((wordStr, wordIdx) => (
+          <React.Fragment key={wordIdx}>
+            {wordIdx > 0 && (
+              <span className="match-table-char match-table-space"> </span>
+            )}
+            {wordStr}
+          </React.Fragment>
+        ))}
+      </React.Fragment>
+    ));
+  };
 
   const rows = useMemo(() => {
     // TODO: Optimize re-rendering
@@ -47,26 +52,13 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     return matches.slice(pageStart, pageEnd).map((match, idxMatch) => ({
       index: pageStart + idxMatch,
       spans: match,
-      groups: match.map(([from, to]) => {
-        const group = utf8Substring(doc, from, to);
-        if (group.length <= MAX_GROUP_CHARS) {
-          return group;
-        } else {
-          // Array slice to prevent splitting 2-byte UTF-16 characters
-          return Array.from(group).slice(0, MAX_GROUP_CHARS).join("") + "…";
-        }
-      }),
     }));
     // eslint-disable-next-line
   }, [page, matches]);
 
-  const handleRowClick = useCallback(
-    (row) => {
-      setSelectedMatchIndex(row.index);
-      addMarks(row.spans);
-    },
-    [addMarks]
-  );
+  const handleRowClick = useCallback((row) => {
+    setSelectedMatchIndex(row.index);
+  }, []);
 
   useEffect(() => {
     // Variables change on new queries, reset the component state
@@ -78,7 +70,12 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     // Trigger the addMarks effect when the selected match value changes
     const selectedMatch = matches[selectedMatchIndex];
     if (selectedMatch && selectedMatch.length) {
-      addMarks(selectedMatch);
+      // Prevent error when trying to highlight no variables
+      if (variables.length > 0) {
+        // Prevent error when trying to highlight empty matches
+        const validSpans = selectedMatch.filter((span) => span.length > 0);
+        addMarks(validSpans);
+      }
     }
     // eslint-disable-next-line
   }, [matches[selectedMatchIndex]]);
@@ -92,7 +89,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
         overflow: "hidden",
       }}
     >
-      <List sx={{ flex: "1 1 auto", overflowY: "auto", p: 0 }}>
+      <List sx={{ flex: "1 1 auto", overflowY: "auto" }} disablePadding>
         {rows.length ? (
           rows.map((row, rowIdx) => (
             <React.Fragment key={rowIdx}>
@@ -145,15 +142,23 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
                               {variable}
                             </TableCell>
                             <TableCell
-                              width={1}
-                              align="left"
-                              className="match-table-cell-span"
-                            >{`${row.spans[varIdx][0]}-${row.spans[varIdx][1]}`}</TableCell>
-                            <TableCell
                               align="left"
                               className="match-table-cell-group"
                             >
-                              {renderGroupStr(row.groups[varIdx])}
+                              {row.spans[varIdx].map(([from, to], spanIdx) => {
+                                return (
+                                  <Box key={spanIdx}>
+                                    <Box className="span">{`(${from}-${to})`}</Box>
+                                    <Box className="group">
+                                      {renderGroupStr(from, to)}
+                                    </Box>
+                                    {spanIdx !==
+                                      row.spans[varIdx].length - 1 && (
+                                      <Divider />
+                                    )}
+                                  </Box>
+                                );
+                              })}
                             </TableCell>
                           </TableRow>
                         ))}

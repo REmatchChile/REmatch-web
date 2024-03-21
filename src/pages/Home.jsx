@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
-import { Box, Typography, Chip, Tooltip } from "@mui/material";
+import { Box, Typography, Chip, Tooltip, ToggleButton } from "@mui/material";
 import { basicDark, basicLight } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorView,
@@ -10,22 +10,27 @@ import CodeMirror, {
 import {
   MarkExtension,
   addMarks,
+  clearMarks,
 } from "../codemirror-extensions/MarkExtension";
 import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
 import { useTheme } from "@emotion/react";
+import { enqueueSnackbar } from "notistack";
+import { useSearchParams } from "react-router-dom";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const ONCHANGE_EXECUTION_DELAY_MS = 500;
 
 const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
+  const formatter = new Intl.NumberFormat("en-US");
+  const foundNumberStr = formatter.format(numMatches);
   const chipColor = errorMessage.length ? "error" : "default";
   const chipLabel = errorMessage.length
     ? "Error"
     : processing
-    ? "Processing..."
-    : `${numMatches} Matches found`;
+    ? `Processing (Found ${foundNumberStr})`
+    : `Finished (Found ${foundNumberStr})`;
   return (
     <Tooltip
       title={errorMessage}
@@ -69,99 +74,130 @@ const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
 
 /* MAIN INTERFACE */
 const Home = () => {
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("query") || "");
+  const [doc, setDoc] = useState(searchParams.get("doc") || "");
+  const [isMultiRegex, setIsMultiRegex] = useState(
+    searchParams.get("isMultiRegex") === "true"
+  );
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
-  const [query, setQuery] = useState("");
-  const [doc, setDoc] = useState("");
-  const [workerIsAlive, setWorkerIsAlive] = useState(false);
-  const [worker, setWorker] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [workerIsAlive, setWorkerIsAlive] = useState(false);
+  const [aborted, setAborted] = useState(false);
+  const worker = useRef(null);
   const docEditorRef = useRef();
-  const theme = useTheme();
   const queryId = useRef(0);
+  const theme = useTheme();
 
   const onQueryChange = useCallback((val, viewUpdate) => {
     setQuery(val);
+    setAborted(false);
   }, []);
 
   const onDocChange = useCallback((val, viewUpdate) => {
     setDoc(val);
+    setAborted(false);
   }, []);
 
   useEffect(() => {
+    if (docEditorRef.current.view) clearMarks(docEditorRef.current.view);
+  }, [docEditorRef, query, doc]);
+
+  useEffect(() => {
+    if (aborted) return;
     queryId.current = Date.now();
     setErrorMessage("");
     setMatches([]);
     setVariables([]);
+    setProcessing(false);
     // Execute query after delay
-    if (workerIsAlive && query.length) {
+    if (query.length > 0 && workerIsAlive) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
-        worker.postMessage({
+        worker.current.postMessage({
           type: "QUERY_INIT",
           query: query,
           doc: doc,
           queryId: queryId.current,
+          isMultiRegex: isMultiRegex,
         });
       }, ONCHANGE_EXECUTION_DELAY_MS);
       return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line
-  }, [query, doc, workerIsAlive]);
+  }, [query, doc, isMultiRegex, workerIsAlive, aborted]);
+
+  const restartWorker = () => {
+    worker.current = new Worker(WORKPATH, { type: "module" });
+    worker.current.onmessage = (event) => {
+      switch (event.data.type) {
+        case "ALIVE": {
+          // Worker is alive and ready for execution
+          setWorkerIsAlive(true);
+          break;
+        }
+        case "QUERY_VARIABLES": {
+          // The regex has been compiled, ask for the first chunk of matches
+          if (event.data.queryId !== queryId.current) return;
+          setVariables(event.data.variables);
+          worker.current.postMessage({ type: "QUERY_NEXT" });
+          break;
+        }
+        case "QUERY_NEXT": {
+          // Prevent processing of previous queries to avoid overlapping matches
+          if (event.data.queryId !== queryId.current) return;
+          // Handle chunk of matches
+          setMatches((prevMatches) => [...prevMatches, ...event.data.matches]);
+          if (event.data.hasNext)
+            worker.current.postMessage({ type: "QUERY_NEXT" });
+          else setProcessing(false);
+          break;
+        }
+        case "ERROR": {
+          // An error occurred in the worker
+          queryId.current = null;
+          console.error(event.data.error);
+          setErrorMessage(event.data.error);
+          setProcessing(false);
+          break;
+        }
+        case "ABORT": {
+          // REmatch's module had a critical error
+          setAborted(true);
+          setWorkerIsAlive(false);
+          setProcessing(false);
+          queryId.current = null;
+          worker.current.terminate();
+          console.error("Emscripten called abort(). Restarting worker...");
+          enqueueSnackbar(
+            "Error: Abnormal termination. Possible memory limit reached in our Emscripten bindings. You can still explore the existing matches or try again later. Restarting web worker...",
+            {
+              variant: "error",
+            }
+          );
+          restartWorker();
+          break;
+        }
+        default: {
+          console.error("UNHANDLED WORKER MESSAGE RECEIVED", event.data);
+          break;
+        }
+      }
+    };
+  };
 
   useEffect(() => {
-    // Set up worker
-    const newWorker = new Worker(WORKPATH, { type: "module" });
-    setWorker(newWorker);
+    restartWorker();
     return () => {
       // Terminate worker when component unmounts
-      newWorker.terminate();
+      if (worker.current) {
+        worker.current.terminate();
+      }
     };
+    // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    if (worker) {
-      worker.onmessage = (event) => {
-        switch (event.data.type) {
-          case "ALIVE": {
-            // Worker is alive and ready for execution
-            setWorkerIsAlive(true);
-            break;
-          }
-          case "QUERY_VARIABLES": {
-            // The regex has been compiled, ask for the first chunk of matches
-            setVariables(event.data.variables);
-            worker.postMessage({ type: "QUERY_NEXT" });
-            break;
-          }
-          case "QUERY_NEXT": {
-            // Prevent processing of previous queries to avoid overlapping matches
-            if (event.data.queryId !== queryId.current) return;
-            // Handle chunk of matches
-            setMatches((prevMatches) => [
-              ...prevMatches,
-              ...event.data.matches,
-            ]);
-            if (event.data.hasNext) worker.postMessage({ type: "QUERY_NEXT" });
-            else setProcessing(false);
-            break;
-          }
-          case "ERROR": {
-            // An error occurred in the worker
-            console.error(event.data.error);
-            setErrorMessage(event.data.error);
-            setProcessing(false);
-            break;
-          }
-          default: {
-            console.error("UNHANDLED WORKER MESSAGE RECEIVED", event.data);
-            break;
-          }
-        }
-      };
-    }
-  }, [worker]);
 
   return (
     <Box
@@ -171,7 +207,7 @@ const Home = () => {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        p: 0.5,
+        p: 1,
       }}
     >
       <Box
@@ -246,6 +282,38 @@ const Home = () => {
                     ]}
                   />
                 </Box>
+                <Box width="4rem">
+                  <Tooltip
+                    title={
+                      isMultiRegex ? "Disable MultiRegex" : "Enable MultiRegex"
+                    }
+                  >
+                    <ToggleButton
+                      value="check"
+                      color="primary"
+                      selected={isMultiRegex}
+                      onChange={() =>
+                        setIsMultiRegex((prevState) => !prevState)
+                      }
+                      sx={{
+                        fontFamily: "monospace",
+                        fontSize: "0.75rem",
+                        fontWeight: "bolder",
+                        height: "100%",
+                        width: "100%",
+                        textDecoration: isMultiRegex
+                          ? "none"
+                          : "line-through !important",
+                        borderRadius: 0,
+                        borderTop: "none",
+                        borderRight: "none",
+                        borderBottom: "none",
+                      }}
+                    >
+                      {"Multi"}
+                    </ToggleButton>
+                  </Tooltip>
+                </Box>
               </Box>
             </Window>
           </Box>
@@ -273,11 +341,7 @@ const Home = () => {
                 searchKeymap: false,
                 highlightSelectionMatches: false,
               }}
-              extensions={[
-                EditorView.lineWrapping,
-                MarkExtension,
-                highlightWhitespace(),
-              ]}
+              extensions={[EditorView.lineWrapping, MarkExtension]}
             />
           </Window>
         </Box>

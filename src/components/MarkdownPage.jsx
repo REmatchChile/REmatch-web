@@ -30,7 +30,7 @@ const components = {
       component="a"
       href={href}
       underline="hover"
-      color="secondary"
+      color="primary"
       rel="noreferrer"
     >
       {children}
@@ -63,32 +63,62 @@ const components = {
     </Typography>
   ),
   h1: ({ children }) => (
-    <Typography component="h1" variant="h1" gutterBottom sx={{ mt: 3 }}>
+    <Typography
+      component="h1"
+      variant="h1"
+      gutterBottom
+      sx={{ mt: 3, fontWeight: 500, fontSize: "2.5rem !important" }}
+    >
       {children}
     </Typography>
   ),
   h2: ({ children }) => (
-    <Typography component="h2" variant="h2" gutterBottom sx={{ mt: 3 }}>
+    <Typography
+      component="h2"
+      variant="h2"
+      gutterBottom
+      sx={{ mt: 3, fontWeight: 500, fontSize: "2rem !important" }}
+    >
       {children}
     </Typography>
   ),
   h3: ({ children }) => (
-    <Typography component="h3" variant="h3" gutterBottom sx={{ mt: 3 }}>
+    <Typography
+      component="h3"
+      variant="h3"
+      gutterBottom
+      sx={{ mt: 3, fontWeight: 500, fontSize: "1.5rem !important" }}
+    >
       {children}
     </Typography>
   ),
   h4: ({ children }) => (
-    <Typography component="h4" variant="h4" gutterBottom sx={{ mt: 3 }}>
+    <Typography
+      component="h4"
+      variant="h4"
+      gutterBottom
+      sx={{ mt: 3, fontWeight: 500, fontSize: "1.17rem !important" }}
+    >
       {children}
     </Typography>
   ),
   h5: ({ children }) => (
-    <Typography component="h5" variant="h4" gutterBottom sx={{ mt: 3 }}>
+    <Typography
+      component="h5"
+      variant="h4"
+      gutterBottom
+      sx={{ mt: 3, fontWeight: 500, fontSize: "1rem !important" }}
+    >
       {children}
     </Typography>
   ),
   h6: ({ children }) => (
-    <Typography component="h6" variant="h6" gutterBottom sx={{ mt: 3 }}>
+    <Typography
+      component="h6"
+      variant="h6"
+      gutterBottom
+      sx={{ mt: 3, fontWeight: 500, fontSize: ".83rem !important" }}
+    >
       {children}
     </Typography>
   ),
@@ -144,7 +174,7 @@ const components = {
     <Typography
       component="code"
       sx={{
-        backgroundColor: "grey.800",
+        backgroundColor: "grey.900",
         color: "white",
         py: 0.25,
         px: 0.5,
@@ -196,23 +226,28 @@ const components = {
 const MarkdownPage = ({ url }) => {
   const [markdownText, setMarkdownText] = useState("");
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
   const fetchAndSetMarkdownText = async () => {
     setError(false);
+    setLoading(true);
     try {
       const res = await fetch(url);
       const text = await res.text();
       if (!res.ok) throw new Error(text);
       setMarkdownText(text);
-    } catch (error) {
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
       setError(true);
     }
   };
 
   useEffect(() => {
     fetchAndSetMarkdownText();
+    // eslint-disable-next-line
   }, [url]);
 
   return (
@@ -258,7 +293,7 @@ const MarkdownPage = ({ url }) => {
             </Button>
           </Box>
         </Box>
-      ) : !markdownText ? (
+      ) : loading ? (
         <Box
           sx={{
             flex: "1 1 auto",

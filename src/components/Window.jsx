@@ -11,7 +11,7 @@ const Window = ({ sx, children, headerText, headerStatus }) => {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        m: 0.5,
+        m: 1,
       }}
     >
       <Box sx={{ flex: "0 0 0" }}>

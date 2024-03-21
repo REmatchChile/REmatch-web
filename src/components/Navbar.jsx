@@ -3,7 +3,6 @@ import React, { useCallback } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DataObjectIcon from "@mui/icons-material/DataObject";
-import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import HelpIcon from "@mui/icons-material/Help";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -39,7 +38,7 @@ const AppLogo = ({ width, onClick }) => (
     src={Logo}
     alt="REmatch"
     sx={{
-      width: {sm: 200, xs: 160},
+      width: { sm: 200, xs: 160 },
       cursor: "pointer",
       "&:hover": {
         filter: "drop-shadow(#03DAC6 0 0 4px)",
@@ -50,8 +49,13 @@ const AppLogo = ({ width, onClick }) => (
 
 const MenuButton = ({ onClick }) => {
   return (
-    <Tooltip title="Menu" sx={{ display: { sm: "none", xs: "flex" } }}>
-      <IconButton size="medium" onClick={onClick} edge="start">
+    <Tooltip title="Menu">
+      <IconButton
+        size="medium"
+        onClick={onClick}
+        edge="start"
+        sx={{ display: { sm: "none", xs: "flex" } }}
+      >
         <MenuIcon />
       </IconButton>
     </Tooltip>
@@ -237,28 +241,18 @@ export default function NavbarComponent({
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
+            IconComponent={SchoolIcon}
+            primary="Examples"
+            path="/examples"
+            handleNavigate={handleNavigate}
+            location={location}
+          />
+          <DrawerNavigationListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
             IconComponent={HelpIcon}
             primary="What is REmatch?"
             path="/what-is-rematch"
-            handleNavigate={handleNavigate}
-            location={location}
-          />
-
-          <DrawerNavigationListItem
-            open={openDrawer}
-            handleDrawerClose={handleDrawerClose}
-            IconComponent={SchoolIcon}
-            primary="Tutorial"
-            path="/tutorial"
-            handleNavigate={handleNavigate}
-            location={location}
-          />
-          <DrawerNavigationListItem
-            open={openDrawer}
-            handleDrawerClose={handleDrawerClose}
-            IconComponent={DeveloperBoardIcon}
-            primary="Examples"
-            path="/examples"
             handleNavigate={handleNavigate}
             location={location}
           />
