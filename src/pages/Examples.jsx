@@ -58,7 +58,6 @@ const ExamplesList = ({ examples, handleExampleClick }) => {
       >
         <DialogTitle
           sx={{
-            wordBreak: "break-all",
             textAlign: "justify",
           }}
         >
@@ -201,7 +200,6 @@ const Examples = () => {
 
   const handleExampleClick = (example) => {
     const { query, doc, isMultiRegex } = example;
-    console.log(example);
     navigate({
       pathname: "/",
       search: createSearchParams({
