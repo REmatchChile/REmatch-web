@@ -58,7 +58,6 @@ const ExamplesList = ({ examples, handleExampleClick }) => {
       >
         <DialogTitle
           sx={{
-            wordBreak: "break-all",
             textAlign: "justify",
           }}
         >
@@ -178,13 +177,15 @@ const Examples = () => {
       const text = await res.text();
       if (!res.ok) throw new Error(text);
       setExamples(
-        JSON.parse(text).map((example) => ({
-          query: example.query || "",
-          doc: example.doc || "",
-          isMultiRegex: example.isMultiRegex || false,
-          title: example.title || "Untitled",
-          description: example.description || "No description",
-        }))
+        JSON.parse(text)
+          .map((example) => ({
+            query: example.query || "",
+            doc: example.doc.replaceAll("\\n", "\n") || "",
+            isMultiRegex: example.isMultiRegex || false,
+            title: example.title || "Untitled",
+            description: example.description || "No description",
+          }))
+          .sort((a, b) => a.title.localeCompare(b.title))
       );
       setLoading(false);
     } catch (err) {

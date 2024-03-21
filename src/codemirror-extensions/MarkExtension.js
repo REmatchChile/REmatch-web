@@ -28,7 +28,7 @@ export const MarkExtension = StateField.define({
         decorations = Decoration.set(marks, true);
       }
     }
-    return decorations;
+    return decorations.map(transaction.changes);
   },
   provide: (f) => EditorView.decorations.from(f),
 });
