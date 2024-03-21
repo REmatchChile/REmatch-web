@@ -181,7 +181,7 @@ const Examples = () => {
         JSON.parse(text)
           .map((example) => ({
             query: example.query || "",
-            doc: example.doc || "",
+            doc: example.doc.replaceAll("\\n", "\n") || "",
             isMultiRegex: example.isMultiRegex || false,
             title: example.title || "Untitled",
             description: example.description || "No description",
@@ -201,6 +201,7 @@ const Examples = () => {
 
   const handleExampleClick = (example) => {
     const { query, doc, isMultiRegex } = example;
+    console.log(example);
     navigate({
       pathname: "/",
       search: createSearchParams({
