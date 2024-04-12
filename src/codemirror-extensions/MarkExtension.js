@@ -33,14 +33,23 @@ export const MarkExtension = StateField.define({
   provide: (f) => EditorView.decorations.from(f),
 });
 
-export const addMarks = (view, spans) => {
-  if (spans.length === 0) return;
-  // Clear all the marks before adding new ones
-  view.dispatch({ effects: setSpans.of([]) });
+export const addMarks = (view, match) => {
+  if (match.length === 0) return;
+  if (match.every((spans) => spans.length === 0)) return;
+
+  let firstValidSpan;
+  match.forEach((spans) => {
+    if (spans.length > 0) {
+      firstValidSpan = spans[0];
+      return;
+    }
+  });
   view.dispatch({
     effects: [
-      setSpans.of(spans),
-      EditorView.scrollIntoView(spans[0][0][0], { y: "center" }),
+      // Clear all the marks before adding new ones
+      setSpans.of([]),
+      setSpans.of(match),
+      EditorView.scrollIntoView(firstValidSpan, { y: "center" }),
     ],
   });
 };

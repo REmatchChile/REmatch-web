@@ -72,9 +72,7 @@ const MatchesTable = ({ matches, variables, doc, addMarks }) => {
     if (selectedMatch && selectedMatch.length) {
       // Prevent error when trying to highlight no variables
       if (variables.length > 0) {
-        // Prevent error when trying to highlight empty matches
-        const validSpans = selectedMatch.filter((span) => span.length > 0);
-        addMarks(validSpans);
+        addMarks(selectedMatch);
       }
     }
     // eslint-disable-next-line
