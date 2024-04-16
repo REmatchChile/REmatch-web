@@ -37,19 +37,20 @@ export const addMarks = (view, match) => {
   if (match.length === 0) return;
   if (match.every((spans) => spans.length === 0)) return;
 
-  let firstValidSpan;
+  let firstValidSpanStart;
   match.forEach((spans) => {
     if (spans.length > 0) {
-      firstValidSpan = spans[0];
+      firstValidSpanStart = spans[0][0];
       return;
     }
   });
+
   view.dispatch({
     effects: [
       // Clear all the marks before adding new ones
       setSpans.of([]),
       setSpans.of(match),
-      EditorView.scrollIntoView(firstValidSpan, { y: "center" }),
+      EditorView.scrollIntoView(firstValidSpanStart, { y: "center" }),
     ],
   });
 };
