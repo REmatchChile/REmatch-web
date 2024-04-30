@@ -62,9 +62,9 @@ const ExamplesList = ({ examples, handleExampleClick }) => {
           }}
         >
           {selectedExample?.title}
-          {selectedExample?.isMultiRegex && (
+          {selectedExample?.isMultiMatch && (
             <Box component="span" sx={{ color: "secondary.main" }}>
-              {" (MultiRegex)"}
+              {" (MultiMatch)"}
             </Box>
           )}
         </DialogTitle>
@@ -140,8 +140,8 @@ const ExamplesList = ({ examples, handleExampleClick }) => {
                     >
                       {example.title}
                     </Typography>
-                    {example.isMultiRegex && (
-                      <Chip label="MultiRegex" color="secondary" size="small" />
+                    {example.isMultiMatch && (
+                      <Chip label="MultiMatch" color="secondary" size="small" />
                     )}
                   </Box>
                   <Typography
@@ -181,7 +181,7 @@ const Examples = () => {
           .map((example) => ({
             query: example.query || "",
             doc: example.doc.replaceAll("\\n", "\n") || "",
-            isMultiRegex: example.isMultiRegex || false,
+            isMultiMatch: example.isMultiMatch || false,
             title: example.title || "Untitled",
             description: example.description || "No description",
           }))
@@ -199,13 +199,13 @@ const Examples = () => {
   }, []);
 
   const handleExampleClick = (example) => {
-    const { query, doc, isMultiRegex } = example;
+    const { query, doc, isMultiMatch } = example;
     navigate({
       pathname: "/",
       search: createSearchParams({
         query,
         doc,
-        isMultiRegex,
+        isMultiMatch,
       }).toString(),
     });
   };

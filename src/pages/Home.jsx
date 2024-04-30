@@ -77,8 +77,8 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("query") || "");
   const [doc, setDoc] = useState(searchParams.get("doc") || "");
-  const [isMultiRegex, setIsMultiRegex] = useState(
-    searchParams.get("isMultiRegex") === "true"
+  const [isMultiMatch, setIsMultiMatch] = useState(
+    searchParams.get("isMultiMatch") === "true"
   );
   const [variables, setVariables] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -121,13 +121,13 @@ const Home = () => {
           query: query,
           doc: doc,
           queryId: queryId.current,
-          isMultiRegex: isMultiRegex,
+          isMultiMatch: isMultiMatch,
         });
       }, ONCHANGE_EXECUTION_DELAY_MS);
       return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line
-  }, [query, doc, isMultiRegex, workerIsAlive, aborted]);
+  }, [query, doc, isMultiMatch, workerIsAlive, aborted]);
 
   const restartWorker = () => {
     worker.current = new Worker(WORKPATH, { type: "module" });
@@ -285,15 +285,15 @@ const Home = () => {
                 <Box width="4rem">
                   <Tooltip
                     title={
-                      isMultiRegex ? "Disable MultiRegex" : "Enable MultiRegex"
+                      isMultiMatch ? "Disable MultiMatch" : "Enable MultiMatch"
                     }
                   >
                     <ToggleButton
                       value="check"
                       color="primary"
-                      selected={isMultiRegex}
+                      selected={isMultiMatch}
                       onChange={() =>
-                        setIsMultiRegex((prevState) => !prevState)
+                        setIsMultiMatch((prevState) => !prevState)
                       }
                       sx={{
                         fontFamily: "monospace",
@@ -301,7 +301,7 @@ const Home = () => {
                         fontWeight: "bolder",
                         height: "100%",
                         width: "100%",
-                        textDecoration: isMultiRegex
+                        textDecoration: isMultiMatch
                           ? "none"
                           : "line-through !important",
                         borderRadius: 0,
