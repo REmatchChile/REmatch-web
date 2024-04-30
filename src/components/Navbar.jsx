@@ -4,6 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import DataObjectIcon from "@mui/icons-material/DataObject";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import EmojiObjectsIcon from '@mui/icons-material/EmojiObjects';
 import HelpIcon from "@mui/icons-material/Help";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -241,7 +242,16 @@ export default function NavbarComponent({
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            IconComponent={SchoolIcon}
+            IconComponent={HelpIcon}
+            primary="What is REmatch?"
+            path="/what-is-rematch"
+            handleNavigate={handleNavigate}
+            location={location}
+          />
+          <DrawerNavigationListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            IconComponent={EmojiObjectsIcon}
             primary="Examples"
             path="/examples"
             handleNavigate={handleNavigate}
@@ -250,9 +260,9 @@ export default function NavbarComponent({
           <DrawerNavigationListItem
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
-            IconComponent={HelpIcon}
-            primary="What is REmatch?"
-            path="/what-is-rematch"
+            IconComponent={SchoolIcon}
+            primary="Tutorial"
+            path="/tutorial"
             handleNavigate={handleNavigate}
             location={location}
           />
@@ -265,6 +275,7 @@ export default function NavbarComponent({
             handleNavigate={handleNavigate}
             location={location}
           />
+
         </List>
       </Drawer>
     </ThemeProvider>
