@@ -23,7 +23,7 @@ const getErrorText = (error) => {
 };
 
 let queryId;
-let isMultiRegex;
+let isMultiMatch;
 let variables;
 let regex;
 let match_iterator;
@@ -33,7 +33,7 @@ self.onmessage = (event) => {
     switch (event.data.type) {
       case "QUERY_INIT": {
         queryId = event.data.queryId;
-        isMultiRegex = event.data.isMultiRegex;
+        isMultiMatch = event.data.isMultiMatch;
         // Initialize query
         variables = [];
         if (regex) {
@@ -45,7 +45,7 @@ self.onmessage = (event) => {
           match_iterator = null;
         }
 
-        if (isMultiRegex) {
+        if (isMultiMatch) {
           regex = new REmatchModuleInstance.MultiRegex(event.data.query);
         } else {
           regex = new REmatchModuleInstance.Regex(event.data.query);
@@ -65,7 +65,7 @@ self.onmessage = (event) => {
         const matches = [];
         while (match != null) {
           const matchData = variables.map((variable) => {
-            if (isMultiRegex) {
+            if (isMultiMatch) {
               const spansVector = match.spans(variable);
               const spans = [];
               for (let i = 0; i < spansVector.size(); ++i) {
