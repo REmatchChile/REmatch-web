@@ -261,7 +261,7 @@ export default function NavbarComponent({
             open={openDrawer}
             handleDrawerClose={handleDrawerClose}
             IconComponent={SchoolIcon}
-            primary="Tutorial"
+            primary="REQL Tutorial"
             path="/tutorial"
             handleNavigate={handleNavigate}
             location={location}
