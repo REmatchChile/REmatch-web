@@ -67,7 +67,7 @@ const GithubButton = () => (
   <Tooltip title="GitHub">
     <IconButton
       size="medium"
-      href="https://github.com/REmatchChile"
+      href="https://github.com/REmatchChile/REmatch"
       target="_blank"
       rel="noreferrer"
     >
