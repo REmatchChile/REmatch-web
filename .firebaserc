@@ -1,0 +1,16 @@
+{
+  "projects": {},
+  "targets": {
+    "rematch-53db9": {
+      "hosting": {
+        "production": [
+          "rematch-53db9"
+        ],
+        "beta": [
+          "rematch-beta-53db9"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
