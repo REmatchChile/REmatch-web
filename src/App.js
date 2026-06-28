@@ -14,6 +14,7 @@ import AboutUs from "./pages/AboutUs";
 import Examples from "./pages/Examples";
 import Tutorial from "./pages/Tutorial";
 import Home from "./pages/Home";
+import Research from "./pages/Research";
 import WhatIsREmatch from "./pages/WhatIsREmatch";
 
 const DRAWER_WIDTH = {
@@ -66,6 +67,7 @@ const App = () => {
             <Route path="/what-is-rematch" element={<WhatIsREmatch />} />
             <Route path="/examples" element={<Examples />} />
             <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/research" element={<Research />} />
             <Route path="/tutorial" element={<Tutorial />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
