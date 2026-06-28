@@ -10,6 +10,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import MenuIcon from "@mui/icons-material/Menu";
 import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
+import ScienceIcon from '@mui/icons-material/Science';
 import {
   AppBar,
   Box,
@@ -263,6 +264,15 @@ export default function NavbarComponent({
             IconComponent={SchoolIcon}
             primary="REQL Tutorial"
             path="/tutorial"
+            handleNavigate={handleNavigate}
+            location={location}
+          />
+          <DrawerNavigationListItem
+            open={openDrawer}
+            handleDrawerClose={handleDrawerClose}
+            IconComponent={ScienceIcon}
+            primary="Research"
+            path="/research"
             handleNavigate={handleNavigate}
             location={location}
           />

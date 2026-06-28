@@ -28,8 +28,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy:production": "npm run build && firebase deploy --only hosting:production",
+    "deploy:beta": "npm run build && firebase deploy --only hosting:beta",
+    "preview:production": "npm run build && firebase hosting:channel:deploy preview --only hosting:production",
+    "preview:beta": "npm run build && firebase hosting:channel:deploy preview --only hosting:beta"
   },
   "eslintConfig": {
     "extends": "react-app"
