@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /* MaterialUI */
-import { Box, Typography, Chip, Tooltip, ToggleButton } from "@mui/material";
+import { useTheme } from "@emotion/react";
+import { Box, Chip, ToggleButton, Tooltip, Typography } from "@mui/material";
 import { basicDark, basicLight } from "@uiw/codemirror-theme-basic";
 import CodeMirror, {
   EditorView,
   highlightWhitespace,
 } from "@uiw/react-codemirror";
+import { enqueueSnackbar } from "notistack";
+import { useSearchParams } from "react-router-dom";
 import {
   MarkExtension,
   addMarks,
@@ -15,9 +18,6 @@ import {
 import { REQLExtension } from "../codemirror-extensions/REQLExtension";
 import MatchesTable from "../components/MatchesTable";
 import Window from "../components/Window";
-import { useTheme } from "@emotion/react";
-import { enqueueSnackbar } from "notistack";
-import { useSearchParams } from "react-router-dom";
 
 const WORKPATH = `${process.env.PUBLIC_URL}/work.js`;
 const ONCHANGE_EXECUTION_DELAY_MS = 500;
@@ -29,8 +29,8 @@ const ExecutionStatus = ({ errorMessage, numMatches, processing }) => {
   const chipLabel = errorMessage.length
     ? "Error"
     : processing
-    ? `Processing (Found ${foundNumberStr})`
-    : `Finished (Found ${foundNumberStr})`;
+      ? `Processing (Found ${foundNumberStr})`
+      : `Finished (Found ${foundNumberStr})`;
   return (
     <Tooltip
       title={errorMessage}
@@ -101,6 +101,16 @@ const Home = () => {
     setAborted(false);
   }, []);
 
+  const [file, setFile] = useState(null);
+
+  const onFileChange = useCallback((event, viewUpdate) => {
+    const selectedFile = event.target.files?.[0] ?? null;
+    console.log("FileChange:");
+    console.log(selectedFile)
+    setFile(selectedFile);
+    setAborted(false);
+  }, []);
+
   useEffect(() => {
     if (docEditorRef.current.view) clearMarks(docEditorRef.current.view);
   }, [docEditorRef, query, doc]);
@@ -113,21 +123,34 @@ const Home = () => {
     setVariables([]);
     setProcessing(false);
     // Execute query after delay
-    if (query.length > 0 && workerIsAlive) {
+    // if (query.length > 0 && workerIsAlive) {
+    //   setProcessing(true);
+    //   const timeoutId = setTimeout(() => {
+    //     worker.current.postMessage({
+    //       type: "QUERY_INIT",
+    //       query: query,
+    //       doc: doc,
+    //       queryId: queryId.current,
+    //       isMultiMatch: isMultiMatch,
+    //     });
+    //   }, ONCHANGE_EXECUTION_DELAY_MS);
+    //   return () => clearTimeout(timeoutId);
+    if (query.length > 0 && file && workerIsAlive) {
       setProcessing(true);
       const timeoutId = setTimeout(() => {
         worker.current.postMessage({
-          type: "QUERY_INIT",
+          type: "QUERY_INIT_S",
           query: query,
           doc: doc,
           queryId: queryId.current,
           isMultiMatch: isMultiMatch,
+          file: file,
         });
       }, ONCHANGE_EXECUTION_DELAY_MS);
       return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line
-  }, [query, doc, isMultiMatch, workerIsAlive, aborted]);
+  }, [query, doc, isMultiMatch, workerIsAlive, aborted, file]);
 
   const restartWorker = () => {
     worker.current = new Worker(WORKPATH, { type: "module" });
@@ -342,6 +365,12 @@ const Home = () => {
                 highlightSelectionMatches: false,
               }}
               extensions={[EditorView.lineWrapping, MarkExtension]}
+            />
+            <input
+              // ref={inputRef}
+              type="file"
+              onChange={onFileChange}
+              style={{}}
             />
           </Window>
         </Box>

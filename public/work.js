@@ -1,4 +1,6 @@
-import initREmatch from "https://cdn.jsdelivr.net/npm/rematch-javascript@1.2.1/lib/index.mjs";
+// import initREmatch from "https://cdn.jsdelivr.net/npm/rematch-javascript@1.2.1/lib/index.mjs";
+
+import initREmatch from "./index.mjs";
 
 // Number of iterations before posting a matches message
 const MIN_MATCHES_PER_POST = 8192;
@@ -29,6 +31,7 @@ let variables;
 let regex;
 let matchGenerator;
 let multiMatch;
+let reader;
 
 const MAX_MEMPOOL_DUPLICATIONS = 8;
 const MAX_DETERMINISTIC_STATES = 1000;
@@ -61,6 +64,53 @@ self.onmessage = (event) => {
         }
         matchGenerator = query.findIter(
           event.data.doc,
+          REmatch.Flags.NONE,
+          MAX_MEMPOOL_DUPLICATIONS,
+          MAX_DETERMINISTIC_STATES
+        );
+        // Get variables
+        variables = query.variables();
+        self.postMessage({ type: "QUERY_VARIABLES", variables, queryId });
+        break;
+      }
+      case "QUERY_INIT_S": {
+        queryId = event.data.queryId;
+        multiMatch = event.data.isMultiMatch;
+        // Initialize query
+        if (regex) {
+          regex.free();
+          regex = null;
+        }
+        if (matchGenerator) {
+          matchGenerator.free();
+          matchGenerator = null;
+        }
+
+        if (multiMatch) {
+          query = REmatch.multiReql(event.data.query);
+        } else {
+          query = REmatch.reql(
+            event.data.query,
+            REmatch.Flags.NONE,
+            MAX_MEMPOOL_DUPLICATIONS,
+            MAX_DETERMINISTIC_STATES
+          );
+        }
+
+        REmatch._wasmModule.FS.mkdir('/input');
+
+        REmatch._wasmModule.FS.mount(
+          REmatch._wasmModule.WORKERFS,
+          { files: [event.data.file] },
+          "/input"
+        );
+
+        console.log("Reader: "+ event.data.file.name);
+        reader = REmatch.Reader("/input/" + event.data.file.name);
+
+        console.log("Finditer");
+        matchGenerator = query.findIter(
+          reader,
           REmatch.Flags.NONE,
           MAX_MEMPOOL_DUPLICATIONS,
           MAX_DETERMINISTIC_STATES
